@@ -1,0 +1,104 @@
+\section{Approach}
+\label{sec:approach}
+
+\theoremstyle{definition}
+\newtheorem{defn}{Definition}[section]
+
+% Noticed that 'A Hueristic Test Data Generation Approach for Program Fault Localization' has a nice definition for passing/failing test cases (no notion of flakiness though). See section 3.1, Definition 1.
+
+\begin{defn}
+	Given a subject under test $f: \vec{I} -> \vec{O}$.
+
+	A test case is $(\vec{i},\vec{o})$
+
+	The “fixed f” condition needs fixing.  It will need to be wrt the slice from the program point at which $\vec{o}$ is generated to entry, given $\vec{i}$. In others words, it’s impact analysis.  Intuitively, a test can only be flaky when its behavior is sensitive unknown inputs and not to changes to f that it, in fact, is designed to test.
+
+	A \emph{flaky test case} is a test case where, for fixed $f$,
+	$p(f(\vec{i} = \vec(o)) = 1 - \epsilon$
+
+	Remark: A flaky test case is an unfair coin.
+
+	Let $\vec{I}$ be the lifting of all inputs, including coin flips and environmental interactions, into a single input vector.
+
+	The key is the true $\vec{I}$ is only partially known;  we capture flakiness as unknown components of $\vec{I}$, like Todd Mytkowicz’ sensitivity to the length of environmental variables, etc.
+
+	Note:  formalize how much data we will need to gather in order to discover the cause of flakiness as a function of epsilon.  Rare events, like flakiness, are related to smoothing.
+
+	Combined with our budget b, we can determine what values of $\epsilon$ we can afford to detect!
+\end{defn}
+
+% See: http://www.texample.net/tikz/examples/line-plot-example/
+\begin{tikzpicture}[thick, framed, x=6.5cm, y=1.6cm]
+	% Title
+	\draw (0.5, 1) node[above] {$\textsc{Flaky Tests}$};
+
+	% Axis
+	\draw (0,0) -- coordinate (x axis mid) (1,0);
+    \draw (0,0) -- coordinate (y axis mid) (0,1);
+
+    % Axis Labels
+    \node (padding) [below] at (0.4, 0) {};
+	\node[below of = padding] at (x axis mid) {$Flakiness$};
+
+    % Ticks
+    \foreach \x in {0, 0.4, 1}
+    	\draw (\x, 1pt) -- (\x, -3pt) node[anchor=north] {\x};
+    \foreach \y in {0, 1}
+    	\draw (1pt, \y) -- (-3pt, \y) node[anchor=east] {\y};
+
+	% Flaky test range
+    \draw[<-] (0, 0.5) -- (0.4, 0.5); % Draw horizontal line
+    \draw (0.4, 0.42) -- (0.4, 0.58); % Draw right vertical tab
+
+    % Alpha label
+    \node [right] at (0.4, 0.5) {$(\boldsymbol{\alpha})$};
+\end{tikzpicture}
+
+
+Test suite $f$ with flaky tests $f!$.
+Budget $B_{f} = B_{6} + B_{f!} + B_{nd}$
+
+\paragraph{Instrumentation pseudocode:}
+
+% Use 'in' for-loop range notation rather than 'to'.
+\renewcommand{\algorithmicto}{\textbf{in}}
+
+% The {algorithm} wrapper is pretty unattractive as far as I'm concerned.
+% Need to look into alternative ways of formatting this.
+\begin{algorithm}
+\caption{Allocate instrumentation budget across a test suite}
+\label{alg1}
+\begin{algorithmic}
+	% Perhaps this should just take a single tests[]. We can query the element to determine its 'priority' (relative flakiness).
+	% Or, could take a vector<test, flakiness> to be explicit.
+	\STATE{\textbf{splatter} (budget, flakyTests[], allTests[])}
+	\STATE{}
+	\COMMENT{Need a function that looks at all the tests and their associated priorities, orders them and attaches an allowedBudget value in terms of the whole budget}
+ 	\WHILE{$budget \geq 0$}
+ 		% Simpler if the 'instrumentTest' function returns a value representing the amount of budget it actually used, rather than its remainder.
+ 		\STATE{$budget \gets budget - allowedBudget + \textbf{instrumentTest} (test, allowedBudget)$}
+	\ENDWHILE
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}
+\caption{Instrument a test with respect to a given budget}
+\label{alg2}
+\begin{algorithmic}
+	\STATE{\textbf{instrumentTest} (test, budget)}
+	% Should 'sites' just be a parameter?
+	\STATE{$sites \gets test.instrumentationSites$}
+	\FOR{$site$ \TO $sites$}
+		% Should probably define a cost function (e.g. cost(instrumentationPoint)) and use that, rather than using an unexplained accessor.
+		\STATE{$cost \gets site.cost$}
+		\IF{$cost \le budget$}
+			\STATE{$site.active \gets true$}
+			\STATE{$budget \gets budget - cost$}
+		\ELSE
+			% Need to work out how to define new algorithmic-style macros (e.g. \BREAK)
+			\STATE{\textbf{break}}
+		\ENDIF
+	\ENDFOR
+	\RETURN{budget}
+\end{algorithmic}
+\end{algorithm}

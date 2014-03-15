@@ -1,0 +1,164 @@
+\documentclass[preprint,nocopyrightspace]{sigplanconf}
+
+\usepackage{graphicx,color}
+\usepackage{subfigure}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{listings}
+\usepackage{xspace}
+\usepackage{paralist}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{balance}
+\usepackage[vlined,ruled,linesnumbered]{algorithm2e}
+\usepackage{algorithmic}
+
+% Needed to rename {algorithm} wrapped {algorithmic} sections.
+\usepackage{float}
+
+% Used for theorem formatting.
+\usepackage{amsthm}
+
+% Graphs & figures.
+\usepackage{tikz}
+\usetikzlibrary{arrows,backgrounds,snakes}
+
+\usepackage[sort&compress]{natbib}
+
+% hyperref redefines a number of macros, so it should be last.  Empirically,
+% doing so eliminates compiler warnings.
+\usepackage[bookmarks, colorlinks]{hyperref}
+% According to the hyperref readme, algorithm must follow hyperref
+
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+% Macros																{{{1
+
+% English
+\newcommand{\cf}{\hbox{\emph{cf.}}\xspace}
+\newcommand{\deletia}{\ldots [deletia] \ldots}
+\newcommand{\etal}{\hbox{\emph{et al.}}\xspace}
+\newcommand{\eg}{\hbox{\emph{e.g.}}\xspace}
+\newcommand{\ie}{\hbox{\emph{i.e.}}\xspace}
+\newcommand{\scil}{\hbox{\emph{sc.}}\xspace} %scilicet: it is permitted to know
+\newcommand{\st}{\hbox{\emph{s.t.}}\xspace}
+\newcommand{\wrt}{\hbox{\emph{w.r.t.}}\xspace}
+\newcommand{\etc}{\hbox{\emph{etc.}}\xspace}
+\newcommand{\viz}{\hbox{\emph{viz.}}\xspace} %videlicet: it is permitted to see
+\newcommand{\vs}{\hbox{\emph{vs.}}\xspace}
+
+\newcommand{\Projn}{NAND\xspace}
+
+\newcommand{\todo}[1]{{\color{red}#1}}
+\newcommand{\kp}[1]{\todo{Karen: #1}}
+\newcommand{\eb}[1]{\todo{Earl: #1}}
+
+\newcommand{\ourtitle}{\Projn: Smashing Heisentests}
+
+\newcommand{\avgoverhead}{$7\%$\xspace} %average overhead rate seen as a percentage
+\newcommand{\avgdatarate}{$0.6$\,{\small MB/s}\xspace} %average data logging rate
+
+\newcommand{\maxoverhead}{$11\%$\xspace} %largest overhead rate seen as a percentage
+\newcommand{\maxdatarate}{$1.3$\,{\small MB/s}\xspace} %largest data logging rate
+
+\newcommand{\avgoverheadbase}{$14\%$\xspace} %average BASELINE overhead rate seen as a percentage
+\newcommand{\avgdataratebase}{$2.2$\,{\small MB/s}\xspace} %average BASELINE data logging rate
+
+\newcommand{\maxoverheadbase}{$22\%$\xspace} %largest BASELINE overhead rate seen as a percentage
+\newcommand{\maxdataratebase}{$5.6$\,{\small MB/s}\xspace} %largest BASELINE data logging rate
+
+\newcommand{\averagereverse}{$0.29s$\xspace} %average reverse execution time
+\newcommand{\maxreverse}{$0.68s$\xspace} %max reverse execution time
+
+\newcommand\bench[1]{\textsf{\small #1}}
+
+%% Document-specific hyperref options
+\hypersetup{
+pdftitle={\ourtitle},
+    pdfauthor={Earl T. Barr and Morrison Cole},
+    plainpages=false,
+    linkcolor=blue, % Overriding these colors to black is somewhat unfortunate
+    %citecolor=black, % b/c the defaults are useful in color.
+    citecolor=blue, % b/c the defaults are useful in color.
+    filecolor=black,
+    urlcolor=blue,
+    pdfpagelabels
+}
+\def\sectionautorefname{Section}
+\def\subsectionautorefname{Section}
+\def\subsubsectionautorefname{Section}
+\newcommand{\subfigureautorefname}{\figureautorefname} %for subfigures
+\newcommand{\defref}[1]{\hyperref[#1]{Definition~\ref*{#1}}}
+\newcommand{\algref}[1]{\hyperref[#1]{Algorithm~\ref*{#1}}}
+\newcommand{\lineref}[1]{\hyperref[#1]{Line~\ref*{#1}}}
+
+%\setlength\textfloatsep{4mm}
+
+%% lstlisting
+\lstset{
+	basicstyle=\ttfamily\small,
+	numbers=left,
+	language=Java,
+	captionpos=b,
+	breaklines=true,
+	escapeinside={(*@}{@*)},
+	breakatwhitespace=true
+}
+
+% show paper number for submission
+\pagestyle{plain}
+\pagenumbering{arabic}
+
+\conferenceinfo{XXX}{YYY.}
+\copyrightyear{ZZZZ}
+\copyrightdata{WWWW}
+
+\preprintfooter{Draft}
+\titlebanner{DRAFT---Do not distribute}
+
+\title{\ourtitle \vspace{-5mm}}
+
+\authorinfo{Earl T. Barr \and Morrison Cole}
+		{University College London}
+    {\texttt{\{e.barr,morrison.cole.10\}@ucl.ac.uk}}
+
+%\authorinfo{}
+%		{}
+%		{}
+
+\begin{document}
+
+\maketitle
+
+\input{abstract}
+
+%\category{D.3.3}{Programming Languages}
+%{Language Constructs and Features}
+%\terms Some Terms Here
+%\keywords Some Keywords Here
+
+\vspace*{4mm}
+\noindent``\todo{find appropriate quote.} Debugging involves backwards reasoning''
+
+\hfill Brian Kernighan and Rob Pike
+
+\hfill The Practice of Programming, 1999
+
+\input{intro}
+\input{example}
+\input{approach}
+\input{imp}
+\input{eval}
+\input{relwork}
+\input{conc}
+
+%\listoftodos
+
+\balance
+
+\nocite{*}
+\bibliographystyle{abbrv}
+\bibliography{Bib/paper}
+
+\end{document}

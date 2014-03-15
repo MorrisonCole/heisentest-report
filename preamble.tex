@@ -1,0 +1,107 @@
+﻿\usepackage{graphicx,color}
+\usepackage{wrapfig}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{url} % do I need this with hyperref?
+\usepackage{multicol}
+\usepackage{multirow}
+\usepackage{setspace} % for double, 1.5, single spacing etc.
+\usepackage{aeguill}
+\usepackage{xspace}
+\usepackage{listings}
+\usepackage{ifthen}
+\usepackage{verbatim}
+\usepackage{float} % defines newfloat used below
+\usepackage{microtype}
+\usepackage{mathptmx}
+\usepackage{stmaryrd} %Additional math symbols.
+\usepackage{textcomp}
+%\usepackage[sort&compress]{natbib} 
+%\usepackage{todos} % Use \todoset{all=off} to turn off todos in a paper.
+\usepackage{booktabs}
+\usepackage{fancyhdr}
+
+
+
+% These two let you use multibyte utf-8 characters, e.g. 03bb - λ 
+\usepackage[mathletters]{ucs}
+\usepackage[utf8x]{inputenc}
+\usepackage{wasysym}	% Defines \cent, \currency, \brokenvert
+
+% hyperref redefines a number of macros, so it should be last.  Empirically,
+% doing so eliminates compiler warnings.
+\usepackage[bookmarks, colorlinks, citecolor=green, urlcolor=blue,
+			filecolor=blue, linkcolor=blue]{hyperref}
+% According to the hyperref readme, algorithm must follow hyperref
+
+% required for combined latex/pdf xfig figures
+\DeclareGraphicsRule{.pdftex}{pdf}{.pdftex}{} 
+
+
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+% Macros																{{{1
+
+% English
+\newcommand{\cf}{\hbox{\emph{cf.}}\xspace}
+\newcommand{\deletia}{\ldots [deletia] \ldots}
+\newcommand{\etal}{\hbox{\emph{et al.}}\xspace}
+\newcommand{\eg}{\hbox{\emph{e.g.}}\xspace}
+\newcommand{\ie}{\hbox{\emph{i.e.}}\xspace}
+\newcommand{\scil}{\hbox{\emph{sc.}}\xspace} %scilicet: it is permitted to know
+\newcommand{\st}{\hbox{\emph{s.t.}}\xspace}
+\newcommand{\wrt}{\hbox{\emph{w.r.t.}}\xspace}
+\newcommand{\etc}{\hbox{\emph{etc.}}\xspace}
+\newcommand{\viz}{\hbox{\emph{viz.}}\xspace} %videlicet: it is permitted to see
+\newcommand{\vs}{\hbox{\emph{vs.}}\xspace}
+
+
+\newfloat{Protocol}{thp}{lop}
+\DeclareMathOperator{\cbar}{||} %denotes concurrency in protocol floats.
+\newfloat{Program}{thp}{lop}
+\newfloat{Procedure}{thp}{lop}
+
+
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+% Theorems, etc.														{{{2
+\newenvironment{proof-idea}{\noindent{\bf Proof Idea}\hspace*{1em}}{\bigskip}
+%
+%\theoremstyle{plain}
+%\newtheorem{thm}{Theorem}[section]
+%\newtheorem{lem}[thm]{Lemma}
+%\newtheorem{prop}[thm]{Proposition}
+%\newtheorem{cor}[thm]{Corollary}
+%
+%\theoremstyle{remark}
+%\newtheorem*{rem}{Remark}
+%
+%\theoremstyle{definition}
+%\newtheorem{defn}{Definition}[section]
+%\newtheorem{conj}{Conjecture}
+%}}}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+% Aliases																{{{1
+\newcommand{\infinity}{\infty}
+%}}}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+% Missing unicode chars, other brokenness in ucs/inputenc {{{1
+\DeclareUnicodeCharacter{183}{\cdot}						% ·
+\DeclareUnicodeCharacter{931}{\ensuremath\Sigma}			% Σ
+\DeclareUnicodeCharacter{9001}{\ensuremath\langle}			% 〈
+\DeclareUnicodeCharacter{9002}{\ensuremath\rangle}			% 〉
+\DeclareUnicodeCharacter{9608}{\ensuremath\blacksquare}		% █
+\DeclareUnicodeCharacter{1013}{\in}							% ϵ
+\DeclareUnicodeCharacter{8213}{---}							% ―
+
+\renewcommand{\textcent}{\cent}
+\renewcommand{\textcurrency}{\currency}
+\renewcommand{\textyen}{\yen}
+\renewcommand{\textbrokenbar}{\brokenvert}
+%}}}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+% vim:foldmethod=marker
