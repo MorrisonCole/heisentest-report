@@ -1,4 +1,5 @@
-\documentclass[12pt,a4paper,twoside,draft]{report}
+% TODO: Re-enable twopage when printing
+\documentclass[12pt,a4paper,draft]{report}
 
 \usepackage{graphicx,color}
 \usepackage{subfigure}
@@ -11,7 +12,6 @@
 \usepackage{paralist}
 \usepackage{array}
 \usepackage{booktabs}
-\usepackage{balance}
 \usepackage[vlined,ruled,linesnumbered]{algorithm2e}
 \usepackage{algorithmic}
 
@@ -122,13 +122,18 @@ pdftitle={\ourtitle},
 \input{title}
 \input{abstract}
 
-% Contents. Perhaps use figures / tables.
+%% Contents. Perhaps use figures / tables.
+
+% Force top-level sections to enumerate with natural numbers even on the 'report' type document.
+\renewcommand\thesection{\arabic{section}}
+
+\raggedbottom
 \tableofcontents
 \newpage
 %\listoffigures
 %\listoftables
 
-\vspace*{4mm}
+
 \noindent``\todo{find appropriate quote.} Debugging involves backwards reasoning''
 
 \hfill Brian Kernighan and Rob Pike
@@ -143,9 +148,12 @@ pdftitle={\ourtitle},
 \input{relwork}
 \input{conc}
 
-\balance
+%% Citations
 
+% Causes all items in the database to be included in the references, regardless of whether or not they are cited.
 \nocite{*}
+
+% TODO: Check with Earl what citation style we want.
 \bibliographystyle{abbrv}
 \bibliography{Bib/paper}
 
