@@ -127,12 +127,13 @@ pdftitle={\ourtitle},
 % Force top-level sections to enumerate with natural numbers even on the 'report' type document.
 \renewcommand\thesection{\arabic{section}}
 
-\raggedbottom
 \tableofcontents
 \newpage
 %\listoffigures
 %\listoftables
 
+% Makes all pages the height of the text on the page. No extra vertical space is added.
+\raggedbottom
 
 \noindent``\todo{find appropriate quote.} Debugging involves backwards reasoning''
 
@@ -147,6 +148,7 @@ pdftitle={\ourtitle},
 \input{eval}
 \input{relwork}
 \input{conc}
+\input{appendix}
 
 %% Citations
 
