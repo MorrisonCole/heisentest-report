@@ -25,6 +25,9 @@
 \usepackage{tikz}
 \usetikzlibrary{arrows,backgrounds,snakes}
 
+% Line spacing
+\usepackage{setspace}
+
 \usepackage[sort&compress]{natbib}
 
 % hyperref redefines a number of macros, so it should be last.  Empirically,
@@ -97,6 +100,9 @@ pdftitle={\ourtitle},
 \setlength{\parskip}{\baselineskip}
 \setlength{\parindent}{0pt}
 
+% Line spacing
+\onehalfspacing
+
 %% lstlisting
 \lstset{
 	basicstyle=\ttfamily\small,
@@ -115,6 +121,12 @@ pdftitle={\ourtitle},
 
 \input{title}
 \input{abstract}
+
+% Contents. Perhaps use figures / tables.
+\tableofcontents
+\newpage
+%\listoffigures
+%\listoftables
 
 \vspace*{4mm}
 \noindent``\todo{find appropriate quote.} Debugging involves backwards reasoning''
