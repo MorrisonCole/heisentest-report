@@ -1,4 +1,4 @@
-\documentclass[preprint,nocopyrightspace]{sigplanconf}
+\documentclass[12pt,a4paper,twoside,draft]{report}
 
 \usepackage{graphicx,color}
 \usepackage{subfigure}
@@ -93,7 +93,9 @@ pdftitle={\ourtitle},
 \newcommand{\algref}[1]{\hyperref[#1]{Algorithm~\ref*{#1}}}
 \newcommand{\lineref}[1]{\hyperref[#1]{Line~\ref*{#1}}}
 
-%\setlength\textfloatsep{4mm}
+% Paragraph formatting
+\setlength{\parskip}{\baselineskip}
+\setlength{\parindent}{0pt}
 
 %% lstlisting
 \lstset{
@@ -106,37 +108,13 @@ pdftitle={\ourtitle},
 	breakatwhitespace=true
 }
 
-% show paper number for submission
 \pagestyle{plain}
 \pagenumbering{arabic}
 
-\conferenceinfo{XXX}{YYY.}
-\copyrightyear{ZZZZ}
-\copyrightdata{WWWW}
-
-\preprintfooter{Draft}
-\titlebanner{DRAFT---Do not distribute}
-
-\title{\ourtitle \vspace{-5mm}}
-
-\authorinfo{Earl T. Barr \and Morrison Cole}
-		{University College London}
-    {\texttt{\{e.barr,morrison.cole.10\}@ucl.ac.uk}}
-
-%\authorinfo{}
-%		{}
-%		{}
-
 \begin{document}
 
-\maketitle
-
+\input{title}
 \input{abstract}
-
-%\category{D.3.3}{Programming Languages}
-%{Language Constructs and Features}
-%\terms Some Terms Here
-%\keywords Some Keywords Here
 
 \vspace*{4mm}
 \noindent``\todo{find appropriate quote.} Debugging involves backwards reasoning''
@@ -152,8 +130,6 @@ pdftitle={\ourtitle},
 \input{eval}
 \input{relwork}
 \input{conc}
-
-%\listoftodos
 
 \balance
 
