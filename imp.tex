@@ -14,3 +14,83 @@
 		\item Provide implementation details as necessary.
 	\end{itemize}
 \end{framed}
+
+
+\subsection{A choice of CI tools}
+
+Probably the most well known and extensible continuous integration tool is Jenkins. Like other tools of its kind, it maintains a history of build results and their associated artifacts. A wealth of plugins provide support for testing frameworks such as JUnit, displaying individual test outcomes, stack traces and assertions in a simple interface.
+
+\subsubsection{Alternatives}
+
+Hudson, from which the Jenkins project derives is a possibility, but has a smaller user base, so has fewer plugins, fewer commits per day etc.
+
+TeamCity has a significant community and a growing number of plugins, but is a closed source project maintained by JetBrains.
+
+Although the tool will be developed initially for Jenkins, it is essential to structure the plugin such that it can easily be migrated to other CI systems. At all stages of design, this must be kept in mind.
+
+
+\subsection{A Solution}
+
+\subsubsection{Identification}
+
+This stage is fairly trivial since we can build upon the work of others.
+
+After a test run completes, we can gather the test run results and store them in a persistent database. We can then look at the test runs over time and attach various values to each test much in the same way as the existing tools. ‘Flakiness’ - a percentage value representing a test’s likelihood to fail will be the most useful of these.
+TODO: Write a list of values we hope to attach to each test. Back this up with quotes from Shazam.
+
+\subsubsection{Prioritisation}
+
+We can use the data gathered during the identification stage to rank the tests according to criteria. A simple output would be a descending list ordered by flakiness:
+
+\begin{center}
+    \begin{tabular}{ | l | p{5cm} |}
+    \hline
+    Test & Flakiness \% \\ \hline
+    testVeryFlaky() & 91 \\ \hline
+    testSometimesFlaky() & 33 \\ \hline
+    testSignificantlyFlaky() & 2 \\ \hline
+    \end{tabular}
+\end{center}
+
+Or, we could group the tests by common failure type, e.g.:
+
+% \lstset{
+% 	numbers=none,
+% 	xleftmargin=3pt,
+% 	numbersep=1em
+% }
+
+\begin{center}
+    \begin{tabular}{| p{10cm} | l |}
+    \hline
+    Common Failure & Flaky Test Count \\ \hline
+    {\begin{lstlisting}[language=Java, numbers=none]
+java.lang.OutOfMemoryError
+	\end{lstlisting}}
+    & 4 \\ \hline
+    {\begin{lstlisting}[language=Java, numbers=none]
+java.lang.AssertionError:
+Expected: (View visibility to be View.VISIBLE and View to have a width and a height)
+but: View visibility to be View.VISIBLE View with id: class android.resources.R$id.anExampleView(1) had a visibility of View.GONE
+	\end{lstlisting}}
+	& 2 \\ \hline
+    {\begin{lstlisting}[language=Java, numbers=none]
+junit.framework.AssertionFailedError:
+expected: "an_example_string"
+but was: ""
+	\end{lstlisting}}
+	& 1 \\ \hline
+
+    \end{tabular}
+\end{center}
+
+Flaky tests using the same troublesome method or similar logical flow may well fail with the same stacktrace or assertion failure. By automatically detecting this, developers could target groups of related tests and potentially fix an entire group at once.
+
+
+\subsubsection{Resolution}
+
+Using data from the identification and prioritisation stages, we can begin to develop an adaptive instrumentation to automatically gather runtime information whilst maintaining a low overhead.
+
+\todo{Explain why we are ‘just’ targeting Android for now (Shazam, GUI testing, etc).}
+
+Automated testing is used during development. We therefore can assume unrestricted access to debug builds.
