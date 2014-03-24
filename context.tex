@@ -11,3 +11,37 @@
 	\item Outline and reference the sources of information you are drawing on (papers, books, websites, etc.). State how each relates to your work.
 	\item Introduce the software, programming languages, library code, frameworks and other tools that you are using. Discuss choices and make clear which you made use of and why.
 \end{itemize}
+
+Test driven development, when taken to its limits, works like this:
+
+\begin{itemize}
+	\item A developer receives a specification for a feature (this could be a user story, given when thens i.e. BDD-style - cucumber, or any number of different presentations)
+
+	\item The developer writes a system test to ensure the feature works. System tests operate at the system level, so they often read like BDD requirements, e.g.:
+
+	\begin{verbatim}
+  	Scenario: Add to Basket
+  	  Given I am viewing the store page
+  	    And I have no items in my basket
+  	  When I add an item to my basket
+  	  Then that item is shown in my basket
+	\end{verbatim}
+
+	Could be eventually converted in to the following Java code:
+
+	\lstinputlisting[language=Java]{bddExample.java}
+
+	\item The developer runs/edits the test until it fails for the right reason.
+
+	\item The developer begins implementing the feature - again writing tests first, but this time on the finer levels of unit / integration.
+
+	\item When all tests pass, the feature is completed.
+\end{itemize}
+
+Note that there are many points for interpretation along the steps of this process. For example, an interface may be tested for the presence of a specific image, but its location may be ignored. Because of this, manual spot checks and alpha / beta staged releases are often used.
+
+In order for a test suite to improve a team’s work, it must be trustworthy. Tests must be written carefully to ensure that they fail when the code under test is indeed broken, and pass otherwise. As is often the case, when tests fail unexpectedly, they are removed from the suite until they are fixed.
+
+Unfortunately, tests running at the system level are prone to intermittent failure.
+
+When a subset of tests fail randomly each time the suite is run, it is all too easy for developers to begin ignoring real failures if and when they do occur.
