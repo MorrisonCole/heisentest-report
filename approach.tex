@@ -1,6 +1,40 @@
 \section{Approach}
 \label{sec:approach}
 
+
+\subsection{Fixing flaky tests}
+
+\todo{Have a comparison between the results gathered normally (logs + assertion failure/stacktrace + screenshot) and heisentest (JSON logs).There are strong ties to ‘heisenbugs’ and ‘debuggability’ here. Perhaps get references.}
+
+Sometimes, it is not possible to fix a flaky test from the information output by the testrunner alone. Typically, the information includes logs, an assertion failure message and/or a stack trace. Applications with a user interface may also provide a number of screenshots. Often, a developer will have to manually gather information to build up an understanding of the intended flow vs. the actual flow on failing runs. For flaky tests with a low failure rate, this can be a painstaking and time-consuming process. Indeed, if the flaky test is a timing based issue, attaching a debugger may cause the test to pass indefinitely.
+
+\todo{Have a comparison between the results gathered normally (logs + assertion failure/stacktrace + screenshot) and heisentest (JSON logs).}
+
+
+\subsection{Aims and Goals}
+
+Flaky tests are hard to fix. In general, there are three stages during which we may intervene:
+\begin{enumerate}
+	\item Identification - which tests in the suite are flaky?
+	\item Prioritisation - why of the flaky tests should we fix first?
+	\item Resolution - what information can we gather to speed the resolution of a test?
+\end{enumerate}
+
+Ultimately, the final stage is the target. In order to tackle the problem practically, knowledge gathered at each stage must be combined and considered.
+
+Existing tools (Shazam’s Flaky Test Monitor included) provide answers to 1. This information can be used to inform manual inspection of 2. As of yet, no tool exists to tackle 3.
+
+In a typical software development project, continuous integration systems will be set up from the beginning. Developers write code and commit to source control. A master server will detect the change and assign one of a number of build agents (other servers with the capability to build the project(s) - virtual or otherwise) an attached job.
+
+For a typical job, the chosen build agent pulls down the latest changes, compiles and run the tests and runs any post-build tasks. At the end, any build artifacts (distributable packages, test results, etc.) will be uploaded to the master server and the agent will be once again free to build the next iteration. Note that in reality, a job can comprise of any number of runnable steps - from executing a shell script to hitting an external server.
+
+\todo{A diagram of this flow would be nice.}
+
+It is obvious that, if we are to develop a tool to assist developers with flaky tests, we should run as part of a modular continuous integration system.
+
+
+\subsection{Formal Definition of a Flaky Test}
+
 \theoremstyle{definition}
 \newtheorem{defn}{Definition}[section]
 
