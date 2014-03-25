@@ -66,48 +66,54 @@ Budget $B_{f} = B_{6} + B_{f!} + B_{nd}$
 
 \subsection{Flakiness}
 
-Each test can be assigned a flakiness value in the range $[0-1]$, representing its chance of failure. This is used to determine test budget allocation.
+Each test is assigned a flakiness value in the range $[0-1]$, representing its severity. The higher the flakiness, the less likely the test is to fail on any given run. This value is used to determine test budget allocation.
 
-\begin{center}
-	% See: http://www.texample.net/tikz/examples/line-plot-example/
-	\begin{tikzpicture}[thick, framed, x=6.5cm, y=1.6cm]
-		% Title
-		\draw (0.5, 1) node[above] {$\textsc{Flaky Tests}$};
+\begin{figure}[here]
+\caption{}
+\label{fig:flakiness}
+	\begin{center}
+		% See: http://www.texample.net/tikz/examples/line-plot-example/
+		\begin{tikzpicture}[thick, framed, x=6.5cm, y=1.6cm]
+			% Title
+			\draw (0.5, 1) node[above] {$\textsc{Flaky Tests}$};
 
-		% Axis
-		\draw (0,0) -- coordinate (x axis mid) (1,0);
-	    \draw (0,0) -- coordinate (y axis mid) (0,1);
+			% Axis
+			\draw (0,0) -- coordinate (x axis mid) (1,0);
+		    \draw (0,0) -- coordinate (y axis mid) (0,1);
 
-	    % Axis Labels
-	    \node (padding) [below] at (0.4, 0) {};
-		\node[below of = padding] at (x axis mid) {Chance of Failure};
+		    % Axis Labels
+		    \node (padding) [below] at (0.4, 0) {};
+			\node[below of = padding] at (x axis mid) {Chance of Failure};
 
-	    % Ticks
-	    \foreach \x in {0, 0.4, 1}
-	    	\draw (\x, 1pt) -- (\x, -3pt) node[anchor=north] {\x};
-	    \foreach \y in {0, 1}
-	    	\draw (1pt, \y) -- (-3pt, \y) node[anchor=east] {\y};
+		    % Ticks
+		    \foreach \x in {0, 0.4, 1}
+		    	\draw (\x, 1pt) -- (\x, -3pt) node[anchor=north] {\x};
+		    \foreach \y in {0, 1}
+		    	\draw (1pt, \y) -- (-3pt, \y) node[anchor=east] {\y};
 
-		% Flaky test range
-	    \draw[<-] (0, 0.5) -- (0.4, 0.5); % Draw horizontal line
-	    \draw (0.4, 0.42) -- (0.4, 0.58); % Draw right vertical tab
+			% Flaky test range
+		    \draw[<-] (0, 0.5) -- (0.4, 0.5); % Draw horizontal line
+		    \draw (0.4, 0.42) -- (0.4, 0.58); % Draw right vertical tab
 
-	    % Flakiness label
-	    \node [above] at (0.2, 0.5) {$Flakiness$};
+		    % Flakiness label
+		    \node [above] at (0.2, 0.5) {$Flaky$};
 
-	    % Alpha label
-	    \node [right] at (0.4, 0.5) {$(\boldsymbol{\alpha})$};
-	\end{tikzpicture}
-\end{center}
+		    % Alpha label
+		    \node [right] at (0.4, 0.5) {$(\boldsymbol{\alpha})$};
+		\end{tikzpicture}
+	\end{center}
+\end{figure}
 
-Flakiness is calculated with respect to the threshold $\alpha$.
+Figure~\ref{fig:flakiness} shows the failure rates that qualify as 'flaky'. If a tests' chance of failure lies within the range $(0, \alpha]$, its flakiness value will be $(0, 1]$; otherwise, it will be $0$.
+
+\todo{What value is $\alpha$, how do we calculate it?}
 
 \begin{algorithm}
 \caption{Calculates the flakiness value given a tests chance of failure and the flaky test threshold.}
 \label{calculateFlakiness}
 \begin{algorithmic}
-	\STATE{\textbf{calculateFlakiness} (chanceOfFailure, threshold)}
-	\IF{$chanceOfFailure \geq threshold$}
+	\STATE{\textbf{calculateFlakiness} ($chanceOfFailure$, $threshold$)}
+	\IF{$chanceOfFailure \geq threshold$ \OR $chanceOfFailure = 0$}
 		\RETURN{$0$}
 	\ELSE
 		\RETURN{$1 - (chanceOfFailure / threshold)$}
@@ -116,6 +122,10 @@ Flakiness is calculated with respect to the threshold $\alpha$.
 \end{algorithm}
 
 \subsection{Allocating Budget}
+
+We prioritise budget allocation for tests with high flakiness since they fail very rarely. A portion of the total budget is set aside for exploratory instrumentation of tests that have not yet been determined to be flaky.
+
+\todo{Consider NEW tests in the test suite. Should we instrument them right away or wait until we've seen them run without instrumentation $n$ times?}
 
 % Use 'in' for-loop range notation rather than 'to'.
 \renewcommand{\algorithmicto}{\textbf{in}}
