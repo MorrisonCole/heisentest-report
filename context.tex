@@ -99,3 +99,7 @@ For example, consider a test run that initially enters state $S_{1}$ (arrange), 
 If each value of the vector $S_{1}$ is loaded asynchronously, the test must check for each of the vectors values to be correct before $A$ is applied. If the test checked only the first two values, the action would complete only if the third element happened to have loaded before the values in position 1 and 2.
 
 In practice, with hundreds of user interface elements, these types of problems can become quite prevalent. Often, the solutions are obvious, but sometimes there is not enough information to solve the problem.
+
+\subsection{This is a real problem}
+
+\todo{Heisentest is an answer to a real problem faced by myself and members of my team at Shazam. Despite limited personal experience in industry, it is obvious that others face the same issue. Mozilla, Shazam and Chromium have known flaky tests. Android even includes an @Flaky annotation in its testing kit for automatic rerunning of known troublesome tests.}

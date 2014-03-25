@@ -94,3 +94,29 @@ Using data from the identification and prioritisation stages, we can begin to de
 \todo{Explain why we are ‘just’ targeting Android for now (Shazam, GUI testing, etc).}
 
 Automated testing is used during development. We therefore can assume unrestricted access to debug builds.
+
+
+\subsubsection{Architecture}
+
+\todo{Need a diagram to show the architecture of the Heisentest plugin. Both an abstract overview and a detailed one (implementation with Jenkins) would be useful.}
+
+At a high level, we essentially instrument the application under test and store the gathered data. We then analyse the gathered data, adapt the instrumentation and present useful information to the developers.
+
+To keep the scope reasonable, we currently target Java Android applications. Of course, the approach is general, and could be applied to any number of languages and frameworks. A pure Java instrumentation would be fairly similar, and actually far less complex, for reasons that will be expanded upon later.
+
+It is necessary to give an overview of the Android pipeline in order to understand how the tool works.
+
+In a standard Java application, code is compiled into a ‘jar’ file - an archive commonly containing compiled ‘class’ files, resources, a manifest and certificates. A java compiler will generate one class file per type (including inner and anonymous) present in the source program. At runtime, the bytecode in these classes is executed by the Java Virtual Machine (JVM).
+
+Android applications are typically written in Java and compiled to bytecode. However, Android runs processes on Dalvik - a Virtual Machine optimised for resource-constrained devices. The compiled bytecode is then transformed to ‘dex’ format and deployed as an ‘apk’. Similar to a standard JAR file, an Android APK is simply an archive containing the compiled assets for an Android application. Crucially, the resulting dex file contains all of the classes present in the application. The format is register-based, so modifying the transformed code can be tricky.
+
+% \todo{http://davidehringer.com/software/android/The_Dalvik_Virtual_Machine.pdf}
+
+For the purposes of the instrumentation, many of the included files can be ignored. Figure 1. shows a simplified APK with the sections that are relevant to the tool:
+
+\dirtree{%
+.1 application.apk.
+.2 META-INF\DTcomment{Directory containing certificates}.
+.2 AndroidManifest.xml\DTcomment{Basic info - version, name, etc.}.
+.2 classes.dex\DTcomment{Dalvik-readable compiled classes; register-based format}.
+}

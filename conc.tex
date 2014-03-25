@@ -10,3 +10,17 @@
 		\item Wrap-up and final thoughts on your project.
 	\end{itemize}
 \end{framed}
+
+
+\subsection{Design Failures}
+
+Could have used Soot to convert Dalvik bytecode into standard Java .class files using Dexpler \cite{bartel:soap2012} and instrumented from then on. However, the DEX code output by Dexpler is often invalid, as is evident from the bug reports and ongoing development at GitHub. Perhaps in the future, Soot would be a more viable option. Certainly the features it boasts are attractive for the Heisentest project.
+
+
+\subsection{Future Work}
+
+\subsubsection{Porting the plugin}
+
+Jenkins is but one of many available continuous integration tools \cite{ContinuousIntegrationSoftware}. Hudson, TeamCity, CruiseControl and Team Foundation Server are amongst the notable alternatives. A Hudson port would be especially trivial, since the Jenkins codebase is still fairly similar. In fact, the code-bases have not diverged significantly since 2010 when Jenkins materialised.
+
+\todo{The instrumentation does not have to be run locally. Indeed, this may damage the inferred data anyway (especially if there are common but obvious failures which are then fixed without issue). Instead, it should be run with the standard build or on it’s own dedicated job (e.g. an overnight build).}
