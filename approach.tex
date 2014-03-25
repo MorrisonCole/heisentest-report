@@ -45,7 +45,7 @@ It is obvious that, if we are to develop a tool to assist developers with flaky 
 
 	A test case is $(\vec{i},\vec{o})$
 
-	The “fixed f” condition needs fixing.  It will need to be wrt the slice from the program point at which $\vec{o}$ is generated to entry, given $\vec{i}$. In others words, it’s impact analysis.  Intuitively, a test can only be flaky when its behavior is sensitive unknown inputs and not to changes to f that it, in fact, is designed to test.
+	The “fixed f” condition needs fixing. It will need to be wrt the slice from the program point at which $\vec{o}$ is generated to entry, given $\vec{i}$. In others words, it’s impact analysis. Intuitively, a test can only be flaky when its behavior is sensitive unknown inputs and not to changes to f that it, in fact, is designed to test.
 
 	A \emph{flaky test case} is a test case where, for fixed $f$,
 	$p(f(\vec{i} = \vec(o)) = 1 - \epsilon$
@@ -56,10 +56,14 @@ It is obvious that, if we are to develop a tool to assist developers with flaky 
 
 	The key is the true $\vec{I}$ is only partially known;  we capture flakiness as unknown components of $\vec{I}$, like Todd Mytkowicz’ sensitivity to the length of environmental variables, etc.
 
-	Note:  formalize how much data we will need to gather in order to discover the cause of flakiness as a function of epsilon.  Rare events, like flakiness, are related to smoothing.
+	Note: formalize how much data we will need to gather in order to discover the cause of flakiness as a function of epsilon. Rare events, like flakiness, are related to smoothing.
 
 	Combined with our budget b, we can determine what values of $\epsilon$ we can afford to detect!
 \end{defn}
+
+Each test can be assigned a flakiness value $f$ in the range $[0-1]$, representing its likihood of failure.
+
+From $f$, we can derive a priority value $p$ relative to other tests in the suite. This is used to determine test budget allocation.
 
 % See: http://www.texample.net/tikz/examples/line-plot-example/
 \begin{tikzpicture}[thick, framed, x=6.5cm, y=1.6cm]
@@ -88,11 +92,10 @@ It is obvious that, if we are to develop a tool to assist developers with flaky 
     \node [right] at (0.4, 0.5) {$(\boldsymbol{\alpha})$};
 \end{tikzpicture}
 
-
 Test suite $f$ with flaky tests $f!$.
 Budget $B_{f} = B_{6} + B_{f!} + B_{nd}$
 
-\paragraph{Instrumentation pseudocode:}
+\subsection{Instrumentation Pseudocode}
 
 % Use 'in' for-loop range notation rather than 'to'.
 \renewcommand{\algorithmicto}{\textbf{in}}
@@ -137,7 +140,24 @@ Budget $B_{f} = B_{6} + B_{f!} + B_{nd}$
 \end{algorithmic}
 \end{algorithm}
 
-\todo{Instrumentation budget definition / pseudocode}
+calculateTestBudget(tests[], totalBudget) {
+	// Should use a combination of test.averageRunTime, test.flakiness and totalBudget.
+}
+
+\todo{We should probably also take into account how much information we gathered from previous runs of a particular test case when allocating its budget.}
+\begin{itemize}
+	\item If a test case has high priority and little previous information, we should instrument it as much as possible.
+	\item If a test case has high priority but already has tonnes of previous information, we should ignore it since the developers probably already have enough information to fix the issue.
+\end{itemize}
+
+\subsection{Budget}
+
+There are a number of factors to take into account when determining our overall budget:
+
+\begin{enumerate}
+	\item Total time available - our upper bound for run time. This could be specified by the developers, or left as a sensible default.
+	\item Average run time of each test - instrumentation comes with overhead. If we know the average run time of a suite without instrumentation and the estimated overhead of probes, we can apply instrumentation until we hit our upper bound. If we end up running over in practice, we simply reduce the budget and vice versa.
+\end{enumerate}
 
 
 \subsection{Monitoring Application State with Probes}
@@ -236,11 +256,3 @@ In a test environment, smoothness and load times rarely matter. Of course, there
 Both fixed and adaptive approaches have been proposed[] in the past. All of these approaches were developed with the underlying constraint of deploying the instrumented software to real users. [adaptive bug isolation] makes use of binary instrumentation to iteratively re-instrument deployed applications to hone in on a bug-predicting predicates. Whilst the adaptive approach has many benefits in terms of overhead, it relies on a specialized API - Dyninst - for code patching to support the injection of  instrumentation at runtime. This has additional runtime costs \cite{DyninstGuide} associated with saving and restoring registers and performing protective checks not present in a fixed instrumentation.
 
 Again, our context allows more freedom. Every run requires a new build by nature, so simply apply a unique fixed instrumentation every time. In other words, we retain the optimisation benefits of a fixed instrumentation whilst gaining those of the adaptive solution.
-
-\subsection{Budget}
-
-There are a number of factors to take into account:
-
-\begin{enumerate}
-	\item Average run time - instrumentation comes with overhead. If we know the average run time of a suite without instrumentation and the estimated overhead of probes, we can allocate instrumentation up to some maximum estimated run time. This could be specified by the developers, or left as a sensible default. If we end up running over, we simply reduce the budget (\& vice versa).
-\end{enumerate}
