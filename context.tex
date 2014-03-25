@@ -14,41 +14,26 @@
 	\end{itemize}
 \end{framed}
 
+
 \subsection{Test Driven Development}
 
-Test driven development, when taken to its limits, works like this:
-
+Normally, test suites are written with the intention of (amongst other things):
 \begin{itemize}
-	\item A developer receives a specification for a feature (this could be a user story, given when thens i.e. BDD-style - cucumber, or any number of different presentations)
-
-	\item The developer writes a system test to ensure the feature works. System tests operate at the system level, so they often read like BDD requirements, e.g.:
-
-	\begin{verbatim}
-  	Scenario: Add to Basket
-  	  Given I am viewing the store page
-  	    And I have no items in my basket
-  	  When I add an item to my basket
-  	  Then that item is shown in my basket
-	\end{verbatim}
-
-	Could be eventually converted in to the following Java code:
-
-	\lstinputlisting[language=Java]{bddExample.java}
-
-	\item The developer runs/edits the test until it fails for the right reason.
-
-	\item The developer begins implementing the feature - again writing tests first, but this time on the finer levels of unit / integration.
-
-	\item When all tests pass, the feature is completed.
+	\item Shortening a product's delivery cycle.
+	\item Reducing a product's defects.
 \end{itemize}
 
-Note that there are many points for interpretation along the steps of this process. For example, an interface may be tested for the presence of a specific image, but its location may be ignored. Because of this, manual spot checks and alpha / beta staged releases are often used.
+A good test suite achieves this by exercising chunks of the program's code to ensure it behaves in some expected way. At a high level, each test can be broken into three steps - arrangement, action and assertion.
 
-In order for a test suite to improve a team’s work, it must be trustworthy. Tests must be written carefully to ensure that they fail when the code under test is indeed broken, and pass otherwise. As is often the case, when tests fail unexpectedly, they are removed from the suite until they are fixed.
+To a developer actively practising Test Driven Development, an unexpected failure usually manifests as a cue to take a step back and rethink the implementation of their solution to the problem being tackled.
 
-Unfortunately, tests running at the system level are prone to intermittent failure.
+With Test Driven Development being taken to new heights with Integration and System testing, it is rarely so simple.
 
-When a subset of tests fail randomly each time the suite is run, it is all too easy for developers to begin ignoring real failures if and when they do occur.
+Anecdotally, the higher-level the behaviour being tested, the more likely a test is to fail due to inputs unaccounted for. Tests that exercise valid code can fail unexpectedly and unpredictably.
+
+Developers working with such tests face a dilemma --- \'surpress\' the tests until they are fixed, or acknowledge them but keep them active, potentially randomly breaking the build from time to time until they are fixed.
+
+Since the tests exercise behaviour which is needed (and indeed, works as intended), both solutions are workarounds until the tests can be resolved.
 
 \subsection{Why are Flaky Tests a problem?}
 
@@ -63,6 +48,8 @@ In this example, $t_{21}$ was not actually flaky, but had been broken by the dev
 After the code is pushed, a different set of tests fail on the build server: $t_{3}, t_{7} \text{ and } t_{9}$ are now passing, but $t_{21}$ has once again failed. In this case, it is obvious that $t_{21}$ must be investigated, so the developer’s changeset is rolled back whilst they fix the change.
 
 This may appear to be workable, but time was almost certainly wasted. The developer writing the new feature only became aware that they had broken existing functionality after the second run revealed a trend. If $t_{21}$ had failed alone, the developer would have taken action before committing the changeset.
+
+When a subset of tests fail randomly each time the suite is run, it is all too easy for developers to begin ignoring real failures if and when they do occur.
 
 \subsection{Why is committing a broken changeset bad?}
 
