@@ -61,41 +61,61 @@ It is obvious that, if we are to develop a tool to assist developers with flaky 
 	Combined with our budget b, we can determine what values of $\epsilon$ we can afford to detect!
 \end{defn}
 
-Each test can be assigned a flakiness value $f$ in the range $[0-1]$, representing its likihood of failure.
-
-From $f$, we can derive a priority value $p$ relative to other tests in the suite. This is used to determine test budget allocation.
-
-% See: http://www.texample.net/tikz/examples/line-plot-example/
-\begin{tikzpicture}[thick, framed, x=6.5cm, y=1.6cm]
-	% Title
-	\draw (0.5, 1) node[above] {$\textsc{Flaky Tests}$};
-
-	% Axis
-	\draw (0,0) -- coordinate (x axis mid) (1,0);
-    \draw (0,0) -- coordinate (y axis mid) (0,1);
-
-    % Axis Labels
-    \node (padding) [below] at (0.4, 0) {};
-	\node[below of = padding] at (x axis mid) {$Flakiness$};
-
-    % Ticks
-    \foreach \x in {0, 0.4, 1}
-    	\draw (\x, 1pt) -- (\x, -3pt) node[anchor=north] {\x};
-    \foreach \y in {0, 1}
-    	\draw (1pt, \y) -- (-3pt, \y) node[anchor=east] {\y};
-
-	% Flaky test range
-    \draw[<-] (0, 0.5) -- (0.4, 0.5); % Draw horizontal line
-    \draw (0.4, 0.42) -- (0.4, 0.58); % Draw right vertical tab
-
-    % Alpha label
-    \node [right] at (0.4, 0.5) {$(\boldsymbol{\alpha})$};
-\end{tikzpicture}
-
 Test suite $f$ with flaky tests $f!$.
 Budget $B_{f} = B_{6} + B_{f!} + B_{nd}$
 
-\subsection{Instrumentation Pseudocode}
+\subsection{Flakiness}
+
+Each test can be assigned a flakiness value in the range $[0-1]$, representing its chance of failure. This is used to determine test budget allocation.
+
+\begin{center}
+	% See: http://www.texample.net/tikz/examples/line-plot-example/
+	\begin{tikzpicture}[thick, framed, x=6.5cm, y=1.6cm]
+		% Title
+		\draw (0.5, 1) node[above] {$\textsc{Flaky Tests}$};
+
+		% Axis
+		\draw (0,0) -- coordinate (x axis mid) (1,0);
+	    \draw (0,0) -- coordinate (y axis mid) (0,1);
+
+	    % Axis Labels
+	    \node (padding) [below] at (0.4, 0) {};
+		\node[below of = padding] at (x axis mid) {Chance of Failure};
+
+	    % Ticks
+	    \foreach \x in {0, 0.4, 1}
+	    	\draw (\x, 1pt) -- (\x, -3pt) node[anchor=north] {\x};
+	    \foreach \y in {0, 1}
+	    	\draw (1pt, \y) -- (-3pt, \y) node[anchor=east] {\y};
+
+		% Flaky test range
+	    \draw[<-] (0, 0.5) -- (0.4, 0.5); % Draw horizontal line
+	    \draw (0.4, 0.42) -- (0.4, 0.58); % Draw right vertical tab
+
+	    % Flakiness label
+	    \node [above] at (0.2, 0.5) {$Flakiness$};
+
+	    % Alpha label
+	    \node [right] at (0.4, 0.5) {$(\boldsymbol{\alpha})$};
+	\end{tikzpicture}
+\end{center}
+
+Flakiness is calculated with respect to the threshold $\alpha$.
+
+\begin{algorithm}
+\caption{Calculates the flakiness value given a tests chance of failure and the flaky test threshold.}
+\label{calculateFlakiness}
+\begin{algorithmic}
+	\STATE{\textbf{calculateFlakiness} (chanceOfFailure, threshold)}
+	\IF{$chanceOfFailure \geq threshold$}
+		\RETURN{$0$}
+	\ELSE
+		\RETURN{$1 - (chanceOfFailure / threshold)$}
+	\ENDIF
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{Allocating Budget}
 
 % Use 'in' for-loop range notation rather than 'to'.
 \renewcommand{\algorithmicto}{\textbf{in}}
@@ -103,13 +123,13 @@ Budget $B_{f} = B_{6} + B_{f!} + B_{nd}$
 % The {algorithm} wrapper is pretty unattractive as far as I'm concerned.
 % Need to look into alternative ways of formatting this.
 \begin{algorithm}
-\caption{Allocate instrumentation budget across a test suite}
+\caption{Allocate instrumentation across the test suite with respect to its budget}
 \label{alg1}
 \begin{algorithmic}
 	% Perhaps this should just take a single tests[]. We can query the element to determine its 'priority' (relative flakiness).
 	% Or, could take a vector<test, flakiness> to be explicit.
-	\STATE{\textbf{splatter} (budget, flakyTests[], allTests[])}
-	\STATE{}
+	\STATE{\textbf{splatter} (suiteBudget, tests[])}
+	\STATE{calculateTestBudgets(suiteBudget, tests)}
 	\COMMENT{Need a function that looks at all the tests and their associated priorities, orders them and attaches an allowedBudget value in terms of the whole budget}
  	\WHILE{$budget \geq 0$}
  		% Simpler if the 'instrumentTest' function returns a value representing the amount of budget it actually used, rather than its remainder.
@@ -119,8 +139,27 @@ Budget $B_{f} = B_{6} + B_{f!} + B_{nd}$
 \end{algorithm}
 
 \begin{algorithm}
-\caption{Instrument a test with respect to a given budget}
+\caption{}
 \label{alg2}
+\begin{algorithmic}
+	% Maybe should call flakiness 'chance of failure', and priority 'flakiness'. More clear?
+	\STATE{\textbf{calculateTestBudgets} (suiteBudget, tests[])}
+	\STATE{$totalRuntime \gets 0$}
+	\STATE{$totalFlakiness \gets 0$}
+ 	\FOR{$test$ \TO $tests$}
+ 		\STATE{$totalRuntime \gets totalRuntime + test.averageRunTime$}
+ 		\STATE{$totalFlakiness \gets totalFlakiness + test.flakiness$}
+	\ENDFOR
+
+	\FOR{$test$ \TO $tests$}
+ 		\STATE{$test.priority \gets 1 - (test.flakiness / totalFlakiness)$}
+	\ENDFOR
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}
+\caption{Instrument a test with respect to a given budget}
+\label{alg4}
 \begin{algorithmic}
 	\STATE{\textbf{instrumentTest} (test, budget)}
 	% Should 'sites' just be a parameter?
