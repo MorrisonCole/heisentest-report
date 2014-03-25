@@ -66,7 +66,7 @@ Budget $B_{f} = B_{6} + B_{f!} + B_{nd}$
 
 \subsection{Flakiness}
 
-Each test is assigned a flakiness value in the range $[0-1]$, representing its severity. The higher the flakiness, the less likely the test is to fail on any given run. This value is used to determine test budget allocation.
+Each test is assigned a value in the range $[0-1]$, representing its flakiness. The higher the flakiness, the less likely the test is to fail on any given run. This value is used during test suite budget allocation.
 
 \begin{figure}[here]
 \caption{}
@@ -106,7 +106,8 @@ Each test is assigned a flakiness value in the range $[0-1]$, representing its s
 
 Figure~\ref{fig:flakiness} shows the failure rates that qualify as 'flaky'. If a tests' chance of failure lies within the range $(0, \alpha]$, its flakiness value will be $(0, 1]$; otherwise, it will be $0$.
 
-\todo{What value is $\alpha$, how do we calculate it?}
+\todo{What value is $\alpha$, how do we calculate it? 0.4 is arbitrary!}
+\todo{We ignore tests with failure rates greater than $\alpha$ since they could be reasonably reproduced by a developer?}
 
 \begin{algorithm}
 \caption{Calculates the flakiness value given a tests chance of failure and the flaky test threshold.}
@@ -121,9 +122,19 @@ Figure~\ref{fig:flakiness} shows the failure rates that qualify as 'flaky'. If a
 \end{algorithmic}
 \end{algorithm}
 
-\subsection{Allocating Budget}
 
-We prioritise budget allocation for tests with high flakiness since they fail very rarely. A portion of the total budget is set aside for exploratory instrumentation of tests that have not yet been determined to be flaky.
+\subsection{Determining Test Suite Budget}
+
+There are a number of factors to take into account when determining our overall budget:
+
+\begin{enumerate}
+	\item Total time available - our upper bound for run time. This could be specified by the developers, or left as a sensible default.
+	\item Average run time of each test - instrumentation comes with overhead. If we know the average run time of a suite without instrumentation and the estimated overhead of probes, we can apply instrumentation until we hit our upper bound. If we end up running over in practice, we simply reduce the budget and vice versa.
+\end{enumerate}
+
+\subsection{Allocating Test Suite Budget}
+
+Test suite budget is distributed across all tests --- though we aggressively prioritise budget allocation for tests with high flakiness since they fail very rarely. A portion of the total budget is set aside for exploratory instrumentation.
 
 \todo{Consider NEW tests in the test suite. Should we instrument them right away or wait until we've seen them run without instrumentation $n$ times?}
 
@@ -198,15 +209,6 @@ calculateTestBudget(tests[], totalBudget) {
 	\item If a test case has high priority and little previous information, we should instrument it as much as possible.
 	\item If a test case has high priority but already has tonnes of previous information, we should ignore it since the developers probably already have enough information to fix the issue.
 \end{itemize}
-
-\subsection{Budget}
-
-There are a number of factors to take into account when determining our overall budget:
-
-\begin{enumerate}
-	\item Total time available - our upper bound for run time. This could be specified by the developers, or left as a sensible default.
-	\item Average run time of each test - instrumentation comes with overhead. If we know the average run time of a suite without instrumentation and the estimated overhead of probes, we can apply instrumentation until we hit our upper bound. If we end up running over in practice, we simply reduce the budget and vice versa.
-\end{enumerate}
 
 
 \subsection{Monitoring Application State with Probes}
