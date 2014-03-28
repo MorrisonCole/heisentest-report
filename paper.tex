@@ -6,14 +6,11 @@
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{amssymb}
-\usepackage{amsthm}
 \usepackage{listings}
 \usepackage{xspace}
 \usepackage{paralist}
 \usepackage{array}
 \usepackage{booktabs}
-\usepackage[vlined,ruled,linesnumbered]{algorithm2e}
-\usepackage{algorithmic}
 \usepackage{framed}
 
 % For displaying directory trees.
@@ -38,6 +35,9 @@
 % doing so eliminates compiler warnings.
 \usepackage[bookmarks, colorlinks]{hyperref}
 % According to the hyperref readme, algorithm must follow hyperref
+
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
 
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 % Macros																{{{1
@@ -80,6 +80,9 @@
 
 \newcommand\bench[1]{\textsf{\small #1}}
 
+% Maths operators
+\DeclareMathOperator*{\eq}{=}
+
 %% Document-specific hyperref options
 \hypersetup{
 pdftitle={\ourtitle},
@@ -89,15 +92,14 @@ pdftitle={\ourtitle},
     %citecolor=black, % b/c the defaults are useful in color.
     citecolor=blue, % b/c the defaults are useful in color.
     filecolor=black,
-    urlcolor=blue,
-    pdfpagelabels
+    urlcolor=blue
 }
 \def\sectionautorefname{Section}
 \def\subsectionautorefname{Section}
 \def\subsubsectionautorefname{Section}
 \newcommand{\subfigureautorefname}{\figureautorefname} %for subfigures
 \newcommand{\defref}[1]{\hyperref[#1]{Definition~\ref*{#1}}}
-\newcommand{\algref}[1]{\hyperref[#1]{Algorithm~\ref*{#1}}}
+\renewcommand{\algref}[1]{\hyperref[#1]{Algorithm~\ref*{#1}}}
 \newcommand{\lineref}[1]{\hyperref[#1]{Line~\ref*{#1}}}
 
 % Paragraph formatting

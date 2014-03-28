@@ -109,16 +109,25 @@ Figure~\ref{fig:flakiness} shows the failure rates that qualify as 'flaky'. If a
 \todo{What value is $\alpha$, how do we calculate it? 0.4 is arbitrary!}
 \todo{We ignore tests with failure rates greater than $\alpha$ since they could be reasonably reproduced by a developer?}
 
+\algrenewcommand\algorithmicrequire{\textbf{Precondition:}}
+\algrenewcommand\algorithmicensure{\textbf{Postcondition:}}
+
 \begin{algorithm}[here]
-\caption{Calculates the flakiness value given a tests chance of failure and the flaky test threshold.}
+\caption{Calculating the flakiness of a test}
 \label{calculateFlakiness}
 \begin{algorithmic}
-	\STATE{\textbf{calculateFlakiness} ($chanceOfFailure$, $threshold$)}
-	\IF{$chanceOfFailure \geq threshold$ \OR $chanceOfFailure = 0$}
-		\RETURN{$0$}
-	\ELSE
-		\RETURN{$1 - (chanceOfFailure / threshold)$}
-	\ENDIF
+	\Require{$chanceOfFailure$ and $threshold$ are decimal values within ranges $[0, 1]$ and $(0,1]$ respectively.}
+    \Statex
+
+	\Function{calculateFlakiness}{$chanceOfFailure$, $threshold$}
+
+	\If{$chanceOfFailure \geq threshold$ OR $chanceOfFailure \eq 0$}
+		\State \Return $0$
+	\Else
+		\State \Return $1 - (chanceOfFailure / threshold)$
+	\EndIf
+
+	\EndFunction
 \end{algorithmic}
 \end{algorithm}
 
@@ -129,7 +138,7 @@ There are two factors to take into account when determining our overall budget:
 
 \begin{description}
 	\item[Total time available] \hfill \\
- 		Our upper bound for run time. This could be specified by the developers, or left as a sensible default.
+ 		Our upper bound for run time. This can be specified by the developer(s), or left as a sensible default.
 	\item[Average run time of each test] \hfill \\
 		Instrumentation comes with overhead. If we know the average run time of a suite without instrumentation and the estimated overhead of probes, we can apply instrumentation until we hit our upper bound. If we end up running over in practice, we simply reduce the budget and vice versa.
 \end{description}
@@ -140,8 +149,12 @@ Test suite budget is distributed across all tests. We split our budget into two 
 
 \todo{Consider NEW tests in the test suite. Should we instrument them right away or wait until we've seen them run without instrumentation $n$ times, etc.?}
 
-% Use 'in' for-loop range notation rather than 'to'.
-\renewcommand{\algorithmicto}{\textbf{in}}
+% Used for 'phases' of an algorithm.
+\newcommand\Algphase[1]{%
+\vspace*{-.7\baselineskip}\Statex\hspace*{\dimexpr-\algorithmicindent-2pt\relax}\rule{\textwidth}{0.4pt}%
+\Statex\hspace*{-\algorithmicindent}\textbf{#1}%
+\vspace*{-.7\baselineskip}\Statex\hspace*{\dimexpr-\algorithmicindent-2pt\relax}\rule{\textwidth}{0.4pt}%
+}
 
 % The {algorithm} wrapper is pretty unattractive as far as I'm concerned.
 % Need to look into alternative ways of formatting this.
@@ -149,16 +162,16 @@ Test suite budget is distributed across all tests. We split our budget into two 
 \caption{Instrument the test suite with respect to a budget}
 \label{alg:splatter}
 \begin{algorithmic}
-	\STATE{\textbf{splatter} ($tests[]$)}
-	\STATE{$proportionTargeted \gets 0.75$}
+	\State{\textbf{splatter} ($tests[]$)}
+	\State $proportionTargeted \gets 0.75$
 
-	\STATE{$suiteBudget \gets \text{calculateSuiteBudget(}tests$)}
+	\State $suiteBudget \gets \text{calculateSuiteBudget(}tests$)
 
-	\STATE{allocateBudget($tests$, $suiteBudget$, $proportionTargeted$)}
+	\State allocateBudget($tests$, $suiteBudget$, $proportionTargeted$)
 
-	\FOR{$test$ \TO $tests$}
-		\STATE{instrument($test$)}
-	\ENDFOR
+	\ForAll {$test \in tests$}
+		\State{instrument($test$)}
+	\EndFor
 \end{algorithmic}
 \end{algorithm}
 
@@ -168,12 +181,12 @@ Algorithm \ref{alg:splatter} defines the two main steps: calculation and instrum
 \caption{}
 \label{alg:allocateBudget}
 \begin{algorithmic}
-	\STATE{\textbf{allocateBudget} ($tests[]$, $suiteBudget$, $proportionTargeted$)}
-	\STATE{$targetedBudget \gets suiteBudget * proportionTargeted$}
-	\STATE{$exploratoryBudget \gets suiteBudget * (1 - proportionTargeted)$}
+	\State{\textbf{allocateBudget} ($tests[]$, $suiteBudget$, $proportionTargeted$)}
+	\State{$targetedBudget \gets suiteBudget * proportionTargeted$}
+	\State{$exploratoryBudget \gets suiteBudget * (1 - proportionTargeted)$}
 
-	\STATE{allocateTargetedBudget($tests$, $targetedBudget$)}
-	\STATE{allocateExploratoryBudget($tests$, $exploratoryBudget$)}
+	\State{allocateTargetedBudget($tests$, $targetedBudget$)}
+	\State{allocateExploratoryBudget($tests$, $exploratoryBudget$)}
 \end{algorithmic}
 \end{algorithm}
 
@@ -183,19 +196,21 @@ Algorithm \ref{alg:splatter} defines the two main steps: calculation and instrum
 \caption{}
 \label{alg:allocateTargetedBudget}
 \begin{algorithmic}
-	\STATE{\textbf{allocateTargetedBudget} ($tests[]$, $targetedBudget$)}
+	\Procedure{AllocateTargetedBudget}{$tests[]$, $targetedBudget$}
 
-	\STATE{$totalFlakiness \gets 0$}
+	\State $totalFlakiness \gets 0$
 
-	\FOR{$test$ \TO $tests$}
-		\STATE{$totalFlakiness \gets totalFlakiness + test.flakiness$}
-	\ENDFOR
+	\ForAll{$test \in tests$}
+		\State{$totalFlakiness \gets totalFlakiness + test.flakiness$}
+	\EndFor
 
-	\STATE{$tests \gets \text{sortByFlakinessDescending(}tests$)}
+	\State $tests \gets \text{sortByFlakinessDescending(}tests$)
 
-	\FOR{$test$ \TO $tests$}
-		\STATE{$test.budget \gets $calculateTestTargetedBudget($test$, $totalFlakiness$, $targetedBudget$)}
-	\ENDFOR
+	\ForAll{$test \in tests$}
+		\State{$test.budget \gets $calculateTestTargetedBudget($test$, $totalFlakiness$, $targetedBudget$)}
+	\EndFor
+
+	\EndProcedure
 \end{algorithmic}
 \end{algorithm}
 
@@ -203,12 +218,13 @@ Algorithm \ref{alg:splatter} defines the two main steps: calculation and instrum
 \caption{}
 \label{alg:calculateTestTargetedBudget}
 \begin{algorithmic}
-	\STATE{\textbf{calculateTestTargetedBudget} ($test$, $targetedBudget$)}
+	\State{\textbf{calculateTestTargetedBudget} ($test$, $targetedBudget$)}
 
-	\STATE{$maximumTargetedBudget \gets \todo{someNumberThatWeCalculate}$}
+	\State{$maximumTargetedBudget \gets \todo{someNumberThatWeCalculate}$}
 
-	\STATE{$budget \gets (test.flakiness / totalFlakiness) * targetedBudget$}
-	\RETURN{minimum($testTargetedBudget$, $maximumTargetedBudget$)}
+	\State{$budget \gets (test.flakiness / totalFlakiness) * targetedBudget$}
+
+	\Return{minimum($testTargetedBudget$, $maximumTargetedBudget$)}
 \end{algorithmic}
 \end{algorithm}
 
@@ -218,14 +234,14 @@ Algorithm \ref{alg:splatter} defines the two main steps: calculation and instrum
 \caption{}
 \label{alg:allocateExploratoryBudget}
 \begin{algorithmic}
-	\STATE{\textbf{allocateExploratoryBudget} ($tests[]$, $exploratoryBudget$)}
+	\State{\textbf{allocateExploratoryBudget} ($tests[]$, $exploratoryBudget$)}
 
-	\STATE{shuffle($tests$)}
-	\STATE{$iterator \gets tests.getIterator()$}
-	\WHILE{$exploratoryBudget > 0$ \AND $iterator.hasNext()$}
-		\STATE{$currentTest \gets tests.getNext()$}
-		\STATE{$exploratoryBudget \gets exploratoryBudget - $calculateTestExploratoryBudget($test$,$ exploratoryBudget$)}
-	\ENDWHILE
+	\State{shuffle($tests$)}
+	\State{$iterator \gets tests.getIterator()$}
+	\While{$exploratoryBudget > 0$ AND $iterator.hasNext()$}
+		\State{$currentTest \gets tests.getNext()$}
+		\State{$exploratoryBudget \gets exploratoryBudget - $calculateTestExploratoryBudget($test$,$ exploratoryBudget$)}
+	\EndWhile
 \end{algorithmic}
 \end{algorithm}
 
@@ -233,17 +249,17 @@ Algorithm \ref{alg:splatter} defines the two main steps: calculation and instrum
 \caption{}
 \label{alg:calculateTestExploratoryBudget}
 \begin{algorithmic}
-	\STATE{\textbf{calculateTestExploratoryBudget} ($test$, $exploratoryBudget$)}
+	\State{\textbf{calculateTestExploratoryBudget} ($test$, $exploratoryBudget$)}
 
-	\STATE{$maximumExploratoryBudget \gets \todo{someNumberThatWeCalculate}$}
+	\State{$maximumExploratoryBudget \gets \todo{someNumberThatWeCalculate}$}
 
-	\IF{$test.budget > 0$}
-		\RETURN{$0$}
-	\ENDIF
+	\If{$test.budget > 0$}
+		\Return{$0$}
+	\EndIf
 
-	\STATE{$test.budget \gets $minimum($exploratoryBudget$, $maximumExploratoryBudget$)}
+	\State{$test.budget \gets $minimum($exploratoryBudget$, $maximumExploratoryBudget$)}
 
-	\RETURN{$test.budget$}
+	\Return{$test.budget$}
 \end{algorithmic}
 \end{algorithm}
 
@@ -256,20 +272,20 @@ Algorithm \ref{alg:splatter} defines the two main steps: calculation and instrum
 \caption{Instrument a test with respect its allocated budget}
 \label{alg:instrument}
 \begin{algorithmic}
-	\STATE{\textbf{instrument} (test)}
-	\STATE{$sites \gets test.instrumentationSites$}
-	\WHILE{$test.budget > 0$}
-		\FOR{$site$ \TO $sites$}
-			\STATE{$cost \gets site.cost$}
-			\IF{$cost \le test.budget$}
-				\STATE{$site.active \gets true$}
-				\STATE{$test.budget \gets budget - cost$}
-			\ELSE
+	\State{\textbf{instrument} (test)}
+	\State{$sites \gets test.instrumentationSites$}
+	\While{$test.budget > 0$}
+		\ForAll{$site \in sites$}
+			\State{$cost \gets site.cost$}
+			\If{$cost \le test.budget$}
+				\State{$site.active \gets true$}
+				\State{$test.budget \gets budget - cost$}
+			\Else
 				% Need to work out how to define new algorithmic-style macros (e.g. \BREAK)
-				\STATE{\textbf{break}}
-			\ENDIF
-		\ENDFOR
-	\ENDWHILE
+				\State{\textbf{break}}
+			\EndIf
+		\EndFor
+	\EndWhile
 \end{algorithmic}
 \end{algorithm}
 
