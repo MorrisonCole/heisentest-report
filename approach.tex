@@ -109,7 +109,7 @@ Figure~\ref{fig:flakiness} shows the failure rates that qualify as 'flaky'. If a
 \todo{What value is $\alpha$, how do we calculate it? 0.4 is arbitrary!}
 \todo{We ignore tests with failure rates greater than $\alpha$ since they could be reasonably reproduced by a developer?}
 
-\begin{algorithm}
+\begin{algorithm}[here]
 \caption{Calculates the flakiness value given a tests chance of failure and the flaky test threshold.}
 \label{calculateFlakiness}
 \begin{algorithmic}
@@ -125,12 +125,14 @@ Figure~\ref{fig:flakiness} shows the failure rates that qualify as 'flaky'. If a
 
 \subsection{Determining Test Suite Budget}
 
-There are a number of factors to take into account when determining our overall budget:
+There are two factors to take into account when determining our overall budget:
 
-\begin{enumerate}
-	\item Total time available - our upper bound for run time. This could be specified by the developers, or left as a sensible default.
-	\item Average run time of each test - instrumentation comes with overhead. If we know the average run time of a suite without instrumentation and the estimated overhead of probes, we can apply instrumentation until we hit our upper bound. If we end up running over in practice, we simply reduce the budget and vice versa.
-\end{enumerate}
+\begin{description}
+	\item[Total time available] \hfill \\
+ 		Our upper bound for run time. This could be specified by the developers, or left as a sensible default.
+	\item[Average run time of each test] \hfill \\
+		Instrumentation comes with overhead. If we know the average run time of a suite without instrumentation and the estimated overhead of probes, we can apply instrumentation until we hit our upper bound. If we end up running over in practice, we simply reduce the budget and vice versa.
+\end{description}
 
 \subsection{Allocating Test Suite Budget}
 
@@ -143,38 +145,46 @@ Test suite budget is distributed across all tests --- though we aggressively pri
 
 % The {algorithm} wrapper is pretty unattractive as far as I'm concerned.
 % Need to look into alternative ways of formatting this.
-\begin{algorithm}
-\caption{Allocate instrumentation across the test suite with respect to its budget}
-\label{alg1}
+\begin{algorithm}[here]
+\caption{Instrument the test suite with respect to a budget}
+\label{alg:splatter}
 \begin{algorithmic}
-	% Perhaps this should just take a single tests[]. We can query the element to determine its 'priority' (relative flakiness).
-	% Or, could take a vector<test, flakiness> to be explicit.
-	\STATE{\textbf{splatter} (suiteBudget, tests[])}
-	\STATE{calculateTestBudgets(suiteBudget, tests)}
-	\COMMENT{Need a function that looks at all the tests and their associated priorities, orders them and attaches an allowedBudget value in terms of the whole budget}
- 	\WHILE{$budget \geq 0$}
- 		% Simpler if the 'instrumentTest' function returns a value representing the amount of budget it actually used, rather than its remainder.
- 		\STATE{$budget \gets budget - allowedBudget + \textbf{instrumentTest} (test, allowedBudget)$}
-	\ENDWHILE
+	\STATE{\textbf{splatter} ($tests[]$)}
+	\STATE{$proportionTargeted \gets 0.75$}
+
+	\STATE{$suiteBudget \gets \text{calculateSuiteBudget(}tests$)}
+
+	\STATE{allocateBudget($tests$, $suiteBudget$, $proportionTargeted$)}
+
+	\FOR{$test$ \TO $tests$}
+		\STATE{instrument($test$)}
+	\ENDFOR
 \end{algorithmic}
 \end{algorithm}
 
-\begin{algorithm}
+Algorithm \ref{alg:splatter} defines the two main steps: calculation and instrumentation. First a per-test budget is calculated based on our knowledge base; finally the instrumentation is performed. It is during the second step that the application is actually modified.
+
+\begin{algorithm}[here]
 \caption{}
-\label{alg2}
+\label{alg:allocateBudget}
 \begin{algorithmic}
-	% Maybe should call flakiness 'chance of failure', and priority 'flakiness'. More clear?
-	\STATE{\textbf{calculateTestBudgets} (suiteBudget, tests[])}
-	\STATE{$totalRuntime \gets 0$}
-	\STATE{$totalFlakiness \gets 0$}
- 	\FOR{$test$ \TO $tests$}
- 		\STATE{$totalRuntime \gets totalRuntime + test.averageRunTime$}
- 		\STATE{$totalFlakiness \gets totalFlakiness + test.flakiness$}
-	\ENDFOR
+	\STATE{\textbf{allocateBudget} ($tests[]$, $suiteBudget$, $proportionTargeted$)}
+	\STATE{$targetedBudget = suiteBudget * proportionTargeted$}
+	\STATE{$exploratoryBudget = suiteBudget * (1 - proportionTargeted)$}
+
+	\STATE{$totalFlakiness = \text{calculateFlakiness(}tests$)}
+	\STATE{$tests \gets \text{sortByFlakinessDescending(}tests$)}
 
 	\FOR{$test$ \TO $tests$}
- 		\STATE{$test.priority \gets 1 - (test.flakiness / totalFlakiness)$}
+		\STATE{$test.budget \gets $calculateTestTargetedBudget($test$, $totalFlakiness$, $targetedBudget$)}
 	\ENDFOR
+
+	\STATE{shuffle($tests$)}
+	\STATE{$iterator = tests.getIterator()$}
+	\WHILE{$exploratoryBudget > 0$ \AND $iterator.hasNext()$}
+		\STATE{$currentTest \gets tests.getNext()$}
+		\STATE{$exploratoryBudget \gets exploratoryBudget - $calculateTestExploratoryBudget($test$,$ exploratoryBudget$)}
+	\ENDWHILE
 \end{algorithmic}
 \end{algorithm}
 
@@ -199,10 +209,6 @@ Test suite budget is distributed across all tests --- though we aggressively pri
 	\RETURN{budget}
 \end{algorithmic}
 \end{algorithm}
-
-calculateTestBudget(tests[], totalBudget) {
-	// Should use a combination of test.averageRunTime, test.flakiness and totalBudget.
-}
 
 \todo{We should probably also take into account how much information we gathered from previous runs of a particular test case when allocating its budget.}
 \begin{itemize}
