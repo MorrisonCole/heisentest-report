@@ -136,16 +136,16 @@ There are two factors to take into account when determining our overall budget:
 
 \subsection{Allocating Test Suite Budget}
 
-Test suite budget is distributed across all tests --- though we aggressively prioritise budget allocation for tests with high flakiness since they fail very rarely. A portion of the total budget is set aside for exploratory instrumentation.
+Test suite budget is distributed across all tests. We split our budget into two pools --- targeted and exploratory. We allocate targeted budget to tests with high flakiness, prioritising those with the highest flakiness and least historical data. Exploratory budget is randomly allocated to the remaining tests in the hopes that we get lucky and catch a previously stable test fail unexpectedly.
 
-\todo{Consider NEW tests in the test suite. Should we instrument them right away or wait until we've seen them run without instrumentation $n$ times?}
+\todo{Consider NEW tests in the test suite. Should we instrument them right away or wait until we've seen them run without instrumentation $n$ times, etc.?}
 
 % Use 'in' for-loop range notation rather than 'to'.
 \renewcommand{\algorithmicto}{\textbf{in}}
 
 % The {algorithm} wrapper is pretty unattractive as far as I'm concerned.
 % Need to look into alternative ways of formatting this.
-\begin{algorithm}[here]
+\begin{algorithm}[h]
 \caption{Instrument the test suite with respect to a budget}
 \label{alg:splatter}
 \begin{algorithmic}
@@ -164,23 +164,64 @@ Test suite budget is distributed across all tests --- though we aggressively pri
 
 Algorithm \ref{alg:splatter} defines the two main steps: calculation and instrumentation. First a per-test budget is calculated based on our knowledge base; finally the instrumentation is performed. It is during the second step that the application is actually modified.
 
-\begin{algorithm}[here]
+\begin{algorithm}[h]
 \caption{}
 \label{alg:allocateBudget}
 \begin{algorithmic}
 	\STATE{\textbf{allocateBudget} ($tests[]$, $suiteBudget$, $proportionTargeted$)}
-	\STATE{$targetedBudget = suiteBudget * proportionTargeted$}
-	\STATE{$exploratoryBudget = suiteBudget * (1 - proportionTargeted)$}
+	\STATE{$targetedBudget \gets suiteBudget * proportionTargeted$}
+	\STATE{$exploratoryBudget \gets suiteBudget * (1 - proportionTargeted)$}
 
-	\STATE{$totalFlakiness = \text{calculateFlakiness(}tests$)}
+	\STATE{allocateTargetedBudget($tests$, $targetedBudget$)}
+	\STATE{allocateExploratoryBudget($tests$, $exploratoryBudget$)}
+\end{algorithmic}
+\end{algorithm}
+
+\subsubsection{Targeted Budget Allocation}
+
+\begin{algorithm}[H]
+\caption{}
+\label{alg:allocateTargetedBudget}
+\begin{algorithmic}
+	\STATE{\textbf{allocateTargetedBudget} ($tests[]$, $targetedBudget$)}
+
+	\STATE{$totalFlakiness \gets 0$}
+
+	\FOR{$test$ \TO $tests$}
+		\STATE{$totalFlakiness \gets totalFlakiness + test.flakiness$}
+	\ENDFOR
+
 	\STATE{$tests \gets \text{sortByFlakinessDescending(}tests$)}
 
 	\FOR{$test$ \TO $tests$}
 		\STATE{$test.budget \gets $calculateTestTargetedBudget($test$, $totalFlakiness$, $targetedBudget$)}
 	\ENDFOR
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]
+\caption{}
+\label{alg:calculateTestTargetedBudget}
+\begin{algorithmic}
+	\STATE{\textbf{calculateTestTargetedBudget} ($test$, $targetedBudget$)}
+
+	\STATE{$maximumTargetedBudget \gets \todo{someNumberThatWeCalculate}$}
+
+	\STATE{$budget \gets (test.flakiness / totalFlakiness) * targetedBudget$}
+	\RETURN{minimum($testTargetedBudget$, $maximumTargetedBudget$)}
+\end{algorithmic}
+\end{algorithm}
+
+\subsubsection{Exploratory Budget Allocation}
+
+\begin{algorithm}[H]
+\caption{}
+\label{alg:allocateExploratoryBudget}
+\begin{algorithmic}
+	\STATE{\textbf{allocateExploratoryBudget} ($tests[]$, $exploratoryBudget$)}
 
 	\STATE{shuffle($tests$)}
-	\STATE{$iterator = tests.getIterator()$}
+	\STATE{$iterator \gets tests.getIterator()$}
 	\WHILE{$exploratoryBudget > 0$ \AND $iterator.hasNext()$}
 		\STATE{$currentTest \gets tests.getNext()$}
 		\STATE{$exploratoryBudget \gets exploratoryBudget - $calculateTestExploratoryBudget($test$,$ exploratoryBudget$)}
@@ -188,33 +229,49 @@ Algorithm \ref{alg:splatter} defines the two main steps: calculation and instrum
 \end{algorithmic}
 \end{algorithm}
 
-\begin{algorithm}
-\caption{Instrument a test with respect to a given budget}
-\label{alg4}
+\begin{algorithm}[H]
+\caption{}
+\label{alg:calculateTestExploratoryBudget}
 \begin{algorithmic}
-	\STATE{\textbf{instrumentTest} (test, budget)}
-	% Should 'sites' just be a parameter?
-	\STATE{$sites \gets test.instrumentationSites$}
-	\FOR{$site$ \TO $sites$}
-		% Should probably define a cost function (e.g. cost(instrumentationPoint)) and use that, rather than using an unexplained accessor.
-		\STATE{$cost \gets site.cost$}
-		\IF{$cost \le budget$}
-			\STATE{$site.active \gets true$}
-			\STATE{$budget \gets budget - cost$}
-		\ELSE
-			% Need to work out how to define new algorithmic-style macros (e.g. \BREAK)
-			\STATE{\textbf{break}}
-		\ENDIF
-	\ENDFOR
-	\RETURN{budget}
+	\STATE{\textbf{calculateTestExploratoryBudget} ($test$, $exploratoryBudget$)}
+
+	\STATE{$maximumExploratoryBudget \gets \todo{someNumberThatWeCalculate}$}
+
+	\IF{$test.budget > 0$}
+		\RETURN{$0$}
+	\ENDIF
+
+	\STATE{$test.budget \gets $minimum($exploratoryBudget$, $maximumExploratoryBudget$)}
+
+	\RETURN{$test.budget$}
 \end{algorithmic}
 \end{algorithm}
 
-\todo{We should probably also take into account how much information we gathered from previous runs of a particular test case when allocating its budget.}
-\begin{itemize}
-	\item If a test case has high priority and little previous information, we should instrument it as much as possible.
-	\item If a test case has high priority but already has tonnes of previous information, we should ignore it since the developers probably already have enough information to fix the issue.
-\end{itemize}
+
+\subsection{Instrumentation}
+
+\todo{Pseudocode should show instrumentation of an individual test based on previous instrumentation sites, budget, etc.}
+
+\begin{algorithm}[H]
+\caption{Instrument a test with respect its allocated budget}
+\label{alg:instrument}
+\begin{algorithmic}
+	\STATE{\textbf{instrument} (test)}
+	\STATE{$sites \gets test.instrumentationSites$}
+	\WHILE{$test.budget > 0$}
+		\FOR{$site$ \TO $sites$}
+			\STATE{$cost \gets site.cost$}
+			\IF{$cost \le test.budget$}
+				\STATE{$site.active \gets true$}
+				\STATE{$test.budget \gets budget - cost$}
+			\ELSE
+				% Need to work out how to define new algorithmic-style macros (e.g. \BREAK)
+				\STATE{\textbf{break}}
+			\ENDIF
+		\ENDFOR
+	\ENDWHILE
+\end{algorithmic}
+\end{algorithm}
 
 
 \subsection{Monitoring Application State with Probes}
