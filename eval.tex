@@ -3,25 +3,6 @@
 
 \subsection{The problem is real: it occurs in real world test suites. The goal is to quantify the problem for the skeptical reviewer.}
 
-First, we see how often project files and test suite files are co-committed.  Then, over this project, we could conceptually break such co-commits and observe how often just committing the project change to the project, then running the resulting version against the older test suite and reporting how often the new version fails against the old test suite.  Then we could uniformly select a small number of these tests, the convention is 30, then manually analyze whether we think the failures are incidental to the test case’s intent or not.  We would then report our Cohen’s Kappa inter-rater agreement on our individual "incidental or not" assessments.  If we could recruit one more person to participate in the manual assessment that would be great.
-
 \subsection{How serious/extensive is the problem?}
 
-Test case assertion slice criteria implicate a large portion of the code base, i.e. the transitive closure is large
-
-Use orbs for II. Note that test cases usually encode their own inputs, so we’re in a special domain. May wish to show that the average commit impacts a huge number of test cases. The core theoretical issue is projection. Test cases are only concerned with a small subset of program state, but that good ways to realize the project so as to isolate the test cases is a hard problem that has been unaddressed. This is to restate the core problem.
-
 \subsection{We solve the problem}
-
-We show that interposing our API between the test case and the program reduces this transitive closure.  The core result will be |closure(P+T)| / |closure(P+API+T)|, where our API is a sink.  Again, we would use orbs.
-We demonstrate the general, practical utility with the following experiment, replay experiment
-
-Replay Experimental Design
-
-Find open source project with test suite T
-We may need to create a test suite T, especially as we need acceptance and GUI tests.
-Modify T to use our API T'
-Inject semantically irrelevant changes like layout and compare the performance of T to T’
-
-
-TODO:  Impact analysis
