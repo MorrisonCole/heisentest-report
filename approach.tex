@@ -149,117 +149,118 @@ Test suite budget is distributed across all tests. We split our budget into two 
 
 \todo{Consider NEW tests in the test suite. Should we instrument them right away or wait until we've seen them run without instrumentation $n$ times, etc.?}
 
-% Used for 'phases' of an algorithm.
-\newcommand\Algphase[1]{%
-\vspace*{-.7\baselineskip}\Statex\hspace*{\dimexpr-\algorithmicindent-2pt\relax}\rule{\textwidth}{0.4pt}%
-\Statex\hspace*{-\algorithmicindent}\textbf{#1}%
-\vspace*{-.7\baselineskip}\Statex\hspace*{\dimexpr-\algorithmicindent-2pt\relax}\rule{\textwidth}{0.4pt}%
-}
 
 % The {algorithm} wrapper is pretty unattractive as far as I'm concerned.
 % Need to look into alternative ways of formatting this.
 \begin{algorithm}[h]
-\caption{Instrument the test suite with respect to a budget}
+\caption{Instrumenting the test suite with respect to a budget}
 \label{alg:splatter}
 \begin{algorithmic}
-	\State{\textbf{splatter} ($tests[]$)}
-	\State $proportionTargeted \gets 0.75$
+	\Require{$tests$ is an set comprising all the tests in the test suite}
+	\Require{$proportionTargeted$ is a decimal value in the range $[0, 1]$}
+	\Statex
 
-	\State $suiteBudget \gets \text{calculateSuiteBudget(}tests$)
+	\Function{splatter}{$tests$, $proportionTargeted$}
+
+	\State $suiteBudget \gets$ calculateSuiteBudget($tests$)
+	\Statex
 
 	\State allocateBudget($tests$, $suiteBudget$, $proportionTargeted$)
+	\Statex
 
 	\ForAll {$test \in tests$}
 		\State{instrument($test$)}
 	\EndFor
+
+	\EndFunction
+
+	\Statex
+
+	\Function{allocateBudget}{$tests$, $suiteBudget$, $proportionTargeted$}
+
+	\State{$targetedBudget \gets suiteBudget * proportionTargeted$}
+	\State{$exploratoryBudget \gets suiteBudget * (1 - proportionTargeted)$}
+	\Statex
+
+	\State{allocateTargetedBudget($tests$, $targetedBudget$)}
+	\State{allocateExploratoryBudget($tests$, $exploratoryBudget$)}
+
+	\EndFunction
 \end{algorithmic}
 \end{algorithm}
 
 Algorithm \ref{alg:splatter} defines the two main steps: calculation and instrumentation. First a per-test budget is calculated based on our knowledge base; finally the instrumentation is performed. It is during the second step that the application is actually modified.
 
-\begin{algorithm}[h]
-\caption{}
-\label{alg:allocateBudget}
-\begin{algorithmic}
-	\State{\textbf{allocateBudget} ($tests[]$, $suiteBudget$, $proportionTargeted$)}
-	\State{$targetedBudget \gets suiteBudget * proportionTargeted$}
-	\State{$exploratoryBudget \gets suiteBudget * (1 - proportionTargeted)$}
-
-	\State{allocateTargetedBudget($tests$, $targetedBudget$)}
-	\State{allocateExploratoryBudget($tests$, $exploratoryBudget$)}
-\end{algorithmic}
-\end{algorithm}
 
 \subsubsection{Targeted Budget Allocation}
 
 \begin{algorithm}[H]
-\caption{}
+\caption{Allocating targeted budget to tests}
 \label{alg:allocateTargetedBudget}
 \begin{algorithmic}
-	\Procedure{AllocateTargetedBudget}{$tests[]$, $targetedBudget$}
+	\Function{AllocateTargetedBudget}{$tests$, $targetedBudget$}
 
 	\State $totalFlakiness \gets 0$
 
 	\ForAll{$test \in tests$}
-		\State{$totalFlakiness \gets totalFlakiness + test.flakiness$}
+		\State $totalFlakiness \gets totalFlakiness + test.flakiness$
 	\EndFor
+	\Statex
 
 	\State $tests \gets \text{sortByFlakinessDescending(}tests$)
 
 	\ForAll{$test \in tests$}
-		\State{$test.budget \gets $calculateTestTargetedBudget($test$, $totalFlakiness$, $targetedBudget$)}
+		\State $test.budget \gets$ calculateTestTargetedBudget($test$, $totalFlakiness$, $targetedBudget$)
 	\EndFor
 
-	\EndProcedure
-\end{algorithmic}
-\end{algorithm}
+	\EndFunction
+	\Statex
+	\Function{calculateTestTargetedBudget}{$test$, $targetedBudget$}
 
-\begin{algorithm}[H]
-\caption{}
-\label{alg:calculateTestTargetedBudget}
-\begin{algorithmic}
-	\State{\textbf{calculateTestTargetedBudget} ($test$, $targetedBudget$)}
+	\State $maximumTargetedBudget \gets \todo{someNumberThatWeCalculate}$
 
-	\State{$maximumTargetedBudget \gets \todo{someNumberThatWeCalculate}$}
+	\State $budget \gets (test.flakiness / totalFlakiness) * targetedBudget$
+	\Statex
 
-	\State{$budget \gets (test.flakiness / totalFlakiness) * targetedBudget$}
+	\Return minimum($testTargetedBudget$, $maximumTargetedBudget$)
 
-	\Return{minimum($testTargetedBudget$, $maximumTargetedBudget$)}
+	\EndFunction
 \end{algorithmic}
 \end{algorithm}
 
 \subsubsection{Exploratory Budget Allocation}
 
-\begin{algorithm}[H]
-\caption{}
+\begin{algorithm}[h]
+\caption{Allocating exploratory budget to tests}
 \label{alg:allocateExploratoryBudget}
-\begin{algorithmic}
-	\State{\textbf{allocateExploratoryBudget} ($tests[]$, $exploratoryBudget$)}
+\begin{algorithmic}[1]
+	\Function{AllocateExploratoryBudget}{$tests$, $exploratoryBudget$}
 
-	\State{shuffle($tests$)}
-	\State{$iterator \gets tests.getIterator()$}
+	\State shuffle($tests$)
+	\State $iterator \gets tests.getIterator()$
 	\While{$exploratoryBudget > 0$ AND $iterator.hasNext()$}
-		\State{$currentTest \gets tests.getNext()$}
-		\State{$exploratoryBudget \gets exploratoryBudget - $calculateTestExploratoryBudget($test$,$ exploratoryBudget$)}
+		\State $currentTest \gets tests.getNext()$
+		\State \begin{varwidth}[t]{\linewidth}
+		$exploratoryBudget \gets exploratoryBudget -$\par
+		\hskip\algorithmicindent \text{calculateTestExploratoryBudget}(test, exploratoryBudget)
+		\end{varwidth}
 	\EndWhile
-\end{algorithmic}
-\end{algorithm}
 
-\begin{algorithm}[H]
-\caption{}
-\label{alg:calculateTestExploratoryBudget}
-\begin{algorithmic}
-	\State{\textbf{calculateTestExploratoryBudget} ($test$, $exploratoryBudget$)}
+	\EndFunction
+	\Statex
+	\Function{CalculateTestExploratoryBudget}{test, exploratoryBudget}
 
-	\State{$maximumExploratoryBudget \gets \todo{someNumberThatWeCalculate}$}
+	\State $maximumExploratoryBudget \gets \todo{someNumberThatWeCalculate}$
 
 	\If{$test.budget > 0$}
-		\Return{$0$}
+		\Return $0$
 	\EndIf
 
-	\State{$test.budget \gets $minimum($exploratoryBudget$, $maximumExploratoryBudget$)}
+	\State $test.budget \gets$ minimum($exploratoryBudget$, $maximumExploratoryBudget$)
 
-	\Return{$test.budget$}
+	\Return $test.budget$
+
+	\EndFunction
 \end{algorithmic}
 \end{algorithm}
 

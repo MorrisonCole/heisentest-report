@@ -120,3 +120,47 @@ For the purposes of the instrumentation, many of the included files can be ignor
 .2 AndroidManifest.xml\DTcomment{Basic info - version, name, etc.}.
 .2 classes.dex\DTcomment{Dalvik-readable compiled classes; register-based format}.
 }
+
+\subsection{Notes}
+
+\subsubsection{SDK}
+
+An SDK project can (optionally) be included. It defines the annotation @SplatterIgnore. During the isntrumentation phase, if a method is found with this annotation, it is blacklisted from the list of possible instrumentation sites. This could be useful by developers during debugging, or to remove instrumentation from sites that are known to be problematic or, alternatively, 'bug-free'!
+
+\subsubsection{Instrumentation Points}
+On the first pass we look at the whole application.
+
+\textbf{Methods}
+For methods that are not blacklisted or ignored due to annotations, we store the method name and owner class (\todo{should also keep track of signature / return type?}) in our pool of 'method' instrumentation points. During the second pass, these methods can be instrumented with a complex (argument-saving) or simple (counter-based) probe IF chosen during the WEKA stage.
+
+\subsection{Logging to JSON}
+
+Logging runs on a background thread. The Test APK drives the Application APK.
+
+\subsubsection{Storing the results}
+
+Android has per-application private storage, but the Gradle test runner task does not expose the 'adb uninstall' task. While you can use adb shell, root and pull to grab the files from this predictable location, on Android, per-app private storage is deleted when an application is removed. Because Gradle hides the uninstall step, it is impossible to grab the Heisentest results before they are deleted.
+
+We devised a workaround.
+
+Android has guaranteed 'public' storage (that will not be removed upon installation). This would be an obvious choice, but the location is not constant. It is likely to differ per-device and Operating System version. So, we save to this location and remember it.
+
+When the tests finish running, we log a message to adb specifying the location of the results on the device. Then, a post-test Gradle task grabs the adb logs, parses and searches for the message to get the location. We then use adb pull to grab and finally delete the files from the device.
+
+Issues:
+If there is a huge flood of log messages, sometimes our special log message is lost in the noise (i.e., deleted before we can grab it). We partially address this by using the INFO log level --- it seems an abuse to hijack anything higher (e.g. ERROR).
+
+\subsection{Analysis}
+
+\todo{need to save the details of the probes we used and their associated instrumentation points so that we can infer things!}
+
+\subsection{Hooking into testrunners}
+
+Part of our approach is to log distinct data per-test. To keep overhead to a minimum, we take a map of test runner classes and their respective set up / tear down methods (run before / after each test in a class is run). We inject our logger set up and clean up to the setup / teardown methods respectively.
+
+Note that during setup if the currently executing method has a @SplatterIgnore annotation attached, we skip logging altogether.
+
+This means that within a class with multiple tests, we can disable instrumentation on any subset of the tests if the developer so desires.
+
+It is important to note that while the @SplatterIgnore annotation prevents the method itself from being instrumented (and in the case of a test, also prevents the logging system from being initialized), other methods will STILL potentially be instrumented. So a test with the annotation that initializes an Activity and performs a sequence of actions will still have a performance penalty if called methods happen to be instrumented.
+
