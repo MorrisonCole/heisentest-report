@@ -158,9 +158,18 @@ If there is a huge flood of log messages, sometimes our special log message is l
 
 Part of our approach is to log distinct data per-test. To keep overhead to a minimum, we take a map of test runner classes and their respective set up / tear down methods (run before / after each test in a class is run). We inject our logger set up and clean up to the setup / teardown methods respectively.
 
-Note that during setup if the currently executing method has a @SplatterIgnore annotation attached, we skip logging altogether.
+Note that during setup if the currently executing method has a @Splatter annotation attached, we look at its policy before running the logging set up. If the annotation has InstrumentationPolicy.NONE, we simply run the test as normal.
 
 This means that within a class with multiple tests, we can disable instrumentation on any subset of the tests if the developer so desires.
 
-It is important to note that while the @SplatterIgnore annotation prevents the method itself from being instrumented (and in the case of a test, also prevents the logging system from being initialized), other methods will STILL potentially be instrumented. So a test with the annotation that initializes an Activity and performs a sequence of actions will still have a performance penalty if called methods happen to be instrumented.
+It is important to note that while the @Splatter annotation with an instrumentation policy of NONE prevents the method itself from being instrumented (and in the case of a test, also prevents the logging system from being initialized), other methods will STILL potentially be instrumented. So a test with the annotation and policy that initializes an Activity and performs a sequence of actions will still have a performance penalty if called methods happen to be instrumented.
 
+\subsection{Modifying the Behaviour}
+
+A small project ('splatter-sdk') can be included to force certain behaviour. It is a simple library that defines a @Splatter annotation, with a parameter 'InstrumentationPolicy'. When a method is annoted with this and a policy specified, Splatter will respect the defined behaviour when performing instrumentation.
+
+Available policies are:
+
+* NONE - Disallows all instrumentation from being injected in the method. When a test is given with this value, the logging system itself will not be initialized for that test.
+* SIMPLE - Disallows complex probes from being injected in the containing method.
+* COMPLEX - (Default), allows all probes to be potentially placed in the containing method.
