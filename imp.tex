@@ -5,7 +5,7 @@
 \section{Design and Implementation}
 \label{sec:imp}
 
-\begin{framed}
+\begin{mdframed}
 	\begin{itemize}
 		\item Describe the design of what you have created.
 		\item Start with the application architecture, giving its overall structure and the components that make up that structure.
@@ -13,7 +13,7 @@
 		\item Include the database or storage representation.
 		\item Provide implementation details as necessary.
 	\end{itemize}
-\end{framed}
+\end{mdframed}
 
 
 \subsection{A choice of CI tools}
@@ -121,6 +121,21 @@ For the purposes of the instrumentation, many of the included files can be ignor
 .2 classes.dex\DTcomment{Dalvik-readable compiled classes; register-based format}.
 }
 
+\subsubsection{Registers}
+Frames are fixed size. This means that total registers are known ahead of time (build in to the format). Space for extra information is also included (program counter etc.) but is not of consequence to us.
+
+Arguments of a method take the final registers of the method's invocation frame. Instance methods have a \textit{this} reference passed as the first argument; the formal arguments (if any) take up the next registers in order.
+
+For the method:
+
+\todo{example tiny instance method with arguments}
+
+The corresponding registers will be allocated:
+
+\todo{colour coded register allocation (Dalvik bytecode)}
+
+\todo{Need to detail our register allocating visitor and explain how it works / when it (might?) fail!}
+
 \subsection{Notes}
 
 \subsubsection{SDK}
@@ -173,3 +188,9 @@ Available policies are:
 * NONE - Disallows all instrumentation from being injected in the method. When a test is given with this value, the logging system itself will not be initialized for that test.
 * SIMPLE - Disallows complex probes from being injected in the containing method.
 * COMPLEX - (Default), allows all probes to be potentially placed in the containing method.
+
+\subsection{Logging Events}
+
+Each event is created as a bean and held in a queue until it can be written to a JSON output file. We define an abstract LogEvent bean with common values (System Time, Thread, EventName etc.) and subclass for specific events.
+
+\todo{We should log to a seperate blocking queue / file per thread since then we won't get blocking occuring at runtime. We can then weave the seperate log files together upon teardown.}

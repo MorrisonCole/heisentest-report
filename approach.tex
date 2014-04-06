@@ -66,11 +66,20 @@ Budget $B_{f} = B_{6} + B_{f!} + B_{nd}$
 
 \subsection{Flakiness}
 
+\begin{quote}
+	Test failure can be modelled probailistically. A flaky test is one known to fail with low probablitiy.
+\end{quote}
+
+\begin{defn}[Flaky Test]\label{def:flakytest}
+
+
+
+\end{defn}
+
 Each test is assigned a value in the range $[0-1]$, representing its flakiness. The higher the flakiness, the less likely the test is to fail on any given run. This value is used during test suite budget allocation.
 
-\begin{figure}[here]
+\begin{figure}[here]\label{fig:app:flakiness}
 \caption{}
-\label{fig:flakiness}
 	\begin{center}
 		% See: http://www.texample.net/tikz/examples/line-plot-example/
 		\begin{tikzpicture}[thick, framed, x=6.5cm, y=1.6cm]
@@ -104,7 +113,7 @@ Each test is assigned a value in the range $[0-1]$, representing its flakiness. 
 	\end{center}
 \end{figure}
 
-Figure~\ref{fig:flakiness} shows the failure rates that qualify as 'flaky'. If a tests' chance of failure lies within the range $(0, \alpha]$, its flakiness value will be $(0, 1]$; otherwise, it will be $0$.
+Figure~\ref{fig:app:flakiness} shows the failure rates that qualify as 'flaky'. If a tests' chance of failure lies within the range $(0, \alpha]$, its flakiness value will be $(0, 1]$; otherwise, it will be $0$.
 
 \todo{What value is $\alpha$, how do we calculate it? 0.4 is arbitrary!}
 \todo{We ignore tests with failure rates greater than $\alpha$ since they could be reasonably reproduced by a developer?}
@@ -112,9 +121,8 @@ Figure~\ref{fig:flakiness} shows the failure rates that qualify as 'flaky'. If a
 \algrenewcommand\algorithmicrequire{\textbf{Precondition:}}
 \algrenewcommand\algorithmicensure{\textbf{Postcondition:}}
 
-\begin{algorithm}[here]
+\begin{algorithm}[here]\label{alg:app:calculateFlakiness}
 \caption{Calculating the flakiness of a test}
-\label{calculateFlakiness}
 \begin{algorithmic}
 	\Require{$chanceOfFailure$ and $threshold$ are decimal values within ranges $[0, 1]$ and $(0,1]$ respectively.}
     \Statex
@@ -234,7 +242,7 @@ Algorithm \ref{alg:splatter} defines the two main steps: calculation and instrum
 \caption{Allocating exploratory budget to tests}
 \label{alg:allocateExploratoryBudget}
 \begin{algorithmic}[1]
-	\Function{AllocateExploratoryBudget}{$tests$, $exploratoryBudget$}
+	\Function{AllocateExploratoryBudget}{ $tests$, $B_e$}
 
 	\State shuffle($tests$)
 	\State $iterator \gets tests.getIterator()$
@@ -258,7 +266,7 @@ Algorithm \ref{alg:splatter} defines the two main steps: calculation and instrum
 
 	\State $test.budget \gets$ minimum($exploratoryBudget$, $maximumExploratoryBudget$)
 
-	\Return $test.budget$
+	\State \Return $test.budget$
 
 	\EndFunction
 \end{algorithmic}

@@ -3,12 +3,20 @@
 % No more than half a page and typically consists of three short paragraphs.
 \begin{abstract}
 
-\begin{framed}
+\begin{mdframed}
 	\begin{itemize}
 		\item What the project is about, the principle aims and goals, and specific challenges.
 		\item How you carried out the project and what work it involved.
 		\item The results and achievements of the project.
 	\end{itemize}
-\end{framed}
+\end{mdframed}
+
+We present a framework for identifying and encouraging the resolution of non-deterministic test cases in a test suite. Random test failure is expensive in terms of trust and confidence. By automatically gathering relevant debugging information for problematic tests ahead of developer intervention, we hope to reduce this cost in practice.
+
+\todo{We evaluate the state of the industry with respect to automated testing and non-deterministic tests and formally define the problem. Open source projects with flaky tests + Shazam.}
+
+Our approach enriches previously developed statistical debugging techniques and apply them in a context where information is cheap and freely available. Our framework operates on a continuous lifecycle made up of three phases. Firstly, the test's probability of failure is evaluated. Then, the test is adaptively instrumented and run as part of the suite. Finally, the collected information is analysed to identify predicates strongly associated with test failure.
+
+We discuss and document the implementation of a working proof of concept and evaluate its application at a modern startup, Shazam.
 
 \end{abstract}

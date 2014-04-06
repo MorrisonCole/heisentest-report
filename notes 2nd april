@@ -1,0 +1,19 @@
+need to know how much overhead roughly in any position.
+
+if we insert a probe and it adds more overhead than we expect (check execution times), then remove it. Look at mean times over k runs after probe placement to see if we've made a mistake (generalise to revert to combinations of set of probes).
+
+Don't need to optimise logging performance since it is not relevant - we're concerned with WHERE TO put probes.
+
+We want to put things in loops sometimes - just need to part of the cost model.
+
+When we randomise exploratory test use resevoir sampling. Entropy distance from uniform distribution.
+
+if we get into remainder part of random, resample. Resevoir sampling.
+
+in pseudocode write uniform random - (we use resevoir sampling)
+
+larus' whole program path
+
+sample live variables, parameters etc. randomly (uniform).
+
+Manually inline the class-representations of the probes and check performance.
