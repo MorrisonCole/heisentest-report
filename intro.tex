@@ -2,14 +2,14 @@
 \section{Introduction}
 \label{sec:intro}
 
-\begin{mdframed}
-	\begin{itemize}
-		\item Outline the problem you are working on, why it is interesting and what the challenges are.
-		\item List your aims and goals. An aim is something you intend to achieve (i.e., learn a new programming language and apply it in solving the problem), while a goal is something specific you expect to deliver (e.g., a working application with a particular set of features).
-		\item Give an overview of how you carried out your project (e.g., an iterative approach).
-		\item A brief overview of the rest of the chapters in the report (a guide to the reader of the overall structure of the report).
-	\end{itemize}
-\end{mdframed}
+% \begin{mdframed}
+% 	\begin{itemize}
+% 		\item Outline the problem you are working on, why it is interesting and what the challenges are.
+% 		\item List your aims and goals. An aim is something you intend to achieve (i.e., learn a new programming language and apply it in solving the problem), while a goal is something specific you expect to deliver (e.g., a working application with a particular set of features).
+% 		\item Give an overview of how you carried out your project (e.g., an iterative approach).
+% 		\item A brief overview of the rest of the chapters in the report (a guide to the reader of the overall structure of the report).
+% 	\end{itemize}
+% \end{mdframed}
 
 \subsection{Motivation}
 
@@ -35,10 +35,14 @@ As would be expected, the Android team faces an growing number of tests as the a
 
 Like any real world project with a significant test suite, Shazam on Android is no stranger to non-deterministic tests. Over the period \todo{length in terms of build history} during which we collected build results from their codebase, we saw $N$ tests fail unexpectedly.
 
-\subsection{What we intend to do}
+\subsection{\splatter}
 
-Apply adaptive bug isolation techniques to testing to gather information on flaky test cases with the aim of aiding their stabilization.
+We focus on developing a practical tool --- \emph{\splatter} --- to reduce the cost of non-deterministic test cases. Ultimately, each test case must be investigated and fixed by a developer. We acknowledge this and focus on gathering and analyzing information much in the same way as a developer would; autonomously and ahead of time.
 
-\subsection{How the rest of the paper is structured}
+First, we identify non-deterministic tests in a test suite; we call these \textit{flaky tests}. Then, we employ techniques similar to those discussed by \citet{ArumugaNainar:2010:ABI:1806799.1806839} to gather relevant debugging information over a series of test runs. Finally we analyze the gathered data and identify predicates strongly associated with test failure. Our tool takes advantage of the continuous integration environment, always running and constantly improving its models.
 
-For the rest of this paper, we will focus on the Android team. As an operating system, Android is fragmented \todo{cite Iordannis, Device Fragmentation}.
+A common approach when fixing any bug (not just a flaky test) is to step through the code manually with the assistance of a debugger. By examining execution flow and program state, a developer can often pinpointing an area related to the bug. Debugging an acceptance test in this way is often tedious, fruitless and time-consuming. Average run times for a test driving the entire application can be extremely lengthy, and the test must constantly be re-run in order to gather more data. What's more, attaching a debugger can affect thread interleaving, potentially obscuring previously observed non-deterministic behaviour.
+
+Reaching a stage where we could analyze the gathered data proved to be far more challenging than expected. The relative youth of the Android platform was a clear stumbling block, since tried and tested instrumentation tools in the world of the Java Virtual Machine had only just begun to acknowledge their Dalvik sibling. As such, we document and discuss many of our design decisions along the way.
+
+\todo{Walk the reader through the upcoming sections of the paper. Can only really do this at the end!}

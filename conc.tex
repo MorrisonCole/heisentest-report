@@ -19,6 +19,19 @@ Could have used Soot to convert Dalvik bytecode into standard Java .class files 
 
 \subsection{Future Work}
 
+\subsubsection{Gathering data from local test runs}
+
+In a typical test driven development cycle, tests are run constantly --- both by the developers and the continuous integration build agents. We could gather test run data from the tests run by developers themselves by sending the results over the network to the Splatter CI plugin.
+
+\begin{itemize}
+	\item This would require 'noise' reduction --- developers break tests locally often, we wouldn't want to adjust our flakiness values based on changes that never make it onto the development branch.
+	\item It should be easy to 'opt-out' of this --- our instrumentation does affect build times and developers may not appreciate the extra overhead!
+\end{itemize}
+
+\subsubsection{Commit blaming}
+
+Our CI plugin could display an estimated commit 'blame' range, along with relevant build numbers if a previously stable test is suddenly observed to be flaky.
+
 \subsubsection{Porting the plugin}
 
 Jenkins is but one of many available continuous integration tools \cite{ContinuousIntegrationSoftware}. Hudson, TeamCity, CruiseControl and Team Foundation Server are amongst the notable alternatives. A Hudson port would be especially trivial, since the Jenkins codebase is still fairly similar. In fact, the code-bases have not diverged significantly since 2010 when Jenkins materialised.
