@@ -15,7 +15,7 @@
 
 Software, more than ever, is ubiquitous. Deployments target the global stage, aiming to run across countless devices, Operating Systems, countries, languages and time zones. Alongside this expansion of target platforms, iteration cycle times are being ever-reduced, with teams commonly releasing new code into production environment multiple times per week. Developers have long employed automated testing to reduce risk and increase quality in the face of challenges raised by this broading scale.
 
-Tests can be divided into three groups, each of which targets an increasingly abstract layer of an application \cite[Chapter~16]{cohn2009succeeding}. At the lowest level, we have Unit tests, which verify the behaviour of functions through their public interfaces. Service (also known as Integration) tests target a layer above, focusing on the interactions of groups of subsystems and their responses to various inputs. Finally, at the highest level, we have User Interface (or 'Acceptance') tests, which verify application functionality as a whole system.
+Tests can be divided into three groups, each of which target an increasingly abstract layer of an application \citep[see][Chapter~16]{cohn2009succeeding}. At the lowest level, we have Unit tests, which verify the behaviour of functions through their public interfaces. Service (also known as Integration) tests target a layer above, focusing on the interactions of groups of subsystems and their responses to various inputs. Finally, at the highest level, we have User Interface (or 'Acceptance') tests, which verify application functionality as a whole system.
 
 The further we travel up these layers, the more environmental factors we introduce. In our experience, this leads to non-determinism. Well written Unit tests are almost guaranteed to be deterministic since they run in isolation. Integration tests may depend on an external service (e.g., a database), so may sometimes see random failure. Most problematic are the Acceptance tests, which run on the complete system. The potential for unexpected behaviour here is significant. Consider an Android UI test that loads an application, selects a button and checks that a page is displayed. The test may run as expected many times, but suddenly fail with no related code changes. It could be due to anything from threading to non-standard operating system behaviour (for example, a background task could have impacted the start up time).
 
@@ -27,12 +27,18 @@ Non-deterministic tests are by definition unreliable and cannot be trusted. In o
 
 Shazam is a thriving software startup focused on audio identification with a truly global focus. As of \today, Shazam reports more than 85 million active users spanning 200 countries and 33 languages across the Android, iOS, Windows Phone and BlackBerry platforms. It is essential that the software Shazam produces is reliable, performant and to-specification. As a technology-centric company with a global focus, they employ modern development practices to ensure these requirements are able to be met constantly.
 
-Development at Shazam is approached in a style that can be compared to the Test Driven Development described by \citet*{freeman2009growing}. Essentially, a programmer tasked with implementing a new feature will first write a failing Acceptance test and use this to drive the specification of lower and lower level components (each thoroughly tested in itself) until the original high level test passes.
+Development at Shazam is approached in a style that can be compared to the Test Driven Development described by \citet*{freeman2009growing}. Essentially, a programmer tasked with implementing a new feature will first write a failing Acceptance test to cover the feature. They then use this test to drive the specification and implementation of progressively lower level components (each thoroughly tested) until the original test passes.
 
-For the rest of this paper, we will focus on the Android team. As an operating system, Android is fragmented \todo{cite Iordannis, Device Fragmentation}.
+Target platforms are developed by dedicated teams --- Android and iOS are the largest at \todo{ask Shazam for permission to use numbers} developers each. Of the two major platforms, Android faces the most significant fragmentation \cite{AndroidFragmentationVisualized}.
+
+As would be expected, the Android team faces an growing number of tests as the application is developed. \todo{Ask Shazam if we can use numbers, or at least an accurate trend graph to illustrate this point.} These tests give the team the confidence to deploy the application across a huge number of devices, each differing in manufacturer, hardware, operating system, API version, form factor and screen size. Today, the Android application is covered by $N$ \todo{Shazam's permission for numbers} Acceptance level tests, as well as a host of Integration and Unit tests.
+
+Like any real world project with a significant test suite, Shazam on Android is no stranger to non-deterministic tests. Over the period \todo{length in terms of build history} during which we collected build results from their codebase, we saw $N$ tests fail unexpectedly.
 
 \subsection{What we intend to do}
 
 Apply adaptive bug isolation techniques to testing to gather information on flaky test cases with the aim of aiding their stabilization.
 
 \subsection{How the rest of the paper is structured}
+
+For the rest of this paper, we will focus on the Android team. As an operating system, Android is fragmented \todo{cite Iordannis, Device Fragmentation}.
