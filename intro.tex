@@ -11,15 +11,25 @@
 	\end{itemize}
 \end{mdframed}
 
-\textit{The following are placeholders; subsections are to be removed.}
+\subsection{Motivation}
 
-\subsection{Testing is used in practice across the industry}
+Software, more than ever, is ubiquitous. Deployments target the global stage, aiming to run across countless devices, Operating Systems, countries, languages and time zones. Alongside this expansion of target platforms, iteration cycle times are being ever-reduced, with teams commonly releasing new code into production environment multiple times per week. Developers have long employed automated testing to reduce risk and increase quality in the face of challenges raised by this broading scale.
 
-Testing is as much a part of modern software development as deployment. Enforces quality, prevents regressions, reduces need for manual testing in certain areas. In the age of continuous deployment, developers have turned to automated testing to ensure that their software does not suffer regressions or recurring bugs. A team might deploy software into a production environment multiple times per week. It is essential to write and maintain a suite of unit, integration and system tests to have the confidence to do so.
+Tests can be divided into three groups, each of which targets an increasingly abstract layer of an application \cite[Chapter~16]{cohn2009succeeding}. At the lowest level, we have Unit tests, which verify the behaviour of functions through their public interfaces. Service (also known as Integration) tests target a layer above, focusing on the interactions of groups of subsystems and their responses to various inputs. Finally, at the highest level, we have User Interface (or 'Acceptance') tests, which verify application functionality as a whole system.
 
-\subsection{Testing is flawed/not always reliable}
+The further we travel up these layers, the more environmental factors we introduce. In our experience, this leads to non-determinism. Well written Unit tests are almost guaranteed to be deterministic since they run in isolation. Integration tests may depend on an external service (e.g., a database), so may sometimes see random failure. Most problematic are the Acceptance tests, which run on the complete system. The potential for unexpected behaviour here is significant. Consider an Android UI test that loads an application, selects a button and checks that a page is displayed. The test may run as expected many times, but suddenly fail with no related code changes. It could be due to anything from threading to non-standard operating system behaviour (for example, a background task could have impacted the start up time).
 
-Flaky tests across the industry.
+An automated test suite is essentially a trust mechanism. It allows changes --- functional or otherwise --- to be made with the confidence that existing behaviour will not be changed. Any unintended regressions are brought to the developers attention by one or more failing tests.
+
+Non-deterministic tests are by definition unreliable and cannot be trusted. In our experience, within the context of real software development projects developers quickly become frustrated when dealing with non-deterministic tests and begin to rely on instinct in order to stay productive. In other words, they lose confidence in the test suite. It is essential to maintain a reliable test suite for it to remain a beneficial part of a teams' workflow.
+
+\subsection{Shazam}
+
+Shazam is a thriving software startup focused on audio identification with a truly global focus. As of \today, Shazam reports more than 85 million active users spanning 200 countries and 33 languages across the Android, iOS, Windows Phone and BlackBerry platforms. It is essential that the software Shazam produces is reliable, performant and to-specification. As a technology-centric company with a global focus, they employ modern development practices to ensure these requirements are able to be met constantly.
+
+Development at Shazam is approached in a style that can be compared to the Test Driven Development described by \citet*{freeman2009growing}. Essentially, a programmer tasked with implementing a new feature will first write a failing Acceptance test and use this to drive the specification of lower and lower level components (each thoroughly tested in itself) until the original high level test passes.
+
+For the rest of this paper, we will focus on the Android team. As an operating system, Android is fragmented \todo{cite Iordannis, Device Fragmentation}.
 
 \subsection{What we intend to do}
 

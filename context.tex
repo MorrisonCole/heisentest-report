@@ -37,9 +37,9 @@ Since the tests exercise behaviour which is needed (and indeed, works as intende
 
 \subsection{Why are Flaky Tests a problem?}
 
-Consider a project with a team of 5 developers. They write system, integration and unit tests to cover every feature they add to the software. The current test suite $T$, made up of tests $t_{0}, t_{1}, \dots, t_{n}$, takes 20 minutes to run and each developer is expected to run the entire suite locally before pushing a new feature to the development branch. The test suite contains a number of flaky system tests $F$ written $f_{0}, f_{1}, \dots, f_{k} \text{, where $k \leq n$}$ that the team are aware of. $F \subseteq T$.
+Consider a project with small team of developers. They write Acceptance, Integration and Unit tests to cover every feature they add to the software. Their test suite $T$, is made up of tests $t_{0}, t_{1}, \dots, t_{n}$. On average, the tests take 20 minutes to run and each developer is expected to run the entire suite locally before pushing a new feature to the development branch. The test suite contains a number of flaky Acceptance tests $F$ written $f_{0}, f_{1}, \dots, f_{k} \text{, where $k \leq n$}$ that the team are aware of. $F \subseteq T$.
 
-A developer is working on a new feature and has written a system test to ensure it works as expected. The system test passes, so the developer prepares to push the code onto the development branch. Before doing so, the developer must run the test suite locally to ensure the work did not break any existing functionality. The test suite runs, but 4 of the system tests --- $t_{3}, t_{7}, t_{9} \text{ and } t_{21}$ --- fail.
+A developer is working on a new feature and has written an Acceptance test to ensure it works as expected. The Acceptance test passes, so the developer prepares to push the code onto the development branch. Before doing so, the developer must run the test suite locally to ensure the work did not break any existing functionality. The test suite runs, but 4 of the Acceptance tests --- $t_{3}, t_{7}, t_{9} \text{ and } t_{21}$ --- fail.
 
 The developer is sure they’ve seen $t_{3}, t_{7} \text{ and } t_{9}$ fail randomly before, i.e. $t_{3}, t_{7}, t_{9} \in F$. After checking with colleagues, they assume that $t_{21} \in F$, since it appears to be unrelated to the area of code they’ve been working on. The developer pushes the code.
 
@@ -50,10 +50,6 @@ After the code is pushed, a different set of tests fail on the build server: $t_
 This may appear to be workable, but time was almost certainly wasted. The developer writing the new feature only became aware that they had broken existing functionality after the second run revealed a trend. If $t_{21}$ had failed alone, the developer would have taken action before committing the changeset.
 
 When a subset of tests fail randomly each time the suite is run, it is all too easy for developers to begin ignoring real failures if and when they do occur.
-
-\subsection{Why is committing a broken changeset bad?}
-
-Any commits made on top of the broken change may need to be reviewed.
 
 \subsection{Living with Flaky Tests}
 
@@ -72,7 +68,7 @@ There are continuous integration tools that aim to mitigate flaky test impact. N
 \subsection{What is a flaky test?}
 Flaky tests tend to occur on the system level. They do not often manifest in unit or integration tests since these tests usually simply call a function with some parameters and check its output against some expected value in isolation from the system as a whole (or, in the case of integration - against some external service).
 
-System tests, on the other hand, target the software as a whole. Developers of software for mobile Operating Systems employ instrumentation to simulate user input and check for the presence of elements in the user interface. Essentially, a test can be distilled down to:
+Acceptance tests, on the other hand, target the software as a whole. Developers of software for mobile Operating Systems employ instrumentation to simulate user input and check for the presence of elements in the user interface. Essentially, a test can be distilled down to:
 \begin{verbatim}
   Given I am in this state (arrange)
   When I do this (act)

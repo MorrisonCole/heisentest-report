@@ -29,7 +29,7 @@
 % Line spacing
 \usepackage{setspace}
 
-\usepackage[sort&compress]{natbib}
+\usepackage[numbers, sort&compress]{natbib}
 
 % hyperref redefines a number of macros, so it should be last.  Empirically,
 % doing so eliminates compiler warnings.
@@ -127,6 +127,7 @@ pdftitle={\ourtitle},
 \begin{document}
 
 \input{title}
+
 \input{abstract}
 
 %% Contents. Perhaps use figures / tables.
@@ -142,11 +143,9 @@ pdftitle={\ourtitle},
 % Makes all pages the height of the text on the page. No extra vertical space is added.
 \raggedbottom
 
-\noindent``\todo{find appropriate quote.} Debugging involves backwards reasoning''
+\noindent``Left uncontrolled, non-deterministic tests can completely destroy the value of an automated regression suite.''
 
-\hfill Brian Kernighan and Rob Pike
-
-\hfill The Practice of Programming, 1999
+\hfill Martin Fowler
 
 \input{intro}
 \input{context}
@@ -166,7 +165,7 @@ pdftitle={\ourtitle},
 \nocite{*}
 
 % TODO: Check with Earl what citation style we want.
-\bibliographystyle{abbrv}
+\bibliographystyle{abbrvnat}
 \bibliography{Bib/paper}
 
 \end{document}
