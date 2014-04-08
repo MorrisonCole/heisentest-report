@@ -65,6 +65,10 @@ Informally, let a valid test be a test that asserts that some unit of the applic
 
 There are continuous integration tools that aim to mitigate flaky test impact. Namely, the Chromium Flakiness Dashboard, Shazam’s internal ‘Flaky Test Monitor’ and various Jenkins plugins. Typically, these attach a ‘flakiness’ value to each test case that represents the likelihood of failure during any given test run. Some also expose statistics such as stability (the tests flakiness across the previous n runs), successful runs since last failure and first known failure. Both the Shazam Android and Chromium dashboards include simple graphics for visual detection of these values.
 
+\subsection{Fixing flaky tests --- the manual way}
+
+A common approach when fixing any bug (not just a flaky test) is to step through the code manually with the assistance of a debugger. By examining execution flow and program state over one or more runs, a developer can often pinpoint the cause or a related area of code. Debugging a flaky acceptance test in this way is often tedious, fruitless and time-consuming. Since an acceptance test must compile and run the entire application, average run times can be extremely lengthy. If the test must constantly be re-run in order to see it fail, this time quickly adds up. What's more, attaching a debugger can affect thread interleaving, potentially obscuring previously observed non-deterministic behaviour.
+
 \subsection{What is a flaky test?}
 Flaky tests tend to occur on the system level. They do not often manifest in unit or integration tests since these tests usually simply call a function with some parameters and check its output against some expected value in isolation from the system as a whole (or, in the case of integration - against some external service).
 
