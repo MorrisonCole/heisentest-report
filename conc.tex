@@ -32,6 +32,10 @@ In a typical test driven development cycle, tests are run constantly --- both by
 
 Our CI plugin could display an estimated commit 'blame' range, along with relevant build numbers if a previously stable test is suddenly observed to be flaky.
 
+\subsubsection{Retiring trusted tests}
+
+Projects with a huge number of tests face lengthy build times. It may be in a teams' interest to remove trusted tests from the per-commit build and instead run them on a seperate cycle to tighten the immediate feedback loop. We could provide a listing of 'most trusted' tests (\ie, tests that have exhibited no flakiness over a significant period).
+
 \subsubsection{Porting the plugin}
 
 Jenkins is but one of many available continuous integration tools \cite{ContinuousIntegrationSoftware}. Hudson, TeamCity, CruiseControl and Team Foundation Server are amongst the notable alternatives. A Hudson port would be especially trivial, since the Jenkins codebase is still fairly similar. In fact, the code-bases have not diverged significantly since 2010 when Jenkins materialised.

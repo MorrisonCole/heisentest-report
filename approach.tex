@@ -155,8 +155,7 @@ There are two factors to take into account when determining our overall budget:
 
 Test suite budget is distributed across all tests. We split our budget into two pools --- targeted and exploratory. We allocate targeted budget to tests with high flakiness, prioritising those with the highest flakiness and least historical data. Exploratory budget is randomly allocated to the remaining tests in the hopes that we get lucky and catch a previously stable test fail unexpectedly.
 
-\todo{Consider NEW tests in the test suite. Should we instrument them right away or wait until we've seen them run without instrumentation $n$ times, etc.?}
-
+We start from a pesimistic; new tests are assumed to have a flakiness value of 1. As the test is run, the flakiness value is adjusted as usual until it represents a more accurate value. New tests will therefore be heavily instrumented, and gradually less so as they prove themselves to be reliable.
 
 % The {algorithm} wrapper is pretty unattractive as far as I'm concerned.
 % Need to look into alternative ways of formatting this.

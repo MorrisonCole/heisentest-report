@@ -1,0 +1,83 @@
+\newcounter{oldSectionCounter}
+\newcounter{oldPageCounter}
+
+\setcounter{oldSectionCounter}{\value{section}}
+\setcounter{oldPageCounter}{\value{page}}
+
+% Set the current value of section to 0
+\setcounter{section}{0}
+
+\title{
+	Improving Diagnostic Data Gathering for Problematic System Tests:\\
+	\itshape{Interim Report}
+}
+\author{
+	Morrison Cole\\
+	\texttt{zcabg19@ucl.ac.uk}
+	\and
+	Supervisor: Dr Earl Barr\\
+	\texttt{e.barr@ucl.ac.uk}
+	\and
+	External Supervisor: Colin Vipurs\\
+	\texttt{colin.vipurs@shazam.com}
+}
+\date{January 22, 2014}
+
+\maketitle
+
+\section{Progress So Far}
+
+\begin{enumerate}
+	\item{
+		Reviewed existing literature in the research space. In particular, the work of Ben Liblit (Bug Isolation via Remote Program Sampling, Statistical Debugging of Sampled Programs).
+	}
+	\item{
+		Negotiated a satisfactory verbal agreement with Shazam which states rather broadly that:
+		\begin{enumerate}
+		\item{\itshape they understand that we are academics who wish to publish certain information};
+		\item {\itshape we understand that Shazam will not allow information that may negatively impact the business to be released publicly}.
+		\end{enumerate}
+	}
+	\item{
+		Received VPN credentials to access Shazam's internal Continuous Integration and Version Control so that the project can be worked on campus.
+	}
+	\item{
+		Wrote scripts to pull both new and historical build results from Shazam's Continuous Integration servers. Have been running these and storing the data so that we can analyze it later.
+	}
+	\item{
+		Set up a project Git repository / Wiki and began development of a Jenkins plugin. All code has been test driven from the Unit Test level so far, and has been written with as little coupling to Jenkins as possible. The plugin currently runs as a post-build step, parses all JUnit-style results and persists them in a database.
+	}
+	\item{
+		Have begun to look at open-source projects for other examples of flaky tests - Mozilla's Tinderbox Build Log in particular. Any particularly interesting cases have been noted on the project Wiki.
+	}
+\end{enumerate}
+
+\newpage
+
+\section{Future Plans}
+
+\begin{enumerate}
+	\item{
+		Complete the remaining features of the Jenkins Plugin:
+	}
+	\begin{enumerate}
+		\item{
+			Using Weka / R, analyse the test suite historically and attempt to detect useful trends such as common failure causes.
+		}
+		\item{
+			Produce an output Web page that displays the flaky tests and any relevant diagnostic information.
+		}
+	\end{enumerate}
+	\item{
+		Continue gathering data on flaky tests at Shazam and at least two other projects / organisations. This means collecting developer statements, finding examples of flaky tests in open-source projects, documenting developer workflow etc.
+	}
+	\item{
+		Develop a system to instrument Java code such that we share the cost of automatically gathering additional runtime information over multiple test-runs and are able to aggregate it afterwards.
+	}
+\end{enumerate}
+
+\newpage
+
+% Restore the old value of the section counter
+\setcounter{section}{\value{oldSectionCounter}}
+\setcounter{page}{\value{oldPageCounter}}
