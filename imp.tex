@@ -63,7 +63,7 @@ Or, we could group the tests by common failure type, e.g.:
 \begin{center}
     \begin{tabular}{| p{10cm} | l |}
     \hline
-    Common Failure & Flaky Test Count \\ \hline
+    Common Failure & \flaky{} Test Count \\ \hline
     {\begin{lstlisting}[language=Java, numbers=none]
 java.lang.OutOfMemoryError
 	\end{lstlisting}}
@@ -84,7 +84,7 @@ but was: ""
     \end{tabular}
 \end{center}
 
-Flaky tests using the same troublesome method or similar logical flow may well fail with the same stacktrace or assertion failure. By automatically detecting this, developers could target groups of related tests and potentially fix an entire group at once.
+\flaky{} tests using the same troublesome method or similar logical flow may well fail with the same stacktrace or assertion failure. By automatically detecting this, developers could target groups of related tests and potentially fix an entire group at once.
 
 
 \subsubsection{Resolution}
@@ -140,13 +140,13 @@ The corresponding registers will be allocated:
 
 \subsubsection{SDK}
 
-An SDK project can (optionally) be included. It defines the annotation @SplatterIgnore. During the isntrumentation phase, if a method is found with this annotation, it is blacklisted from the list of possible instrumentation sites. This could be useful by developers during debugging, or to remove instrumentation from sites that are known to be problematic or, alternatively, 'bug-free'!
+An SDK project can (optionally) be included. It defines the annotation @SplatterIgnore. During the isntrumentation phase, if a method is found with this annotation, it is blacklisted from the list of possible instrumentation sites. This could be useful by developers during debugging, or to remove instrumentation from sites that are known to be problematic or, alternatively, {\lq}bug-free{\rq}!
 
 \subsubsection{Instrumentation Points}
 On the first pass we look at the whole application.
 
 \textbf{Methods}
-For methods that are not blacklisted or ignored due to annotations, we store the method name and owner class (\todo{should also keep track of signature / return type?}) in our pool of 'method' instrumentation points. During the second pass, these methods can be instrumented with a complex (argument-saving) or simple (counter-based) probe IF chosen during the WEKA stage.
+For methods that are not blacklisted or ignored due to annotations, we store the method name and owner class (\todo{should also keep track of signature / return type?}) in our pool of {\lq}method{\rq} instrumentation points. During the second pass, these methods can be instrumented with a complex (argument-saving) or simple (counter-based) probe IF chosen during the WEKA stage.
 
 \subsection{Logging to JSON}
 
@@ -154,11 +154,11 @@ Logging runs on a background thread. The Test APK drives the Application APK.
 
 \subsubsection{Storing the results}
 
-Android has per-application private storage, but the Gradle test runner task does not expose the 'adb uninstall' task. While you can use adb shell, root and pull to grab the files from this predictable location, on Android, per-app private storage is deleted when an application is removed. Because Gradle hides the uninstall step, it is impossible to grab the Heisentest results before they are deleted.
+Android has per-application private storage, but the Gradle test runner task does not expose the \texttt{adb uninstall} task. While you can use adb shell, root and pull to grab the files from this predictable location, on Android, per-app private storage is deleted when an application is removed. Because Gradle hides the uninstall step, it is impossible to grab the Heisentest results before they are deleted.
 
 We devised a workaround.
 
-Android has guaranteed 'public' storage (that will not be removed upon installation). This would be an obvious choice, but the location is not constant. It is likely to differ per-device and Operating System version. So, we save to this location and remember it.
+Android has guaranteed {\lq}public{\rq} storage (that will not be removed upon installation). This would be an obvious choice, but the location is not constant. It is likely to differ per-device and Operating System version. So, we save to this location and remember it.
 
 When the tests finish running, we log a message to adb specifying the location of the results on the device. Then, a post-test Gradle task grabs the adb logs, parses and searches for the message to get the location. We then use adb pull to grab and finally delete the files from the device.
 
@@ -181,7 +181,7 @@ It is important to note that while the @Splatter annotation with an instrumentat
 
 \subsection{Modifying the Behaviour}
 
-A small project ('splatter-sdk') can be included to force certain behaviour. It is a simple library that defines a @Splatter annotation, with a parameter 'InstrumentationPolicy'. When a method is annoted with this and a policy specified, Splatter will respect the defined behaviour when performing instrumentation.
+A small project ('splatter-sdk') can be included to force certain behaviour. It is a simple library that defines a @Splatter annotation, with a parameter {\lq}InstrumentationPolicy{\rq}. When a method is annoted with this and a policy specified, Splatter will respect the defined behaviour when performing instrumentation.
 
 Available policies are:
 

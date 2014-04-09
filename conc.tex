@@ -24,17 +24,17 @@ Could have used Soot to convert Dalvik bytecode into standard Java .class files 
 In a typical test driven development cycle, tests are run constantly --- both by the developers and the continuous integration build agents. We could gather test run data from the tests run by developers themselves by sending the results over the network to the Splatter CI plugin.
 
 \begin{itemize}
-	\item This would require 'noise' reduction --- developers break tests locally often, we wouldn't want to adjust our flakiness values based on changes that never make it onto the development branch.
-	\item It should be easy to 'opt-out' of this --- our instrumentation does affect build times and developers may not appreciate the extra overhead!
+	\item This would require {\lq}noise{\rq} reduction --- developers break tests locally often, we wouldn't want to adjust our flakiness values based on changes that never make it onto the development branch.
+	\item It should be easy to {\lq}opt-out{\rq} of this --- our instrumentation does affect build times and developers may not appreciate the extra overhead!
 \end{itemize}
 
 \subsubsection{Commit blaming}
 
-Our CI plugin could display an estimated commit 'blame' range, along with relevant build numbers if a previously stable test is suddenly observed to be flaky.
+Our CI plugin could display an estimated commit {\lq}blame{\rq} range, along with relevant build numbers if a previously stable test is suddenly observed to be \flaky{}.
 
 \subsubsection{Retiring trusted tests}
 
-Projects with a huge number of tests face lengthy build times. It may be in a teams' interest to remove trusted tests from the per-commit build and instead run them on a seperate cycle to tighten the immediate feedback loop. We could provide a listing of 'most trusted' tests (\ie, tests that have exhibited no flakiness over a significant period).
+Projects with a huge number of tests face lengthy build times. It may be in a teams' interest to remove trusted tests from the per-commit build and instead run them on a seperate cycle to tighten the immediate feedback loop. We could provide a listing of {\lq}most trusted{\rq} tests (\ie, tests that have exhibited no flakiness over a significant period).
 
 \subsubsection{Porting the plugin}
 

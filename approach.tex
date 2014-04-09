@@ -2,27 +2,27 @@
 \label{sec:approach}
 
 
-\subsection{Fixing flaky tests}
+\subsection{Fixing \flaky{} tests}
 
 \todo{Have a comparison between the results gathered normally (logs + assertion failure/stacktrace + screenshot) and heisentest (JSON logs).There are strong ties to ‘heisenbugs’ and ‘debuggability’ here. Perhaps get references.}
 
-Sometimes, it is not possible to fix a flaky test from the information output by the testrunner alone. Typically, the information includes logs, an assertion failure message and/or a stack trace. Applications with a user interface may also provide a number of screenshots. Often, a developer will have to manually gather information to build up an understanding of the intended flow vs. the actual flow on failing runs. For flaky tests with a low failure rate, this can be a painstaking and time-consuming process. Indeed, if the flaky test is a timing based issue, attaching a debugger may cause the test to pass indefinitely.
+Sometimes, it is not possible to fix a \flaky{} test from the information output by the testrunner alone. Typically, the information includes logs, an assertion failure message and/or a stack trace. Applications with a user interface may also provide a number of screenshots. Often, a developer will have to manually gather information to build up an understanding of the intended flow vs. the actual flow on failing runs. For \flaky{} tests with a low failure rate, this can be a painstaking and time-consuming process. Indeed, if the \flaky{} test is a timing based issue, attaching a debugger may cause the test to pass indefinitely.
 
 \todo{Have a comparison between the results gathered normally (logs + assertion failure/stacktrace + screenshot) and heisentest (JSON logs).}
 
 
 \subsection{Aims and Goals}
 
-Flaky tests are hard to fix. In general, there are three stages during which we may intervene:
+\flaky{} tests are hard to fix. In general, there are three stages during which we may intervene:
 \begin{enumerate}
 	\item Identification - which tests in the suite are flaky?
-	\item Prioritisation - why of the flaky tests should we fix first?
+	\item Prioritisation - why of the \flaky{} tests should we fix first?
 	\item Resolution - what information can we gather to speed the resolution of a test?
 \end{enumerate}
 
 Ultimately, the final stage is the target. In order to tackle the problem practically, knowledge gathered at each stage must be combined and considered.
 
-Existing tools (Shazam’s Flaky Test Monitor included) provide answers to 1. This information can be used to inform manual inspection of 2. As of yet, no tool exists to tackle 3.
+Existing tools (Shazam’s \flaky{} Test Monitor included) provide answers to 1. This information can be used to inform manual inspection of 2. As of yet, no tool exists to tackle 3.
 
 In a typical software development project, continuous integration systems will be set up from the beginning. Developers write code and commit to source control. A master server will detect the change and assign one of a number of build agents (other servers with the capability to build the project(s) - virtual or otherwise) an attached job.
 
@@ -30,10 +30,10 @@ For a typical job, the chosen build agent pulls down the latest changes, compile
 
 \todo{A diagram of this flow would be nice.}
 
-It is obvious that, if we are to develop a tool to assist developers with flaky tests, we should run as part of a modular continuous integration system.
+It is obvious that, if we are to develop a tool to assist developers with \flaky{} tests, we should run as part of a modular continuous integration system.
 
 
-\subsection{Formal Definition of a Flaky Test}
+\subsection{Formal Definition of a \flaky{} Test}
 
 \theoremstyle{definition}
 \newtheorem{defn}{Definition}[section]
@@ -45,12 +45,12 @@ It is obvious that, if we are to develop a tool to assist developers with flaky 
 
 	A test case is $(\vec{i},\vec{o})$
 
-	The “fixed f” condition needs fixing. It will need to be wrt the slice from the program point at which $\vec{o}$ is generated to entry, given $\vec{i}$. In others words, it’s impact analysis. Intuitively, a test can only be flaky when its behavior is sensitive unknown inputs and not to changes to f that it, in fact, is designed to test.
+	The “fixed f” condition needs fixing. It will need to be wrt the slice from the program point at which $\vec{o}$ is generated to entry, given $\vec{i}$. In others words, it’s impact analysis. Intuitively, a test can only be \flaky{} when its behavior is sensitive unknown inputs and not to changes to f that it, in fact, is designed to test.
 
-	A \emph{flaky test case} is a test case where, for fixed $f$,
+	A \emph{\flaky{} test case} is a test case where, for fixed $f$,
 	$p(f(\vec{i} = \vec(o)) = 1 - \epsilon$
 
-	Remark: A flaky test case is an unfair coin.
+	Remark: A \flaky{} test case is an unfair coin.
 
 	Let $\vec{I}$ be the lifting of all inputs, including coin flips and environmental interactions, into a single input vector.
 
@@ -61,16 +61,16 @@ It is obvious that, if we are to develop a tool to assist developers with flaky 
 	Combined with our budget b, we can determine what values of $\epsilon$ we can afford to detect!
 \end{defn}
 
-Test suite $f$ with flaky tests $f!$.
+Test suite $f$ with \flaky{} tests $f!$.
 Budget $B_{f} = B_{6} + B_{f!} + B_{nd}$
 
 \subsection{Flakiness}
 
 \begin{quote}
-	Test failure can be modelled probailistically. A flaky test is one known to fail with low probablitiy.
+	Test failure can be modelled probailistically. A \flaky{} test is one known to fail with low probablitiy.
 \end{quote}
 
-\begin{defn}[Flaky Test]\label{def:flakytest}
+\begin{defn}[\flaky{} Test]\label{def:flakytest}
 
 
 
@@ -84,7 +84,7 @@ Each test is assigned a value in the range $[0-1]$, representing its flakiness. 
 		% See: http://www.texample.net/tikz/examples/line-plot-example/
 		\begin{tikzpicture}[thick, framed, x=6.5cm, y=1.6cm]
 			% Title
-			\draw (0.5, 1) node[above] {$\textsc{Flaky Tests}$};
+			\draw (0.5, 1) node[above] {$\textsc{\flaky{} Tests}$};
 
 			% Axis
 			\draw (0,0) -- coordinate (x axis mid) (1,0);
@@ -100,7 +100,7 @@ Each test is assigned a value in the range $[0-1]$, representing its flakiness. 
 		    \foreach \y in {0, 1}
 		    	\draw (1pt, \y) -- (-3pt, \y) node[anchor=east] {\y};
 
-			% Flaky test range
+			% \flaky{} test range
 		    \draw[<-] (0, 0.5) -- (0.4, 0.5); % Draw horizontal line
 		    \draw (0.4, 0.42) -- (0.4, 0.58); % Draw right vertical tab
 
@@ -387,7 +387,7 @@ The only real storage concern is that of the central database. But, this can be 
 
 Instrumentation adds performance overhead. In the case of a production system, this is a major problem since performance directly affects a user’s experience. Nainar and Liblit \cite{ArumugaNainar:2010:ABI:1806799.1806839} propose an adaptive bug isolation system with a performance overhead of just 1\%.
 
-In a test environment, smoothness and load times rarely matter. Of course, there are exceptions (performance regression tests, etc.), but we expect to mainly be dealing with system tests. We can safely add instrumentation and ignore performance, unless it begins to affect the thread-wise execution. If a flaky test begins consistently passing when heavily instrumented, we can simply reduce the instrumentation until the previous flaky behaviour is once again observed.
+In a test environment, smoothness and load times rarely matter. Of course, there are exceptions (performance regression tests, etc.), but we expect to mainly be dealing with system tests. We can safely add instrumentation and ignore performance, unless it begins to affect the thread-wise execution. If a \flaky{} test begins consistently passing when heavily instrumented, we can simply reduce the instrumentation until the previous \flaky{} behaviour is once again observed.
 
 \subsubsection{Adaptivity}
 

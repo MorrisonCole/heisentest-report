@@ -27,19 +27,44 @@ A good test suite achieves this by exercising discrete chunks of the program's c
 
 Anecdotally, the higher-level the behaviour being tested, the more likely a test is to fail due to inputs unaccounted for. Tests that exercise valid code can fail unexpectedly and unpredictably.
 
-Developers working with such tests face a dilemma --- \'surpress\' the tests until they are fixed, or acknowledge them but keep them active, potentially randomly breaking the build from time to time until they are fixed.
+Developers working with such tests face a dilemma --- {\lq}suppress{\rq} the tests until they are fixed, or acknowledge them but keep them active, potentially randomly breaking the build from time to time until they are fixed.
 
 Since the tests exercise behaviour which is needed (and indeed, works as intended), both solutions are workarounds until the tests can be resolved.
 
-\subsection{Why are \flaky tests a problem?}
+\subsection{What is a \flaky{} test?}
 
-Consider a project with small team of developers. They write Acceptance, Integration and Unit tests to cover every feature they add to the software. Their test suite $T$, is made up of tests $t_{0}, t_{1}, \dots, t_{n}$. On average, the tests take 20 minutes to run and each developer is expected to run the entire suite locally before pushing a new feature to the development branch. The test suite contains a number of \flaky Acceptance tests $F$ written $f_{0}, f_{1}, \dots, f_{k} \text{, where $k \leq n$}$ that the team are aware of. $F \subseteq T$.
+\flaky{} tests tend to occur on the system level. They do not often manifest in unit or integration tests since these tests usually simply call a function with some parameters and check its output against some expected value in isolation from the system as a whole (or, in the case of integration - against some external service).
+
+Acceptance tests, on the other hand, target the software as a whole. Developers of software for mobile Operating Systems employ instrumentation to simulate user input and check for the presence of elements in the user interface. Essentially, a test can be distilled down to:
+\begin{verbatim}
+  Given I am in this state (arrange)
+  When I do this (act)
+  Then I am in this state (assert)
+\end{verbatim}
+
+\flaky{} tests are commonly caused by timing issues. The action step requires the arrange step to have completed before it runs; there must be some kind of wait and check mechanism to block further progress until the arrange step has finished.
+
+For example, consider a test run that initially enters state $S_{1}$ (arrange), where $S_{1}$ is a vector $(x_{1},x_{2},x_{3})$. Action $A$ transforms $S_1$ to $S_2$ --- $(x_{1},x_{2},x_{3})$. Finally, the assertion checks that the current state is equal to $S_2$.
+
+If each value of the vector $S_{1}$ is loaded asynchronously, the test must check for each of the vectors values to be correct before $A$ is applied. If the test checked only the first two values, the action would complete only if the third element happened to have loaded before the values in position 1 and 2.
+
+In practice, with hundreds of user interface elements, these types of problems can become quite prevalent. Often, the solutions are obvious, but sometimes there is not enough information to solve the problem.
+
+
+\subsection{This is a real problem}
+
+\todo{Heisentest is an answer to a real problem faced by myself and members of my team at Shazam. Despite limited personal experience in industry, it is obvious that others face the same issue. Mozilla, Shazam and Chromium have known \flaky{} tests. Android even includes an @\flaky{} annotation in its testing kit for automatic rerunning of known troublesome tests.}
+
+
+\subsection{Why are \flaky{} tests a problem?}
+
+Consider a project with small team of developers. They write Acceptance, Integration and Unit tests to cover every feature they add to the software. Their test suite $T$, is made up of tests $t_{0}, t_{1}, \dots, t_{n}$. On average, the tests take 20 minutes to run and each developer is expected to run the entire suite locally before pushing a new feature to the development branch. The test suite contains a number of \flaky{} Acceptance tests $F$ written $f_{0}, f_{1}, \dots, f_{k} \text{, where $k \leq n$}$ that the team are aware of. $F \subseteq T$.
 
 A developer is working on a new feature and has written an Acceptance test to ensure it works as expected. The Acceptance test passes, so the developer prepares to push the code onto the development branch. Before doing so, the developer must run the test suite locally to ensure the work did not break any existing functionality. The test suite runs, but 4 of the Acceptance tests --- $t_{3}, t_{7}, t_{9} \text{ and } t_{21}$ --- fail.
 
 The developer is sure they’ve seen $t_{3}, t_{7} \text{ and } t_{9}$ fail randomly before, i.e. $t_{3}, t_{7}, t_{9} \in F$. After checking with colleagues, they assume that $t_{21} \in F$, since it appears to be unrelated to the area of code they’ve been working on. The developer pushes the code.
 
-In this example, $t_{21}$ was not actually \flaky, but had been broken by the developers changes. It is important to recognise that, whilst in some situations it may be possible to run the test suite multiple times to be sure, sometimes this is impractical. Test suites may take hours, days or even months to run in their entirety, and may contain many \flaky tests.
+In this example, $t_{21}$ was not actually \\flaky{}, but had been broken by the developers changes. It is important to recognise that, whilst in some situations it may be possible to run the test suite multiple times to be sure, sometimes this is impractical. Test suites may take hours, days or even months to run in their entirety, and may contain many \flaky{} tests.
 
 After the code is pushed, a different set of tests fail on the build server: $t_{3}, t_{7} \text{ and } t_{9}$ are now passing, but $t_{21}$ has once again failed. In this case, it is obvious that $t_{21}$ must be investigated, so the developer’s changeset is rolled back whilst they fix the change.
 
@@ -47,25 +72,28 @@ This may appear to be workable, but time was almost certainly wasted. The develo
 
 When a subset of tests fail randomly each time the suite is run, it is all too easy for developers to begin ignoring real failures if and when they do occur.
 
-\subsection{Living with \flaky tests}
 
-When the latest changes are due to be released, the \flaky tests must be considered. Normally, a particular software iteration would be held back until all tests pass, but with \flaky tests thrown into the mix - it may take multiple runs before all the tests pass at once - again, adding overhead.
+\subsection{Living with \flaky{} tests}
 
-The set of \flaky tests cause confusion, obscure real failures and erode trust.
+When the latest changes are due to be released, the \flaky{} tests must be considered. Normally, a particular software iteration would be held back until all tests pass, but with \flaky{} tests thrown into the mix - it may take multiple runs before all the tests pass at once - again, adding overhead.
 
-\subsection{Why not just ‘suppress’ the \flaky tests?}
+The set of \flaky{} tests cause confusion, obscure real failures and erode trust.
 
-Informally, let a valid test be a test that asserts that some unit of the application behaves as expected. A redundant test might check behaviour that is not required, or is tested thoroughly elsewhere. Assuming all tests in a suite are valid, then any \flaky tests in the suite are also valid. A \flaky test may cover behaviour that is not tested elsewhere. Suppressing (temporarily retiring) the \flaky test may do more harm than good, since the behaviour it previously tested will now be go completely unchecked unless manually tested upon each commit.
 
-\subsection{Fixing \flaky tests --- the manual way}
+\subsection{Why not just ‘suppress’ the \flaky{} tests?}
 
-There are many ways to fix a \flaky test. A developer relies on experience and intuition to determine the best approach.
+Informally, let a valid test be a test that asserts that some unit of the application behaves as expected. A redundant test might check behaviour that is not required, or is tested thoroughly elsewhere. Assuming all tests in a suite are valid, then any \flaky{} tests in the suite are also valid. A \flaky{} test may cover behaviour that is not tested elsewhere. Suppressing (temporarily retiring) the \flaky{} test may do more harm than good, since the behaviour it previously tested will now be go completely unchecked unless manually tested upon each commit.
+
+
+\subsection{Fixing \flaky{} tests --- the manual way}
+
+There are many ways to fix a \flaky{} test. A developer relies on experience and intuition to determine the best approach.
 
 \subsubsection{Common causes of flakiness}
 
 First, let us consider common causes of flakiness:
 \begin{itemize}
-	\item Timeouts --- issues can occur when 'driving' the application from the outside. Often, callbacks for actions are not available, so a test may be forced to wait on, for example, the presence of some element in the UI. If the wait time expires before the element is detected, the test will fail.
+	\item Timeouts --- issues can occur when {\lq}driving{\rq} the application from the outside. Often, callbacks for actions are not available, so a test may be forced to wait on, for example, the presence of some element in the UI. If the wait time expires before the element is detected, the test will fail.
 	\item Memory usage --- it is not uncommon for a constrained process to run out of memory. Again, this could be caused by operating system priorities unrelated to the test itself. It's obvious \textit{when} this has happened, but not \textit{why}.
 	\item External services --- if a third party service falls over during a test run that depends on it, tests may fail.
 	\item Left-over state --- static state can affect the execution of a test. If it is not cleaned up and reset, it can cause strange behaviour. This includes things like external databases, configuration files \etc.
@@ -76,51 +104,49 @@ Each developer familiar with these issues may employ techniques and patterns to 
 
 \subsubsection{Identification}
 
-\flaky tests are often split out into a seperate suite (a practice is known as 'quarantining'), so that developers may continue to receive the benefits of a fast feedback cycle from the stable ones. This is a reasonable, although it is the first step on a slippery slope to complete test suite erosion.
+\flaky{} tests are often split out into a seperate suite (a practice is known as {\lq}quarantining{\rq}), so that developers may continue to receive the benefits of a fast feedback cycle from the stable ones. This is a reasonable, although it is the first step on a slippery slope to complete test suite erosion.
 
-But, this is jumping ahead. First, \flaky tests must be identified. How does a developer know if a failure was genuine (\ie, failed due to a change in behaviour it was designed to test) or unexpected?
+But, this is jumping ahead. First, \flaky{} tests must be identified. How does a developer know if a failure was genuine (\ie, failed due to a change in behaviour it was designed to test) or unexpected?
 
-Manual inspection of the related changeset and failure stacktrace is often sufficient. A change in an area of the application (seemingly) entirely unrelated to the observed test failure may indicate that the failure was indeed unrelated and hence, the test \flaky. But, it is imprudent to operate on this assumption alone. The test will then need to be re-run (either as part of the suite on CI, or in isolation by the investigating developer locally). If the test continues to fail, the change was clearly related. If not, the test is \flaky.
+Manual inspection of the related changeset and failure stacktrace is often sufficient. A change in an area of the application (seemingly) entirely unrelated to the observed test failure may indicate that the failure was indeed unrelated and hence, the test \\flaky{}. But, it is imprudent to operate on this assumption alone. The test will then need to be re-run (either as part of the suite on CI, or in isolation by the investigating developer locally). If the test continues to fail, the change was clearly related. If not, the test is \\flaky{}.
 
-The problem with this approach is that humans have limited memory. If the \flaky test is not fixed as soon as it is identified (or moved to a quarantine), the test can continue to cause problems further down the line. In fact, it can be useful to examine test failure over time --- trends in failure may stand out.
+The problem with this approach is that humans have limited memory. If the \flaky{} test is not fixed as soon as it is identified (or moved to a quarantine), the test can continue to cause problems further down the line. In fact, it can be useful to examine test failure over time --- trends in failure may stand out.
 
-A couple of projects have tackled this preliminary step of \flaky test identification; namely, the Chromium Flakiness Dashboard\cite{flakinessDashboard}, Shazam’s internal 'Flaky Test Monitor' and various Jenkins plugins. These tools typically run as a continuous integration step. Some simply attach a value to each test representing its likelihood of failure during any given test run. Others also expose statistics such as \emph{stability($N$)} (the tests chance of failure across the previous $N$ runs), successful runs since last failure and first known failure. Both the Shazam Android and Chromium dashboards include a graphical matrix view for visual detection of trends, displaying tests and their binary results over time.
+A couple of projects have tackled this preliminary step of \flaky{} test identification; namely, the Chromium Flakiness Dashboard\cite{flakinessDashboard}, Shazam’s internal {\lq}\flaky{} Test Monitor{\rq} and various Jenkins plugins. These tools typically run as a continuous integration step. Some simply attach a value to each test representing its likelihood of failure during any given test run. Others also expose statistics such as \emph{stability($N$)} (the tests chance of failure across the previous $N$ runs), successful runs since last failure and first known failure. Both the Shazam Android and Chromium dashboards include a graphical matrix view for visual detection of trends, displaying tests and their binary results over time.
 
 \subsubsection{Prioritisation}
 
-With a host of known \flaky tests, either in quarantine or in the main test suite, how does a developer decide which tests to fix first? There are several obvious factors which may affect prioritisation, including:
+With a host of known \flaky{} tests, either in quarantine or in the main test suite, how does a developer decide which tests to fix first? There are several obvious factors which may affect prioritisation, including:
 \begin{itemize}
-	\item Failure type --- multiple \flaky tests exhibiting similar problems may be tackled as a group. Certain failure types may be considered more critical than others.
-	\item Age --- a \flaky test that has been known to be \flaky for a long period may be prioritised over more recent additions, or vice versa.
+	\item Failure type --- multiple \flaky{} tests exhibiting similar problems may be tackled as a group. Certain failure types may be considered more critical than others.
+	\item Age --- a \flaky{} test that has been known to be \flaky{} for a long period may be prioritised over more recent additions, or vice versa.
 	\item \todo{I must be missing something here!}
 \end{itemize}
 
-In the end, it is up to the development team to prioritise the \flaky tests, if at all. With this in mind, the most useful thing we could do is expose information to aid the decision making process. Providing the ability to group and sort \flaky tests by the attributes listed above would no doubt be valuable. In fact, this was an initial goal of the paper, but it was sidelined in order to focus on the instrumentation.
+In the end, it is up to the development team to prioritise the \flaky{} tests, if at all. With this in mind, the most useful thing we could do is expose information to aid the decision making process. Providing the ability to group and sort \flaky{} tests by the attributes listed above would no doubt be valuable. In fact, this was an initial goal of the paper, but it was sidelined in order to focus on the instrumentation.
 
 \subsubsection{Resolution}
 
-A common approach when fixing any bug (not just a \flaky test) is to step through the code manually with the assistance of a debugger. By examining execution flow and program state over one or more runs, a developer can often pinpoint the cause or a related area of code. Debugging a \flaky acceptance test in this way is often tedious, fruitless and time-consuming. Since an acceptance test must compile and run the entire application, average run times can be extremely lengthy. If the test must constantly be re-run in order to see it fail, this time quickly adds up. What's more, attaching a debugger can affect thread interleaving, potentially obscuring previously observed non-deterministic behaviour.
+A common approach when fixing any bug (not just a \flaky{} test) is to step through the code manually with the assistance of a debugger. By examining execution flow and program state over one or more runs, a developer can often pinpoint the cause or a related area of code. Debugging a \flaky{} acceptance test in this way is often tedious, fruitless and time-consuming. Since an acceptance test must compile and run the entire application, average run times can be extremely lengthy. If the test must constantly be re-run in order to see it fail, this time quickly adds up. What's more, attaching a debugger can affect thread interleaving, potentially obscuring previously observed non-deterministic behaviour.
 
-\subsection{What is a \flaky test?}
+An experienced developer may simply inspect the test in question to determine the cause. The success of this method depends on the complexity and (likely) familiarity of the bug.
 
 
-\flaky tests tend to occur on the system level. They do not often manifest in unit or integration tests since these tests usually simply call a function with some parameters and check its output against some expected value in isolation from the system as a whole (or, in the case of integration - against some external service).
+\subsection{An automatic assistant}
 
-Acceptance tests, on the other hand, target the software as a whole. Developers of software for mobile Operating Systems employ instrumentation to simulate user input and check for the presence of elements in the user interface. Essentially, a test can be distilled down to:
-\begin{verbatim}
-  Given I am in this state (arrange)
-  When I do this (act)
-  Then I am in this state (assert)
-\end{verbatim}
+We know why automated tests are useful, what a \flaky{} test is and why they are costly. What can we do to aid the process of resolution?
 
-\flaky tests are commonly caused by timing issues. The action step requires the arrange step to have completed before it runs; there must be some kind of wait and check mechanism to block further progress until the arrange step has finished.
+We have seen that tools exist to speed the identification of \flaky{} tests. Some of these tools expose information that can be useful in prioritisation, but none touch resolution. This is the interesting part.
 
-For example, consider a test run that initially enters state $S_{1}$ (arrange), where $S_{1}$ is a vector $(x_{1},x_{2},x_{3})$. Action $A$ transforms $S_1$ to $S_2$ --- $(x_{1},x_{2},x_{3})$. Finally, the assertion checks that the current state is equal to $S_2$.
+As we've seen, a developer will often resort to a manual execution with the help of a debugger, to gather information on program state with the aim of identifying the bug (or areas related to it). We could, with the assistance of instrumentation, gather this information ahead of time. If we knew a test to be \flaky{}, we could attach instrumentation to automatically gather and save sections of program state. Using Adaptive Bug Isolation techniques, we could output a ranked list of strongly associated program statements.
 
-If each value of the vector $S_{1}$ is loaded asynchronously, the test must check for each of the vectors values to be correct before $A$ is applied. If the test checked only the first two values, the action would complete only if the third element happened to have loaded before the values in position 1 and 2.
 
-In practice, with hundreds of user interface elements, these types of problems can become quite prevalent. Often, the solutions are obvious, but sometimes there is not enough information to solve the problem.
+\subsection{Application at Shazam}
 
-\subsection{This is a real problem}
+Of the teams at Shazam, the Android project arguably has the largest number of target environments. The application is deployed across hundreds of devices differing in operating system version, form factor and hardware specification. This diversity combined with the relative youth of the platform has been the cause of many \flaky{} tests.
 
-\todo{Heisentest is an answer to a real problem faced by myself and members of my team at Shazam. Despite limited personal experience in industry, it is obvious that others face the same issue. Mozilla, Shazam and Chromium have known \flaky tests. Android even includes an @Flaky annotation in its testing kit for automatic rerunning of known troublesome tests.}
+The Android team at Shazam use a standard workflow and are able to deploy frequently. Code is eventually committed to a master branch where it is picked up by a continuous integration server and built. Tests (Unit, Integration and Acceptance) are run on an array of physical Android devices connected to build agents. \todo{Mention built times? Shazam's permission.}.
+
+Instrumenting Android applications is possible, but less well-tested than Java. Android specifies its own virtual machine, Dalvik\cite{dalvik} --- a register-based implementation designed for resource constrained devices.
+
+Two notable tools facilitate the manipulation of Dalvik bytecode; ASMDEX\cite{asmDex} and Soot\cite{vall99soot}.
