@@ -11,21 +11,28 @@
 % 	\end{itemize}
 % \end{mdframed}
 
-\subsection{Motivation}
+% Software is ubiquitous. Deployments target the global stage, aiming to run across countless devices, Operating Systems, countries, languages and time zones. Alongside this expansion of target platforms, iteration cycle times are being ever-reduced, with teams commonly releasing new code into production environment multiple times per week. Developers have long employed automated testing to reduce risk and increase quality in the face of challenges raised by this broading scale.
 
-Software, more than ever, is ubiquitous. Deployments target the global stage, aiming to run across countless devices, Operating Systems, countries, languages and time zones. Alongside this expansion of target platforms, iteration cycle times are being ever-reduced, with teams commonly releasing new code into production environment multiple times per week. Developers have long employed automated testing to reduce risk and increase quality in the face of challenges raised by this broading scale.
+Software today is ubiquitous. With applications targeting a diverse set of environments and platforms, developers commonly turn to automated testing in the hopes of reducing defects. Each test is viewed as a trust mechanism. In theory, a test allows changes --- functional or otherwise --- to be made to the code under test with the confidence that existing behaviour will not be changed. Test suites are run regularly as part a tightly controlled feedback loop; unintended regressions are brought to the developers attention by one or more failing tests. Despite adherance to widely-regarded best practices, automated tests are ultimately just more software, and just as software is rarely bug free, automated tests are often plagued with bugs of their own.
 
-Tests can be divided into three groups, each of which target an increasingly abstract layer of an application \citep[see][Chapter~16]{cohn2009succeeding}. At the lowest level, we have Unit tests, which verify the behaviour of functions through their public interfaces. Service (also known as Integration) tests target a layer above, focusing on the interactions of groups of subsystems and their responses to various inputs. Finally, at the highest level, we have User Interface (or 'Acceptance') tests, which verify application functionality as a whole system.
+\todo{A set of tests displaying seemingly random failure can devalue an entire suite, so it is of utmost importance that developers fix such issues as they arise.Since the test suite is not a user facing feature and can quickly become a cost rather than a benefit.}
 
-The further we travel up these layers, the more environmental factors we introduce. In our experience, this leads to non-determinism. Well written Unit tests are almost guaranteed to be deterministic since they run in isolation. Integration tests may depend on an external service (e.g., a database), so may sometimes see random failure. Most problematic are the Acceptance tests, which run on the complete system. The potential for unexpected behaviour here is significant. Consider an Android UI test that loads an application, selects a button and checks that a page is displayed. The test may run as expected many times, but suddenly fail with no related code changes. It could be due to anything from threading to non-standard operating system behaviour (for example, a background task could have impacted the start up time).
+\todo{A developer given the task of fixing a bug in an automated test faces a similar set of challenges as if they were to fix a bug in the application itself.}
 
-An automated test suite is essentially a trust mechanism. It allows changes --- functional or otherwise --- to be made with the confidence that existing behaviour will not be changed. Any unintended regressions are brought to the developers attention by one or more failing tests.
 
-Non-deterministic tests are by definition unreliable and cannot be trusted. In our experience, within the context of real software development projects developers quickly become frustrated when dealing with non-deterministic tests and begin to rely on instinct in order to stay productive. In other words, they lose confidence in the test suite. It is essential to maintain a reliable test suite for it to remain a beneficial part of a teams' workflow.
+\subsection{The Testing Pyramid}
+\label{sec:the_testing_pyramid}
+
+Tests can be divided into three groups, each of which target an increasingly abstract layer of an application \citep[see][Chapter~16]{cohn2009succeeding}. At the lowest level, we have \emph{unit} tests, which verify the behaviour of functions through their public interfaces. \emph{Service} (or \emph{integration}) tests target a layer above, focusing on the interactions of groups of subsystems and their responses to various inputs. Finally, at the highest level, we have \emph{user interface} (or \emph{acceptance}) tests, which verify the functionality of an application as a whole system.
+
+The further we travel up these layers, the more environmental factors we introduce. Unit tests target sections of code in isolation, so their outcome is almost guaranteed to depend only on the behaviour they are designed to test. Integration tests may depend on an external service (\eg, a database), so may sometimes see unexpected failure. Most vulnerable are acceptance tests since they run on a complete system. An acceptance test's behaviour could be altered by any number of environmental events or characteristics --- an operating system starved of memory could kill the application, or, a particularly slow start-up time could cause a timeout to occur. Later, we discuss some of the common causes of flakiness in detail.
+
+\todo{Non-deterministic tests are by definition unreliable and cannot be trusted. In our experience, within the context of real software development projects developers quickly become frustrated when dealing with non-deterministic tests and begin to rely on instinct in order to stay productive. In other words, they lose confidence in the test suite. It is essential to maintain a reliable test suite for it to remain a beneficial part of a teams' workflow.}
+
 
 \subsection{Shazam}
 
-Shazam is a thriving software startup focused on audio identification with a truly global focus. As of \today, Shazam reports more than 85 million active users spanning 200 countries and 33 languages across the Android, iOS, Windows Phone and BlackBerry platforms. It is essential that the software Shazam produces is reliable, performant and to-specification. As a technology-centric company with a global focus, they employ modern development practices to ensure these requirements are able to be met constantly.
+Shazam is a thriving software startup focused on audio identification with a global focus. As of \today, Shazam reports more than 85 million active users spanning 200 countries and 33 languages across the Android, iOS, Windows Phone and BlackBerry platforms. It is essential that the software Shazam produces is reliable, performant and to-specification. As a technology-centric company with a global focus, they employ modern development practices to ensure these requirements are able to be met constantly.
 
 Development at Shazam is approached in a style that can be compared to the Test Driven Development described by \citet*{freeman2009growing}. Essentially, a programmer tasked with implementing a new feature will first write a failing Acceptance test to cover the feature. They then use this test to drive the specification and implementation of progressively lower level components (each thoroughly tested) until the original test passes.
 
@@ -35,7 +42,9 @@ As would be expected, the Android team faces an growing number of tests as the a
 
 Like any real world project with a significant test suite, Shazam on Android is no stranger to non-deterministic tests. Over the period \todo{length in terms of build history} during which we collected build results from their codebase, we saw $N$ tests fail unexpectedly.
 
-\subsection{\splatter}
+\subsection{Automating the Diagnostic Process}
+
+Our goal is to minimise the need for developer intervention.
 
 We focus on developing a practical tool --- \emph{\splatter} --- to reduce the cost of non-deterministic test cases. Ultimately, each test case must be investigated and fixed by a developer. We acknowledge this and focus on gathering and analyzing information much in the same way as a developer would; autonomously and ahead of time.
 

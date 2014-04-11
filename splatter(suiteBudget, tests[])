@@ -1,0 +1,42 @@
+splatter(suiteBudget, tests[])
+	flakinessThreshold = 0.4
+	targetedBudget = suiteBudget * 0.75
+	exploratoryBudget = suiteBudget * (1 - 0.75)
+
+	calculateAllowedBudgets(suiteBudget, tests)
+
+	for (test in tests)
+		instrument(test)
+
+calculateAllowedBudgets(targetedBudget, exploratoryBudget, tests[])
+	// calculateFlakiness returns the total flakiness
+	totalFlakiness = calculateFlakiness(tests)
+
+	tests.sortByFlakinessDescending
+
+	// First allocate targeted budget to the \flaky{} tests
+	for test in tests:
+		test.allowedBudget = calculateTestTargetedBudget(test, totalFlakiness, targetedBudget)
+
+	// Finally allocate spare 'exploratory' budget randomly
+	tests.shuffle
+	iterator = tests.getIterator
+
+	while (exploratoryBudget > 0 && iterator.hasNext)
+		currentTest = tests.getNext
+		exploratoryBudget -= calculateTestExploratoryBudget(test, exploratoryBudget)
+
+
+// Each test gets a portion of the targeted budget based on its relative flakiness.
+calculateTestTargetedBudget(test, totalFlakiness, totalBudget)
+	budget = (test.flakiness / totalFlakiness) * totalBudget
+	return minimum(testTargetedBudget, maximumTestBudget)
+
+calculateTestExploratoryBudget(test, exploratoryBudget)
+	// We do not provide additional budget to tests that have already received some.
+	if (test.allocatedBudget > 0)
+		return 0
+
+	test.allocatedBudget = minimum(exploratoryBudget, maximumTestBudget)
+
+	return test.allocatedBudget

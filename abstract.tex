@@ -11,11 +11,22 @@
 % 	\end{itemize}
 % \end{mdframed}
 
-We present a framework for identifying and encouraging the resolution of non-deterministic test cases in a test suite. Random test failure is expensive in terms of trust and confidence. By automatically gathering relevant debugging information for problematic tests ahead of developer intervention, we hope to reduce this cost in practice.
+A flaky test case is one whose outcome is sensitive to some unknown input. We present a framework for identifying and accelerating the resolution of flaky test cases in a test suite.
 
-\todo{We evaluate the state of the industry with respect to automated testing and non-deterministic tests and formally define the problem. Open source projects with \flaky{} tests + Shazam.}
+The framework operates on a continuous lifecycle. To begin, each test's probability of failure is calculated. Then, each test is adaptively instrumented with respect to a budget --- state-logging probes are placed in choice locations. Finally, aggregated data is analysed to identify predicates strongly associated with test failure. At each stage, the framework can work autonomously or with input from a developer.
 
-Our approach enriches previously developed statistical debugging techniques and apply them in a context where information is cheap and freely available. Our framework operates on a continuous lifecycle made up of three phases. Firstly, the test's probability of failure is evaluated. Then, the test is adaptively instrumented and run as part of the suite. Finally, the collected information is analysed to identify predicates strongly associated with test failure.
+\todo{
+	We present a case study of the Android team and their codebase at Shazam.
+
+	We also formulate some contextual research questions:
+
+	\begin{itemize}
+		\item Why are flaky tests a problem?
+		\item What are the costs of a flaky test?
+	\end{itemize}
+}
+
+Our approach applies bug isolation techniques in an environment free from previously enfeebling characteristics, allowing us to record a rich set of program state.
 
 We discuss and document the implementation of a working proof of concept and evaluate its application at a modern startup, Shazam.
 
