@@ -40,15 +40,16 @@ Target platforms are developed by dedicated teams --- Android and iOS are the la
 
 As would be expected, the Android team faces an growing number of tests as the application is developed. \todo{Ask Shazam if we can use numbers, or at least an accurate trend graph to illustrate this point.} These tests give the team the confidence to deploy the application across a huge number of devices, each differing in manufacturer, hardware, operating system, API version, form factor and screen size. Today, the Android application is covered by $N$ \todo{Shazam's permission for numbers} Acceptance level tests, as well as a host of Integration and Unit tests.
 
-Like any real world project with a significant test suite, Shazam on Android is no stranger to non-deterministic tests. Over the period \todo{length in terms of build history} during which we collected build results from their codebase, we saw $N$ tests fail unexpectedly.
+Like any real world project with a significant test suite, Shazam on Android is no stranger to flaky tests. Over the period \todo{length in terms of build history} during which we collected build results from their codebase, we saw $N$ tests fail unexpectedly.
+
 
 \subsection{Automating the Diagnostic Process}
 
-Our goal is to minimise the need for developer intervention.
+A test suite is not a user facing feature. Our goal is automate as much of the process for fixing a flaky test as possible, freeing developers to spend time developing the software itself rather than debugging tests that are in fact intended to speed up the development process. Ultimately, each test case must be investigated and fixed by a developer, but as we will show, much of the legwork can be automated.
 
-We focus on developing a practical tool --- \emph{\splatter} --- to reduce the cost of non-deterministic test cases. Ultimately, each test case must be investigated and fixed by a developer. We acknowledge this and focus on gathering and analyzing information much in the same way as a developer would; autonomously and ahead of time.
+The tool we propose --- \emph{\splatter} --- gathers and analyses information much in the same way as a developer would. First, we identify the flaky tests in a test suite. Then, we employ techniques similar to those discussed by \citet{ArumugaNainar:2010:ABI:1806799.1806839} to gather relevant debugging information over a series of test runs. Finally we analyze the gathered data and identify predicates strongly associated with test failure. Our tool takes advantage of the continuous integration environment, gathering data each time an associated test suite is run.
 
-First, we identify non-deterministic tests in a test suite; we call these \textit{\flaky{} tests}. Then, we employ techniques similar to those discussed by \citet{ArumugaNainar:2010:ABI:1806799.1806839} to gather relevant debugging information over a series of test runs. Finally we analyze the gathered data and identify predicates strongly associated with test failure. Our tool takes advantage of the continuous integration environment, always running and constantly improving its models.
+Running as a continuous integration step is a natural application. For one, test suites are run as continuous integration steps themselves. In addition, we want to be as transparent as possible.
 
 One of the primary initial goals of this paper was to create a continuous integration plugin to present the data gathered during the identification of the \flaky{} tests. As we researched the area, we realised that the indentification of \flaky{} tests is the most well-covered and least interesting area. The more experimental and relatively untouched area dealing with adaptive instrumentation and analysis of collected information eventually became our primary focus.
 

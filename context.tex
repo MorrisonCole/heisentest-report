@@ -132,7 +132,7 @@ In the end, it is up to the development team to prioritise the \flaky{} tests, i
 
 \subsubsection{Resolution}
 
-A common approach when fixing any bug (not just a \flaky{} test) is to step through the code manually with the assistance of a debugger. By examining execution flow and program state over one or more runs, a developer can often pinpoint the cause or a related area of code. Debugging a \flaky{} acceptance test in this way is often tedious, fruitless and time-consuming. Since an acceptance test must compile and run the entire application, average run times can be extremely lengthy. If the test must constantly be re-run in order to see it fail, this time quickly adds up. What's more, attaching a debugger can affect thread interleaving, potentially obscuring previously observed non-deterministic behaviour.
+A common approach when fixing any bug (not just a \flaky{} test) is to step through the code manually with the assistance of a debugger. By examining execution flow and program state over one or more runs, a developer can often pinpoint the cause or a related area of code. Debugging a \flaky{} acceptance test in this way is often tedious, fruitless and time-consuming. Since an acceptance test must compile and run the entire application, average run times can be extremely lengthy. If the test must constantly be re-run in order to see it fail, this time quickly adds up. What's more, attaching a debugger can affect thread interleaving, potentially obscuring previously observed flaky behaviour.
 
 An experienced developer may simply inspect the test in question to determine the cause. The success of this method depends on the complexity and (likely) familiarity of the bug.
 
