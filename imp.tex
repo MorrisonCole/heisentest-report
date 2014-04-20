@@ -26,16 +26,16 @@ The Jenkins plugin is a wrapper that manages the storage of the test results and
 
 \subsection{Android Instrumentation}
 
-The repository is made up of a few projects. Figure \ref{fig:repo_structure} shows an overview of the structure and key submodules.
+The Heisentest Splatter repository\cite{heisentestInstrumentation} is made up of a few modules. Figure \ref{fig:repo_structure} shows an overview of the structure and key submodules.
 
 \begin{figure}[h]
     \dirtree{%
     .1 heisentest-splatter.
-    .2 dex-generator\DTcomment{A basic Android application from which ASMDEX visitor code is generated}.
+    .2 dex-generator\DTcomment{An Android application from which ASMDEX visitor code is generated}.
     .2 dexifier\DTcomment{A Java command line tool that generates ASMDEX visitor code given a {\tt .apk}}.
     .2 skeleton-android-app\DTcomment{A basic Android application, with Espresso\cite{espresso}-based tests}.
-    .2 splatter-instrumentation\DTcomment{Java command line tool responsible for the actual instrumentation}.
-    .2 splatter-sdk\DTcomment{Java library that defines the {\tt @Splatter} annotation}.
+    .2 splatter-instrumentation\DTcomment{A Java command line tool responsible for the actual instrumentation}.
+    .2 splatter-sdk\DTcomment{A standalone Java library that defines the {\tt @Splatter} annotation}.
     }
 \caption{\heisentest{} module structure}
 \label{fig:repo_structure}
