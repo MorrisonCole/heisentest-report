@@ -16,7 +16,7 @@
 \end{mdframed}
 
 
-This section details the design and implementation of our proof of concept tool, as it stands so far. It is comprised of two parts: a Jenkins plugin and an Android instrumentation tool.
+This section details the design and implementation of our proof of concept tool, as it stands so far. It is comprised of two parts: a Jenkins plugin and an Android instrumentation.
 
 
 \subsection{Jenkins Plugin}
@@ -24,9 +24,24 @@ This section details the design and implementation of our proof of concept tool,
 The Jenkins plugin is a wrapper that manages the storage of the test results and associated artifacts in a HSQL database.
 
 
-\subsection{Android Instrumentation Tool}
+\subsection{Android Instrumentation}
 
-The Android instrumentation tool is a command line Java project, packaged as a \texttt{.jar}.
+The repository is made up of a few projects. Figure \ref{fig:repo_structure} shows an overview of the structure and key submodules.
+
+\begin{figure}[h]
+    \dirtree{%
+    .1 heisentest-splatter.
+    .2 dex-generator\DTcomment{A basic Android application from which ASMDEX visitor code is generated}.
+    .2 dexifier\DTcomment{A Java command line tool that generates ASMDEX visitor code from an APK}.
+    .2 skeleton-android-app\DTcomment{A basic Android application, with Espresso\todo{cite}-based tests}.
+    .2 splatter-instrumentation\DTcomment{Java command line tool responsible for the actual instrumentation}.
+    .2 splatter-sdk\DTcomment{Java library that defines the {\tt @Splatter} annotation}.
+    }
+\caption{}
+\label{fig:repo_structure}
+\end{figure}
+
+The main tool --- \splatterinst{} --- is Java-based and operates from the command line.
 
 \subsubsection{Command Line Arguments}
 
@@ -51,7 +66,7 @@ We looked into Soot for its ability to generate control flow graphs (CFGs). When
 
 It is possible to generate the CFG for a method using ASMDEX alone, although it is a slightly more tricky task.
 
-In the end, although Soot was a nice tool to work with, we scrapped it for a few reasons. Firstly, the representation used by Soot is fairly incompatible with that of ASMDEX. Even if we could determine the CFG for a method using Soot, we'd have to somehow map the locations to our ASMDEX instrumentation sites --- a non-trivial task. The overhead of starting up Soot and loading an APK is significant. On an Intel\textsuperscript{\textregistered} Core\textsuperscript{\texttrademark} i7-3610QM CPU @ 2.30GHz, the the time to load the application and test APKs was 10.76 seconds. With a total time of 19.09 seconds, Soot takes up 56\% of the total instrumentation time --- and that is \textit{without} generating the CFGs for any methods. Finally, Soot requires that the Android JARs for all API levels are available on the classpath, these come to well over \SI{100}{\mega\byte}.
+In the end, although Soot was a nice tool to work with, we scrapped it for a few reasons. Firstly, the representation used by Soot is fairly incompatible with that of ASMDEX. Even if we could determine the CFG for a method using Soot, we'd have to somehow map the locations to our ASMDEX instrumentation sites --- a non-trivial task. The overhead of starting up Soot and loading an APK is significant. On an Intel\textsuperscript{\textregistered} Core\textsuperscript{\texttrademark} i7-3610QM CPU @ 2.30GHz, the the time to load the application and test APKs was 10.76 seconds. With a total time of 19.09 seconds, Soot takes up 56\% of the total instrumentation time (and that is \textit{without} generating the CFGs for any methods). In fact, with Soot removed entirely, the same instrumentation run took just 3.294 seconds --- 17\% of the previous total run time.
 
 \subsubsection{Hardcoded Strings}
 
