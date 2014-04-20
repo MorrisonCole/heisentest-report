@@ -45,6 +45,19 @@ An example usage, run from the directory containing the APKs to be instrumented,
 
 We use the Apache commons-cli library for command line argument parsing and validation.
 
+\subsubsection{Soot}
+
+We looked into Soot for its ability to generate control flow graphs (CFGs). When searching for failure-predicting predicates, we will favor locations futher down the CFG when placing probes (new or moved). Section \todo{ref} describes this process in more detail.
+
+It is possible to generate the CFG for a method using ASMDEX alone, although it is a slightly more tricky task.
+
+In the end, although Soot was a nice tool to work with, we scrapped Soot for a few reasons:
+\begin{itemize}
+    \item The representation used by Soot is fairly incompatible with that of ASMDEX. Even if we could determine the CFG for a method using Soot, we'd have to somehow map the locations to our ASMDEX instrumentation sites --- a non-trivial task.
+    \item The overhead of starting up Soot and analysing an APK is significant. \todo{how long}
+    \item We want to avoid extra dependencies if possible.
+\end{itemize}
+
 \subsubsection{Hardcoded Strings}
 
 There are various points in the application that have been hardcoded during development and never generalised. These are marked with \texttt{// TODO:} comments in the places they do exist. Obviously, these dependencies must be pulled up into the \texttt{Options} command line arguments, so that a user can modify them.
