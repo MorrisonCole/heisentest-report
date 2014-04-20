@@ -51,12 +51,7 @@ We looked into Soot for its ability to generate control flow graphs (CFGs). When
 
 It is possible to generate the CFG for a method using ASMDEX alone, although it is a slightly more tricky task.
 
-In the end, although Soot was a nice tool to work with, we scrapped Soot for a few reasons:
-\begin{itemize}
-    \item The representation used by Soot is fairly incompatible with that of ASMDEX. Even if we could determine the CFG for a method using Soot, we'd have to somehow map the locations to our ASMDEX instrumentation sites --- a non-trivial task.
-    \item The overhead of starting up Soot and analysing an APK is significant. \todo{how long}
-    \item We want to avoid extra dependencies if possible.
-\end{itemize}
+In the end, although Soot was a nice tool to work with, we scrapped it for a few reasons. Firstly, the representation used by Soot is fairly incompatible with that of ASMDEX. Even if we could determine the CFG for a method using Soot, we'd have to somehow map the locations to our ASMDEX instrumentation sites --- a non-trivial task. The overhead of starting up Soot and loading an APK is significant. On an Intel\textsuperscript{\textregistered} Core\textsuperscript{\texttrademark} i7-3610QM CPU @ 2.30GHz, the the time to load the application and test APKs was 10.76 seconds. With a total time of 19.09 seconds, Soot takes up 56\% of the total instrumentation time --- and that is \textit{without} generating the CFGs for any methods. Finally, Soot requires that the Android JARs for all API levels are available on the classpath, these come to well over \SI{100}{\mega\byte}.
 
 \subsubsection{Hardcoded Strings}
 
