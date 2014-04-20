@@ -14,19 +14,14 @@
 % 	\end{itemize}
 % \end{mdframed}
 
-
-\subsection{Why not {\lq}non-deterministic{\rq}}
-
-Flaky tests have been referred to as {\lq}non-deterministic{\rq} by practitioners. Whilst a flaky test may well be non-deterministic (\ie, it behaves differently on different runs), but may also be deterministic with respect to some unknown input. Hence, flaky seems a better choice of term.
-
-
 \subsection{Automated Testing}
+\label{sec:sec:automated_testing}
 
-Software development can be modelled as a cost optimisation problem. Product quality, delivery time and budget are the overarching concerns --- every company wants to delivery a quality product regularly within budget.
+Software development can be modelled as a cost optimisation problem: product quality, delivery time and budget are just some of the common overarching concerns.
 
 Automated testing has been adopted by developers globally, from those working in start ups to those in major corporations. As the number of environments deployments are expected to run in increases, testing all possible variants quickly becomes unworkable. It is impractical to manually test an application across hundreds of devices every time it is modified.
 
-Automated tests serve a simple purpose --- ensure the software behaves as expected, no matter the environment.
+Automated tests serve a simple purpose --- ensure the software under test behaves as expected.
 
 A good test suite achieves this by exercising discrete chunks of the program's code to ensure it behaves in some expected way. At a high level, each test can be broken into three steps - arrangement, action and assertion.
 
@@ -35,6 +30,18 @@ Anecdotally, the higher-level the behaviour being tested, the more likely a test
 Developers working with such tests face a dilemma --- {\lq}suppress{\rq} the tests until they are fixed, or acknowledge them but keep them active, potentially randomly breaking the build from time to time until they are fixed.
 
 Since the tests exercise behaviour which is needed (and indeed, works as intended), both solutions are workarounds until the tests can be resolved.
+
+A set of tests displaying seemingly random failure can devalue an entire suite, so it is of utmost importance that developers fix such issues as they arise.Since the test suite is not a user facing feature and can quickly become a cost rather than a benefit.
+
+A developer given the task of fixing a bug in an automated test faces a similar set of challenges as if they were to fix a bug in the application itself.
+
+In our experience, within the context of real software development projects developers quickly become frustrated when dealing with \flaky{} tests and begin to rely on instinct in order to stay productive. In other words, they lose confidence in the test suite. It is essential to maintain a reliable test suite for it to remain a beneficial part of a teams' workflow.
+
+
+\subsection{Why not {\lq}non-deterministic{\rq}}
+
+Flaky tests have been referred to as {\lq}non-deterministic{\rq} by practitioners. Whilst a flaky test may well be non-deterministic (\ie, it behaves differently on different runs), but may also be deterministic with respect to some unknown input. Hence, flaky seems a better choice of term.
+
 
 \subsection{What is a \flaky{} test?}
 
@@ -62,6 +69,8 @@ In practice, with hundreds of user interface elements, these types of problems c
 
 
 \subsection{Why are \flaky{} tests a problem?}
+
+A test suite is not a user facing feature.
 
 Consider a project with small team of developers. They write Acceptance, Integration and Unit tests to cover every feature they add to the software. Their test suite $T$, is made up of tests $t_{0}, t_{1}, \dots, t_{n}$. On average, the tests take 20 minutes to run and each developer is expected to run the entire suite locally before pushing a new feature to the development branch. The test suite contains a number of \flaky{} Acceptance tests $F$ written $f_{0}, f_{1}, \dots, f_{k} \text{, where $k \leq n$}$ that the team are aware of. $F \subseteq T$.
 

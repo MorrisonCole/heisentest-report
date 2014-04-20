@@ -11,9 +11,9 @@
 % 	\end{itemize}
 % \end{mdframed}
 
-A flaky test case is one whose outcome is sensitive to some unknown input. We present a framework for identifying and accelerating the resolution of flaky test cases in a test suite.
+We present a framework for identifying and accelerating the resolution of flaky test cases in a test suite. A flaky test case is one whose outcome is sensitive to some unknown input.
 
-The framework operates on a continuous lifecycle. To begin, each test's probability of failure is calculated. Then, each test is adaptively instrumented with respect to a budget --- state-logging probes are placed in choice locations. Finally, aggregated data is analysed to identify predicates strongly associated with test failure. At each stage, the framework can work autonomously or with input from a developer.
+The framework --- \emph{\splatter} --- operates on a continuous lifecycle. To begin, each test's probability of failure is calculated. Then, each test is adaptively instrumented with respect to a budget --- state-logging probes are placed in choice locations. Finally, aggregated data is analysed to identify predicates strongly associated with test failure. At each stage, the framework can work autonomously or with input from a developer.
 
 \todo{
 	We present a case study of the Android team and their codebase at Shazam.
@@ -26,8 +26,8 @@ The framework operates on a continuous lifecycle. To begin, each test's probabil
 	\end{itemize}
 }
 
-Our approach applies bug isolation techniques in an environment free from previously enfeebling characteristics, allowing us to record a rich set of program state.
+Our instrumentation approach applies bug isolation techniques in an environment free from previously \todo{enfeebling} characteristics, allowing us to record a richer set of the pieces making up a program's state. We improve probe placement by taking into account control flow graphs, loops and probe cost (overhead).
 
-We discuss and document the implementation of a working proof of concept and evaluate its application at a modern startup, Shazam.
+We discuss and document the implementation of a working proof of concept targeting the Android platform and evaluate its use on tests from the Shazam Android test suite.
 
 \end{abstract}

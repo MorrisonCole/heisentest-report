@@ -16,15 +16,49 @@
 \end{mdframed}
 
 
-\subsection{A choice of CI tools}
+This section details the design and implementation of our proof of concept tool, as it stands so far. It is comprised of two parts: a Jenkins plugin and an Android instrumentation tool.
 
-Probably the most well known and extensible continuous integration tool is Jenkins \cite{Jenkins}. Like other tools of its kind, it maintains a history of build results and their associated artifacts. A wealth of plugins provide support for testing frameworks such as JUnit, displaying individual test outcomes, stack traces and assertions in a simple interface.
 
-\subsubsection{Alternatives}
+\subsection{Jenkins Plugin}
 
-Hudson, from which the Jenkins project derives is a possibility, but has a smaller user base, so has fewer plugins, fewer commits per day etc.
+The Jenkins plugin is a wrapper that manages the storage of the test results and associated artifacts in a HSQL database.
 
-TeamCity \cite{TeamCity} has a significant community and a growing number of plugins, but is a closed source project maintained by JetBrains.
+
+\subsection{Android Instrumentation Tool}
+
+The Android instrumentation tool is a command line Java project, packaged as a \texttt{.jar}.
+
+\subsubsection{Command Line Arguments}
+
+It takes a number of arguments, all necessary for the correct running of the program. If any of the necessary arguments are missing, a usage message is printed and the program exits.
+
+The following arguments are required:
+\begin{itemize}
+    \item \texttt{applicationApk} --- The fully qualified path to the Application APK to be instrumented.
+    \item \texttt{testApk} ---The fully qualified path to the Application Test APK.
+    \item \texttt{androidPlatforms} --- The fully qualified path to an \texttt{Android SDK/platforms/} folder.
+\end{itemize}
+
+An example usage, run from the directory containing the APKs to be instrumented, would look something like:
+
+\texttt{splatter --applicationApk=android-app-debug.apk\\--testApk=android-app-debug-test.apk\\--androidPlatforms=\$ANDROID\_HOME/android-platforms}
+
+We use the Apache commons-cli library for command line argument parsing and validation.
+
+\subsubsection{Hardcoded Strings}
+
+There are various points in the application that have been hardcoded during development and never generalised. These are marked with \texttt{// TODO:} comments in the places they do exist. Obviously, these dependencies must be pulled up into the \texttt{Options} command line arguments, so that a user can modify them.
+
+\subsubsection{Future Work}
+
+The plugin will need to analyse historical test results and calculate the probability of failure for each test \todo{as discuss in section $n$}. It will also need to be extended with an interface to visualise test flakiness and related information {\todo bring in some of the information from approach here, flakiness tables \etc}. This is also related to prioritisation.
+
+
+\subsection{A Choice of Continuous Integration Tools}
+
+Jenkins \cite{Jenkins} is a popular open source continuous integration tool. Like others of its kind, it maintains a history of build results and their associated artifacts. A wealth of plugins provide support for testing frameworks such as JUnit --- displaying individual test outcomes, stack traces and assertions in a simple interface.
+
+Although there are many open source alternatives which we could support (\eg, Hudson, from which the Jenkins project derives), many of these have significantly smaller user bases and commit activity. Mostly though, our decision to support Jenkins was motivated by Shazam's use of it across all teams.
 
 Although the tool will be developed initially for Jenkins, it is essential to structure the plugin such that it can easily be migrated to other CI systems. At all stages of design, this must be kept in mind.
 
