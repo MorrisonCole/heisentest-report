@@ -17,6 +17,7 @@ Rakefile
 paper.pdf
 *.sublime-project
 *.sublime-workspace
+out/
 
 ## Core latex/pdflatex auxiliary files:
 *.aux
