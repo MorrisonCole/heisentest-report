@@ -41,22 +41,20 @@ The Heisentest Splatter repository\cite{heisentestInstrumentation} is made up of
 \label{fig:repo_structure}
 \end{figure}
 
-The main tool --- \splatterinst{} --- is Java-based and operates from the command line.
+\subsubsection{\splatterinst{}}
 
-\subsubsection{Command Line Arguments}
+The main tool --- {\tt splatter-instrumentation} --- is Java-based and is operated from the command line.
 
-It takes a number of arguments, all necessary for the correct running of the program. If any of the necessary arguments are missing, a usage message is printed and the program exits.
+It takes two arguments, both of which are necessary for the correct running of the program. If any of the necessary arguments are missing, a usage message is printed and the program exits.
 
-The following arguments are required:
 \begin{itemize}
     \item \texttt{applicationApk} --- The fully qualified path to the Application APK to be instrumented.
-    \item \texttt{testApk} ---The fully qualified path to the Application Test APK.
-    \item \texttt{androidPlatforms} --- The fully qualified path to an \texttt{Android SDK/platforms/} folder.
+    \item \texttt{testApk} ---The fully qualified path to the Application Test APK to be instrumented.
 \end{itemize}
 
-An example usage, run from the directory containing the APKs to be instrumented, would look something like:
+An example usage, run from the directory containing both of the APKs to be instrumented, would look something like:
 
-\texttt{splatter --applicationApk=android-app-debug.apk\\--testApk=android-app-debug-test.apk\\--androidPlatforms=\$ANDROID\_HOME/android-platforms}
+\texttt{splatter --applicationApk=android-app-debug.apk\\--testApk=android-app-debug-test.apk}
 
 We use the Apache commons-cli library for command line argument parsing and validation.
 
@@ -66,11 +64,11 @@ We looked into Soot for its ability to generate control flow graphs (CFGs). When
 
 It is possible to generate the CFG for a method using ASMDEX alone, although it is a slightly more tricky task.
 
-In the end, although Soot was a nice tool to work with, we scrapped it for a few reasons. Firstly, the representation used by Soot is fairly incompatible with that of ASMDEX. Even if we could determine the CFG for a method using Soot, we'd have to somehow map the locations to our ASMDEX instrumentation sites --- a non-trivial task. The overhead of starting up Soot and loading an APK is significant. On an Intel\textsuperscript{\textregistered} Core\textsuperscript{\texttrademark} i7-3610QM CPU @ 2.30GHz, the the time to load the application and test APKs was 10.76 seconds. With a total time of 19.09 seconds, Soot takes up 56\% of the total instrumentation time (and that is \textit{without} generating the CFGs for any methods). In fact, with Soot removed entirely, the same instrumentation run took just 3.294 seconds --- 17\% of the previous total run time.
+In the end, although Soot appeared to be a nice tool to work with, we scrapped it for a few reasons. Firstly, the representation used by Soot is fairly incompatible with that of ASMDEX. Even if we could determine the CFG for a method using Soot, we'd have to somehow map the locations to our ASMDEX instrumentation sites --- a non-trivial task. Finally, the overhead of starting up Soot and loading an APK is significant. On an Intel\textsuperscript{\textregistered} Core\textsuperscript{\texttrademark} i7-3610QM CPU @ 2.30GHz, the the time to load the application and test APKs was 10.76 seconds. With a total instrumentation time of 19.09 seconds, Soot takes up 56\% of the total instrumentation time (and that is \textit{without} generating the CFGs for any methods). In fact, with Soot removed entirely, the same instrumentation run took just 3.294 seconds --- 17\% of the previous total run time.
 
 \subsubsection{Hardcoded Strings}
 
-There are various points in the application that have been hardcoded during development and never generalised. These are marked with \texttt{// TODO:} comments in the places they do exist. Obviously, these dependencies must be pulled up into the \texttt{Options} command line arguments, so that a user can modify them.
+There are various points in the application that have been hardcoded during development and never exposed to the user or calculated automatically. These are marked with \texttt{// TODO:} comments in the places they do exist.
 
 \subsubsection{Future Work}
 
@@ -90,9 +88,7 @@ Although the tool will be developed initially for Jenkins, it is essential to st
 
 \subsubsection{Identification}
 
-This stage is fairly trivial since we can build upon the work of others.
-
-After a test run completes, we can gather the test run results and store them in a persistent database. We can then look at the test runs over time and attach various values to each test much in the same way as the existing tools. ‘Flakiness’ - a percentage value representing a test’s likelihood to fail will be the most useful of these.
+After a test run completes, we can gather the test run artifacts (JUnit results, \heisentest{} JSON log files \etc) and store them in a persistent database. In the future, we can look at the test runs over time and attach various values to each test much in the same way as the existing tools. \todo{Section [] describes the values and things we expect to infer in more detail.}.
 TODO: Write a list of values we hope to attach to each test. Back this up with quotes from Shazam.
 
 \subsubsection{Prioritisation}
