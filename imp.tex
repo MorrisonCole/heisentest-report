@@ -18,6 +18,10 @@
 
 This section details the design and implementation of our proof of concept tool, as it stands so far. It is comprised of two parts: a Jenkins plugin and an Android instrumentation.
 
+At a high level, we essentially instrument the application under test and store the gathered data. We then analyse the gathered data, adapt the instrumentation and present useful information to the developers.
+
+To keep the scope reasonable, we currently target Java Android applications. Of course, the approach is general, and could be applied to any number of languages and frameworks. A pure Java instrumentation would be fairly similar, and actually far less complex, for reasons that will be expanded upon later.
+
 
 \subsection{Jenkins Plugin}
 
@@ -57,6 +61,35 @@ An example usage, run from the directory containing both of the APKs to be instr
 \texttt{splatter --applicationApk=android-app-debug.apk\\--testApk=android-app-debug-test.apk}
 
 We use the Apache commons-cli library for command line argument parsing and validation.
+
+Figure \ref{fig:instrumenting_apk}, shows the main stages of the tool. First the APK is extracted.
+
+\begin{figure}[h]
+\includegraphics[width=\linewidth]{images/instrumenting_apk}
+\caption{}
+\label{fig:instrumenting_apk}
+\end{figure}
+
+It is necessary to give an overview of the Android pipeline in order to understand how the tool works.
+
+In a standard Java application, code is compiled into a {\tt .jar} file - an archive commonly containing compiled {\tt .class} files, resources, a manifest and certificates. A java compiler will generate one class file per type (including inner and anonymous) present in the source program. At runtime, the bytecode in these classes is executed by the Java Virtual Machine (JVM).
+
+Android applications are typically written in Java and compiled to bytecode. However, Android runs processes on Dalvik - a Virtual Machine optimised for resource-constrained devices. The compiled bytecode is then transformed to {\tt dex} format and packaged as an {\tt .apk}. Similar to a standard JAR file, an Android {\tt .apk} is simply an archive containing the compiled assets for an Android application. Crucially, the resulting {\tt dex} file contains all of the classes present in the application\footnote{This is not strictly true; applications can depend on multiple {\tt dex} files, but a single file is the norm.}. The {\tt dex} format is register-based, so modifying the Dalvik bytecode can be tricky.
+
+% \todo{http://davidehringer.com/software/android/The_Dalvik_Virtual_Machine.pdf}
+
+For the purposes of the instrumentation, many of the included files can be ignored. Figure \ref{fig:android_apk} shows a simplified APK with the sections that are relevant to the tool:
+
+\begin{figure}[h]
+\dirtree{%
+.1 application.apk.
+.2 META-INF\DTcomment{Directory containing certificates}.
+.2 AndroidManifest.xml\DTcomment{Basic info - version, name, etc.}.
+.2 classes.dex\DTcomment{Dalvik-readable compiled classes; register-based format}.
+}
+\caption{}
+\label{fig:android_apk}
+\end{figure}
 
 \subsubsection{Soot}
 
@@ -144,35 +177,9 @@ but was: ""
 
 Using data from the identification and prioritisation stages, we can begin to develop an adaptive instrumentation to automatically gather runtime information whilst maintaining a low overhead.
 
-\todo{Explain why we are ‘just’ targeting Android for now (Shazam, GUI testing, etc).}
+\todo{Explain why we are ‘just’ targeting Android for now (Shazam, GUI testing, \etc).}
 
 Automated testing is used during development. We therefore can assume unrestricted access to debug builds.
-
-
-\subsubsection{Architecture}
-
-\todo{Need a diagram to show the architecture of the Heisentest plugin. Both an abstract overview and a detailed one (implementation with Jenkins) would be useful.}
-
-At a high level, we essentially instrument the application under test and store the gathered data. We then analyse the gathered data, adapt the instrumentation and present useful information to the developers.
-
-To keep the scope reasonable, we currently target Java Android applications. Of course, the approach is general, and could be applied to any number of languages and frameworks. A pure Java instrumentation would be fairly similar, and actually far less complex, for reasons that will be expanded upon later.
-
-It is necessary to give an overview of the Android pipeline in order to understand how the tool works.
-
-In a standard Java application, code is compiled into a ‘jar’ file - an archive commonly containing compiled ‘class’ files, resources, a manifest and certificates. A java compiler will generate one class file per type (including inner and anonymous) present in the source program. At runtime, the bytecode in these classes is executed by the Java Virtual Machine (JVM).
-
-Android applications are typically written in Java and compiled to bytecode. However, Android runs processes on Dalvik - a Virtual Machine optimised for resource-constrained devices. The compiled bytecode is then transformed to ‘dex’ format and deployed as an ‘apk’. Similar to a standard JAR file, an Android APK is simply an archive containing the compiled assets for an Android application. Crucially, the resulting dex file contains all of the classes present in the application. The format is register-based, so modifying the transformed code can be tricky.
-
-% \todo{http://davidehringer.com/software/android/The_Dalvik_Virtual_Machine.pdf}
-
-For the purposes of the instrumentation, many of the included files can be ignored. Figure 1. shows a simplified APK with the sections that are relevant to the tool:
-
-\dirtree{%
-.1 application.apk.
-.2 META-INF\DTcomment{Directory containing certificates}.
-.2 AndroidManifest.xml\DTcomment{Basic info - version, name, etc.}.
-.2 classes.dex\DTcomment{Dalvik-readable compiled classes; register-based format}.
-}
 
 \subsubsection{Registers}
 Frames are fixed size. This means that total registers are known ahead of time (build in to the format). Space for extra information is also included (program counter etc.) but is not of consequence to us.
