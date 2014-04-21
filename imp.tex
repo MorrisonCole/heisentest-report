@@ -60,21 +60,11 @@ An example usage, run from the directory containing both of the APKs to be instr
 
 \texttt{splatter --applicationApk=android-app-debug.apk\\--testApk=android-app-debug-test.apk}
 
-We use the Apache commons-cli library for command line argument parsing and validation.
-
-Figure \ref{fig:instrumenting_apk}, shows the main stages of the tool. First the APK is extracted.
-
-\begin{figure}[h]
-\includegraphics[width=\linewidth]{images/instrumenting_apk}
-\caption{}
-\label{fig:instrumenting_apk}
-\end{figure}
-
 It is necessary to give an overview of the Android pipeline in order to understand how the tool works.
 
 In a standard Java application, code is compiled into a {\tt .jar} file - an archive commonly containing compiled {\tt .class} files, resources, a manifest and certificates. A java compiler will generate one class file per type (including inner and anonymous) present in the source program. At runtime, the bytecode in these classes is executed by the Java Virtual Machine (JVM).
 
-Android applications are typically written in Java and compiled to bytecode. However, Android runs processes on Dalvik - a Virtual Machine optimised for resource-constrained devices. The compiled bytecode is then transformed to {\tt dex} format and packaged as an {\tt .apk}. Similar to a standard JAR file, an Android {\tt .apk} is simply an archive containing the compiled assets for an Android application. Crucially, the resulting {\tt dex} file contains all of the classes present in the application\footnote{This is not strictly true; applications can depend on multiple {\tt dex} files, but a single file is the norm.}. The {\tt dex} format is register-based, so modifying the Dalvik bytecode can be tricky.
+Android applications are typically written in Java and compiled to bytecode. However, Android runs processes on Dalvik - a Virtual Machine optimised for resource-constrained devices. The compiled bytecode is then transformed to {\tt dex} format and packaged as an {\tt .apk}. Similar to a standard JAR file, an Android {\tt .apk} is simply an archive containing the compiled assets for an Android application. Crucially, the resulting {\tt dex} file contains all of the classes present in the application\footnote{This is not strictly true; applications can depend on multiple {\tt dex} files, but a single file is the norm. Note that our tool does not support multiple {\tt .dex} files}. The {\tt dex} format is register-based, so modifying the Dalvik bytecode can be tricky.
 
 % \todo{http://davidehringer.com/software/android/The_Dalvik_Virtual_Machine.pdf}
 
@@ -89,6 +79,18 @@ For the purposes of the instrumentation, many of the included files can be ignor
 }
 \caption{}
 \label{fig:android_apk}
+\end{figure}
+
+Figure \ref{fig:instrumenting_apk}, shows the main stages of the tool. First, the application {\tt .apk} is extracted. Then, the Dalvik bytecode is parsed two times \todo{why does ASMDEX require two passes? Can't remember...}.
+
+The first time, we build up a list of {\tt InstrumentationPoint} objects. These correspond to the instrumentation points defined in \todo{sec:}. The proof of concept supports method entry instrumentation points, and has basic infrastructure for branch points, but no working support. At the moment, our implementation is not adaptive --- instrumentation points are added unconditionally provided they match a certain signature (\eg, method entry). Each {\tt InstrumentationPoint} object has an associated {\tt InstrumentationPolicy}. The tool assumes an {\tt InstrumentationPolicy} of {\tt Complex} for now, unless a {\tt @Splatter} annotation is found with a different policy. Section \todo{[]} defines the {\tt @Splatter} annotation and its customizable parameters. \todo{Note that in the future, instrumentation points and the like will be stored along with the test run results by the Jenkins plugin. Then, the results will be given to this tool again, so that it can decide which instrumentation policies to apply to each instrumentation point (\eg, an instrumentation point with a previous {\tt InstrumentationPolicy} of {\tt InstrumentationPolicy.COMPLEX} could be assigned a new policy of {\tt InstrumentationPolicy.NONE} if the site has not been helpful in determining a failure-predicting predicate and should not be monitored this time around.)}
+
+Instrumentation bytecode is injected during the second pass. With a list of instrumentation points defined, we visit the bytecode again, this time inserting probes based on the {\tt InstrumentationPolicy} each time we encounter bytecode that matches a known {\tt InstrumentationPoint}. As might be expected, a policy of {\tt COMPLEX} tells us to inject a complex probe, {\tt SIMPLE} a simple (counter-based) probe and {\tt NONE} nothing at all. Finally, at the end of the second pass, any extra classes that we require for monitoring our instrumentation are injected. \todo{Note that most of these classes are now defined in the Splatter SDK?}.
+
+\begin{figure}[h]
+\includegraphics[width=\linewidth]{images/instrumenting_apk}
+\caption{}
+\label{fig:instrumenting_apk}
 \end{figure}
 
 \subsubsection{Soot}
