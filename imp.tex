@@ -60,28 +60,34 @@ An example usage, run from the directory containing both of the APKs to be instr
 
 \texttt{splatter --applicationApk=android-app-debug.apk\\--testApk=android-app-debug-test.apk}
 
-It is necessary to give an overview of the Android pipeline in order to understand how the tool works.
+\subsubsection{The Android Platform}
 
-In a standard Java application, code is compiled into a {\tt .jar} file - an archive commonly containing compiled {\tt .class} files, resources, a manifest and certificates. A java compiler will generate one class file per type (including inner and anonymous) present in the source program. At runtime, the bytecode in these classes is executed by the Java Virtual Machine.
+It is necessary to give an overview of the Android platform in order to understand how our \splatterinst{} tool works.
 
-Android applications are typically written in Java and compiled to bytecode. However, Android runs processes on Dalvik - a Virtual Machine optimised for resource-constrained devices. The compiled bytecode is then transformed to {\tt dex} format and packaged as an {\tt .apk}. Similar to a standard {\tt .jar} file, an Android {\tt .apk} is simply an archive containing the compiled assets for an Android application. Crucially, the resulting {\tt dex} file contains all of the classes present in the application\footnote{This is not strictly true; applications can depend on multiple {\tt dex} files, but a single file is the norm. Our tool does not support multiple {\tt .dex} files}. The {\tt dex} format is register-based, so modifying the Dalvik bytecode can be tricky.
+In a standard Java application, code is compiled into {\tt .class} files and packaged as a {\tt .jar} --- an archive containing compiled {\tt .class} files, resources, a manifest and certificates. A Java compiler will generate one class file per type (including inner and anonymous) present in the source program. At runtime, the bytecode in these classes is executed by the Java Virtual Machine.
 
-% \todo{http://davidehringer.com/software/android/The_Dalvik_Virtual_Machine.pdf}
+Similarly, Android applications are written in Java and compiled to bytecode. However, the target Virtual Machine --- Dalvik --- is register-based, so the bytecode is transformed after compilation. The {\tt dx} tool is used to convert multiple {\tt .class} files to a single {\tt .dex} file\footnote{Note that an Android application can be defined over multiple {\tt dex} files, but this is not the norm and requires custom class loading.} and packaged as an {\tt .apk}. Like the standard {\tt .jar} file, an Android {\tt .apk} is simply an archive containing the compiled assets for an Android application.
 
-For the purposes of the instrumentation, many of the included files can be ignored. Figure \ref{fig:android_apk} shows a simplified APK with the sections that are relevant to the tool:
+For the purposes of the instrumentation, many of the included files can be ignored. Figure \ref{fig:android_apk} shows the contents of an {\tt APK} relevant to our tool. For an application with device-based tests (\ie, the applications we target), an application test {\tt APK} will also be generated when the tests are run. The test archive contains the compiled test source code and is executed when the tests are run.
 
 \begin{figure}[h]
 \dirtree{%
 .1 application.apk.
 .2 META-INF\DTcomment{Directory containing certificates}.
-.2 AndroidManifest.xml\DTcomment{Basic info - version, name, etc.}.
-.2 classes.dex\DTcomment{Dalvik-readable compiled classes; register-based format}.
+.2 AndroidManifest.xml\DTcomment{Basic info --- version, name, etc.}.
+.2 classes.dex\DTcomment{Dalvik bytecode (register-based format)}.
 }
 \caption{}
 \label{fig:android_apk}
 \end{figure}
 
-Figure \ref{fig:instrumenting_apk}, shows the main stages of the tool. First, the application {\tt .apk} is extracted. Then, the Dalvik bytecode is parsed two times \todo{why does ASMDEX require two passes? Can't remember...}.
+Figure \ref{fig:instrumenting_apk} shows the main stages of our tool. First, the application {\tt .apk} is extracted. Then, the {\tt classes.dex} Dalvik bytecode is parsed two times. The first pass is inpection-based, the second injects the instrumentation. Finally, the application is re-packaged. The same process is then followed for the application's test {\tt .apk}.
+
+\begin{figure}[h]
+\includegraphics[width=\linewidth]{images/instrumenting_apk}
+\caption{}
+\label{fig:instrumenting_apk}
+\end{figure}
 
 \subsubsection{First Pass}
 
@@ -93,6 +99,22 @@ Instrumentation bytecode is injected during the second pass. With a list of inst
 
 The user must provide at least one base test class and the names of its equivalent JUnit's {\tt SetUp} and {\tt TearDown} methods. These are methods that are called respectively at the beginning and end of each individual test run. We inject code to initialize and clean up our logging system at these points. Upon {\tt SetUp}, we create a file matching the test name \todo{a directory diagram with some tests} under the directory \todo{android directories}.
 
+\subsubsection{Injecting Instrumentation}
+
+A stack frame in Dalvik bytecode is of fixed size; the registers are allocated during compilation. A stack frame contains  Space for extra information is also included (program counter etc.) but is not of consequence to us.
+
+Arguments of a method take the final registers of the method's invocation frame. Instance methods have a \textit{this} reference passed as the first argument; the formal arguments (if any) take up the next registers in order.
+
+For the method:
+
+\todo{example tiny instance method with arguments}
+
+The corresponding registers will be allocated:
+
+\todo{colour coded register allocation (Dalvik bytecode)}
+
+\todo{Need to detail our register allocating visitor and explain how it works / when it (might?) fail!}
+
 \subsubsection{Storing the results}
 
 With the tests running on the Android device or emulator, we must somehow retrieve the {\tt JSON} logs either during the test run or afterward. Transferring logs during the test run is unreliable. If we were to send our JSON to {\tt logcat} with a special tag and monitor it on the build agent, we could {\lq}miss{\rq} messages due to log flooding. Consider a heavily instrumented application capable of logging a huge number of events in a short period of time --- if data is written to the device's log buffer faster than {\tt logcat} can read out of it, messages will be dropped. Instead, we log the {\tt JSON} to files on the device's storage and retrieve it when the test suite has finished running.
@@ -102,12 +124,6 @@ Copying the {\tt .json} log files back to the computer running the instrumentati
 We devised a workaround; Android has guaranteed {\lq}public{\rq} storage that is not removed when an application is uninstalled. Its location is not fixed and is likely to differ per-device and operating system version. So, we take care to inform the build agent of the exact location of the devices public storage each test run before copying the files.
 
 When the tests finish running, we log a message with a special tag to {\tt logcat} specifying the full path to the results directory on the device. Then, a Gradle task grabs the {\tt logcat} logs, searches for the message and parses it to get the location. Then, the task uses {\tt adb pull} and {\tt adb rm} to grab and finally delete the files from the device. The previous issue of log flooding can still be a problem here. If our special log message is lost in the noise of an extreme number of log messages (i.e., deleted before we can grab it), the build could fail. This is robust enough for a proof of concept.
-
-\begin{figure}[h]
-\includegraphics[width=\linewidth]{images/instrumenting_apk}
-\caption{}
-\label{fig:instrumenting_apk}
-\end{figure}
 
 \subsubsection{Soot}
 
@@ -121,18 +137,50 @@ In the end, although Soot appeared to be a nice tool to work with, we scrapped i
 
 There are various points in the application that have been hardcoded during development and never exposed to the user or calculated automatically. These are marked with \texttt{// TODO:} comments in the places they do exist.
 
-\subsubsection{Future Work}
+\subsection{Notes}
 
-The plugin will need to analyse historical test results and calculate the probability of failure for each test \todo{as discuss in section $n$}. It will also need to be extended with an interface to visualise test flakiness and related information {\todo bring in some of the information from approach here, flakiness tables \etc}. This is also related to prioritisation.
+\subsubsection{SDK}
 
+An SDK project can (optionally) be included. It defines the annotation @SplatterIgnore. During the isntrumentation phase, if a method is found with this annotation, it is blacklisted from the list of possible instrumentation sites. This could be useful by developers during debugging, or to remove instrumentation from sites that are known to be problematic or, alternatively, {\lq}bug-free{\rq}!
 
-\subsection{A Choice of Continuous Integration Tools}
+\textbf{Methods}
+For methods that are not blacklisted or ignored due to annotations, we store the method name and owner class (\todo{should also keep track of signature / return type?}) in our pool of {\lq}method{\rq} instrumentation points. During the second pass, these methods can be instrumented with a complex (argument-saving) or simple (counter-based) probe IF chosen during the WEKA stage.
 
-Jenkins \cite{Jenkins} is a popular open source continuous integration tool. Like others of its kind, it maintains a history of build results and their associated artifacts. A wealth of plugins provide support for testing frameworks such as JUnit --- displaying individual test outcomes, stack traces and assertions in a simple interface.
+\subsection{Logging to JSON}
 
-Although there are many open source alternatives which we could support (\eg, Hudson, from which the Jenkins project derives), many of these have significantly smaller user bases and commit activity. Mostly though, our decision to support Jenkins was motivated by Shazam's use of it across all teams.
+\todo{Describe/show structure of log messages (show sample JSON for a method call and the original Java code \etc.). Perhaps also show the Dalvik bytecode?}
 
-Although the tool will be developed initially for Jenkins, it is essential to structure the plugin such that it can easily be migrated to other CI systems. At all stages of design, this must be kept in mind.
+Logging runs on a background thread. The Test APK drives the Application APK.
+
+\subsection{Analysis}
+
+\todo{need to save the details of the probes we used and their associated instrumentation points so that we can infer things!}
+
+\subsection{Hooking into testrunners}
+
+Part of our approach is to log distinct data per-test. To keep overhead to a minimum, we take a map of test runner classes and their respective set up / tear down methods (run before / after each test in a class is run). We inject our logger set up and clean up to the setup / teardown methods respectively.
+
+Note that during setup if the currently executing method has a @Splatter annotation attached, we look at its policy before running the logging set up. If the annotation has InstrumentationPolicy.NONE, we simply run the test as normal.
+
+This means that within a class with multiple tests, we can disable instrumentation on any subset of the tests if the developer so desires.
+
+It is important to note that while the @Splatter annotation with an instrumentation policy of NONE prevents the method itself from being instrumented (and in the case of a test, also prevents the logging system from being initialized), other methods will STILL potentially be instrumented. So a test with the annotation and policy that initializes an Activity and performs a sequence of actions will still have a performance penalty if called methods happen to be instrumented.
+
+\subsection{Modifying the Behaviour}
+
+A small project ('splatter-sdk') can be included to force certain behaviour. It is a simple library that defines a @Splatter annotation, with a parameter {\lq}InstrumentationPolicy{\rq}. When a method is annoted with this and a policy specified, Splatter will respect the defined behaviour when performing instrumentation.
+
+Available policies are:
+
+* NONE - Disallows all instrumentation from being injected in the method. When a test is given with this value, the logging system itself will not be initialized for that test.
+* SIMPLE - Disallows complex probes from being injected in the containing method.
+* COMPLEX - (Default), allows all probes to be potentially placed in the containing method.
+
+\subsection{Logging Events}
+
+Each event is created as a bean and held in a queue until it can be written to a JSON output file. We define an abstract LogEvent bean with common values (System Time, Thread, EventName etc.) and subclass for specific events.
+
+\todo{We should log to a seperate blocking queue / file per thread since then we won't get blocking occuring at runtime. We can then weave the seperate log files together upon teardown.}
 
 
 \subsection{A Solution}
@@ -199,60 +247,15 @@ Using data from the identification and prioritisation stages, we can begin to de
 
 Automated testing is used during development. We therefore can assume unrestricted access to debug builds.
 
-\subsubsection{Registers}
-Frames are fixed size. This means that total registers are known ahead of time (build in to the format). Space for extra information is also included (program counter etc.) but is not of consequence to us.
+\subsubsection{Future Work}
 
-Arguments of a method take the final registers of the method's invocation frame. Instance methods have a \textit{this} reference passed as the first argument; the formal arguments (if any) take up the next registers in order.
+The plugin will need to analyse historical test results and calculate the probability of failure for each test \todo{as discuss in section $n$}. It will also need to be extended with an interface to visualise test flakiness and related information {\todo bring in some of the information from approach here, flakiness tables \etc}. This is also related to prioritisation.
 
-For the method:
 
-\todo{example tiny instance method with arguments}
+\subsection{A Choice of Continuous Integration Tools}
 
-The corresponding registers will be allocated:
+Jenkins \cite{Jenkins} is a popular open source continuous integration tool. Like others of its kind, it maintains a history of build results and their associated artifacts. A wealth of plugins provide support for testing frameworks such as JUnit --- displaying individual test outcomes, stack traces and assertions in a simple interface.
 
-\todo{colour coded register allocation (Dalvik bytecode)}
+Although there are many open source alternatives which we could support (\eg, Hudson, from which the Jenkins project derives), many of these have significantly smaller user bases and commit activity. Mostly though, our decision to support Jenkins was motivated by Shazam's use of it across all teams.
 
-\todo{Need to detail our register allocating visitor and explain how it works / when it (might?) fail!}
-
-\subsection{Notes}
-
-\subsubsection{SDK}
-
-An SDK project can (optionally) be included. It defines the annotation @SplatterIgnore. During the isntrumentation phase, if a method is found with this annotation, it is blacklisted from the list of possible instrumentation sites. This could be useful by developers during debugging, or to remove instrumentation from sites that are known to be problematic or, alternatively, {\lq}bug-free{\rq}!
-
-\textbf{Methods}
-For methods that are not blacklisted or ignored due to annotations, we store the method name and owner class (\todo{should also keep track of signature / return type?}) in our pool of {\lq}method{\rq} instrumentation points. During the second pass, these methods can be instrumented with a complex (argument-saving) or simple (counter-based) probe IF chosen during the WEKA stage.
-
-\subsection{Logging to JSON}
-
-Logging runs on a background thread. The Test APK drives the Application APK.
-
-\subsection{Analysis}
-
-\todo{need to save the details of the probes we used and their associated instrumentation points so that we can infer things!}
-
-\subsection{Hooking into testrunners}
-
-Part of our approach is to log distinct data per-test. To keep overhead to a minimum, we take a map of test runner classes and their respective set up / tear down methods (run before / after each test in a class is run). We inject our logger set up and clean up to the setup / teardown methods respectively.
-
-Note that during setup if the currently executing method has a @Splatter annotation attached, we look at its policy before running the logging set up. If the annotation has InstrumentationPolicy.NONE, we simply run the test as normal.
-
-This means that within a class with multiple tests, we can disable instrumentation on any subset of the tests if the developer so desires.
-
-It is important to note that while the @Splatter annotation with an instrumentation policy of NONE prevents the method itself from being instrumented (and in the case of a test, also prevents the logging system from being initialized), other methods will STILL potentially be instrumented. So a test with the annotation and policy that initializes an Activity and performs a sequence of actions will still have a performance penalty if called methods happen to be instrumented.
-
-\subsection{Modifying the Behaviour}
-
-A small project ('splatter-sdk') can be included to force certain behaviour. It is a simple library that defines a @Splatter annotation, with a parameter {\lq}InstrumentationPolicy{\rq}. When a method is annoted with this and a policy specified, Splatter will respect the defined behaviour when performing instrumentation.
-
-Available policies are:
-
-* NONE - Disallows all instrumentation from being injected in the method. When a test is given with this value, the logging system itself will not be initialized for that test.
-* SIMPLE - Disallows complex probes from being injected in the containing method.
-* COMPLEX - (Default), allows all probes to be potentially placed in the containing method.
-
-\subsection{Logging Events}
-
-Each event is created as a bean and held in a queue until it can be written to a JSON output file. We define an abstract LogEvent bean with common values (System Time, Thread, EventName etc.) and subclass for specific events.
-
-\todo{We should log to a seperate blocking queue / file per thread since then we won't get blocking occuring at runtime. We can then weave the seperate log files together upon teardown.}
+Although the tool will be developed initially for Jenkins, it is essential to structure the plugin such that it can easily be migrated to other CI systems. At all stages of design, this must be kept in mind.
