@@ -107,6 +107,9 @@ pdftitle={\ourtitle},
 % Line spacing
 \onehalfspacing
 
+\pagestyle{plain}
+\pagenumbering{arabic}
+
 %% lstlisting
 \lstset{
 	basicstyle=\ttfamily\small,
@@ -115,11 +118,25 @@ pdftitle={\ourtitle},
 	captionpos=b,
 	breaklines=true,
 	escapeinside={(*@}{@*)},
-	breakatwhitespace=true
+	breakatwhitespace=true,
 }
 
-\pagestyle{plain}
-\pagenumbering{arabic}
+\makeatletter
+\newcommand*\SuppressNumber{%
+	\lst@AddToHook{OnNewLine}{%
+		\let\origthelstnumber\thelstnumber%
+    	\let\thelstnumber\relax%
+    	\advance\c@lstnumber-\@ne\relax%
+    }%
+}
+
+\newcommand*\ReactivateNumber{%
+	\lst@AddToHook{OnNewLine}{%
+   		\let\thelstnumber\origthelstnumber%
+   		\advance\c@lstnumber\@ne\relax%
+	}%
+}
+\makeatother
 
 \begin{document}
 

@@ -47,9 +47,7 @@ The Heisentest Splatter repository\cite{heisentestInstrumentation} is made up of
 
 \subsection{\splatterinst{}}
 
-The main tool --- {\tt splatter-instrumentation} --- is Java-based and is operated from the command line.
-
-It takes a number of arguments, each of which are necessary for the correct running of the program. If any of the necessary arguments are missing, a usage message is printed and the program exits.
+The main tool --- {\tt splatter-instrumentation} --- is operated from the command line. It takes a number of arguments, each of which are necessary for the correct running of the program. If any of the necessary arguments are missing, a usage message is printed and the program exits.
 
 \begin{itemize}
     \item {\tt applicationApk} --- The fully qualified path to the Application APK to be instrumented.
@@ -82,13 +80,17 @@ For the purposes of the instrumentation, many of the included files can be ignor
 \label{fig:android_apk}
 \end{figure}
 
-Figure \ref{fig:instrumenting_apk} shows the main stages of our tool. First, the application {\tt .apk} is extracted. Then, the {\tt classes.dex} Dalvik bytecode is parsed two times. The first pass is inpection-based, the second injects the instrumentation. Finally, the application is re-packaged. The same process is then followed for the application's test {\tt .apk}.
+\splatter broadly follows the same set of steps for both the application and test {\tt APK}s. Figure \ref{fig:instrumenting_apk} shows each of the steps in the order they occur. First, the application {\tt .apk} is extracted. Then, the {\tt classes.dex} file is parsed two times: the first pass inspects the bytecode, the second injects our instrumentation. Finally, the {\tt APK} is re-packaged.
 
 \begin{figure}[h]
 \includegraphics[width=\linewidth]{images/instrumenting_apk}
 \caption{}
 \label{fig:instrumenting_apk}
 \end{figure}
+
+\subsubsection{Extraction}
+
+
 
 \subsubsection{First Pass}
 
@@ -102,15 +104,44 @@ The user must provide at least one base test class and the names of its equivale
 
 \subsubsection{Injecting Instrumentation}
 
-A stack frame in Dalvik bytecode is of fixed size; the registers are allocated during compilation. A stack frame contains  Space for extra information is also included (program counter etc.) but is not of consequence to us.
+This section details the steps we take to insert probe at an instance method entry and presents the results of both a complex and a simple probe in practice.
 
-Arguments of a method take the final registers of the method's invocation frame. Instance methods have a \textit{this} reference passed as the first argument; the formal arguments (if any) take up the next registers in order.
+A Dalvik bytecode method consists of the definition and associated data. Most of this data is of no consequence to our instrumentation, but we have to pay attention to the registers.
 
-For the method:
+Each method specifies the number of registers it requires. Arguments of a method take the final registers, with the final argument taking the final register position. Instance methods have a reference to their live object passed as the first argument; the formal arguments (if any) take up the next registers in order.
 
-\todo{example tiny instance method with arguments}
+For the Java method:
 
-The corresponding registers will be allocated:
+\begin{lstlisting}
+private void anExampleMethod(int firstArg, String secondArg) { }
+\end{lstlisting}
+
+The corresponding Dalvik bytecode would be generated:
+
+\begin{lstlisting}[mathescape,numberblanklines=false]
+#1              : (in Lcom/example/MainActivity;)
+  name          : 'anExampleMethod'
+  type          : '(Ljava/lang/String;I)Ljava/lang/String;'
+  access        : 0x0002 (PRIVATE) (*@\SuppressNumber@*)
+$\vdots$ (*@\ReactivateNumber@*)
+  registers     : 4
+  ins           : 3
+  outs          : 2 (*@\SuppressNumber@*)
+$\vdots$ (*@\ReactivateNumber@*)
+024570:                  |[024570] com.example.MainActivity.anExampleMethod:(Ljava/lang/String;I)Ljava/lang/String; (*@\label{method_body_definition}@*)
+024580: 7120 8503 3200   |0000: invoke-static {v2, v3}, Lcom/example/MainActivity;.appendIntToString:(Ljava/lang/String;I)Ljava/lang/String; // method@0385
+024586: 0c00             |0003: move-result-object v0
+024588: 1100             |0004: return-object v0 (*@\label{method_body_end_definition}@*) (*@\SuppressNumber@*)
+$\vdots$ (*@\ReactivateNumber@*)
+      locals    :
+        0x0000 - 0x0005 reg=1 this Lcom/example/MainActivity;
+        0x0000 - 0x0005 reg=2 firstArg Ljava/lang/String;
+        0x0000 - 0x0005 reg=3 secondArg I
+\end{lstlisting}
+
+\todo{this is a bad example, because the method uses no registers!}
+
+Lines \ref{method_body_definition}-\ref{method_body_end_definition} define the method body. In this case, the method body simply returns void since it is empty in the original Java source. The full set of bytecode operations and symbols are defined at \cite{dalvikBytecode}. Note that this listing omits irrelevant sections of bytecode. The full listing can be found in section \ref{sec:sec:full_dalvik_bytecode_example}. From here on we will focus on the registers, method body and locals of the bytecode, omitting extraneous information as we see fit.
 
 \todo{colour coded register allocation (Dalvik bytecode)}
 
