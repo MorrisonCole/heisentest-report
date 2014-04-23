@@ -110,13 +110,19 @@ A Dalvik bytecode method consists of the definition and associated data. Most of
 
 Each method specifies the number of registers it requires. Arguments of a method take the final registers, with the final argument taking the final register position. Instance methods have a reference to their live object passed as the first argument; the formal arguments (if any) take up the next registers in order.
 
-For the Java method:
+For the Java methods:
 
-\begin{lstlisting}
-private void anExampleMethod(int firstArg, String secondArg) { }
+\begin{lstlisting}[mathescape, numberblanklines=false]
+private String anExampleMethod(String firstArg, int secondArg) {
+    return appendIntToString(firstArg, secondArg);
+} (*@\SuppressNumber@*)
+$\vdots$ (*@\ReactivateNumber@*)
+private static String appendIntToString(String baseString, int number) {
+    return baseString + number;
+}
 \end{lstlisting}
 
-The corresponding Dalvik bytecode would be generated:
+The corresponding Dalvik bytecode would be generated for {\tt anExampleMethod}:
 
 \begin{lstlisting}[mathescape,numberblanklines=false]
 #1              : (in Lcom/example/MainActivity;)
@@ -138,8 +144,6 @@ $\vdots$ (*@\ReactivateNumber@*)
         0x0000 - 0x0005 reg=2 firstArg Ljava/lang/String;
         0x0000 - 0x0005 reg=3 secondArg I
 \end{lstlisting}
-
-\todo{this is a bad example, because the method uses no registers!}
 
 Lines \ref{method_body_definition}-\ref{method_body_end_definition} define the method body. In this case, the method body simply returns void since it is empty in the original Java source. The full set of bytecode operations and symbols are defined at \cite{dalvikBytecode}. Note that this listing omits irrelevant sections of bytecode. The full listing can be found in section \ref{sec:sec:full_dalvik_bytecode_example}. From here on we will focus on the registers, method body and locals of the bytecode, omitting extraneous information as we see fit.
 
