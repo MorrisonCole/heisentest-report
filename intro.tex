@@ -20,8 +20,8 @@ Tests can be divided into three groups, each targetting an increasingly abstract
 
 Environmental factors are often related to intermittent test failure. The further we travel up the layers of the pyramid, the more environmental factors we introduce. Unit tests target and exercise isolated sections of code. A well written unit test's outcome is almost guaranteed to depend only on the behaviour of the code it exercises. Integration tests may depend on an external service (\eg, a database), so may sometimes fail unexpectedly. Most vulnerable are acceptance tests. Since they run on a complete system, they are potentially open to interference by any number of environmental events or characteristics. For example, an operating system starved of memory could kill the application, or, a particularly slow start-up time could cause a timeout to occur.
 
+\todo{Heisentest is an answer to a real problem faced by myself and members of my team at Shazam. Despite limited personal experience in industry, it is obvious that others face the same issue. Mozilla, Shazam and Chromium have known \flaky{} tests. Android even includes an @\flaky{} annotation in its testing kit for automatic rerunning of known troublesome tests.}
 
-% Probably move this to Context?
 \subsection{Shazam}
 
 Shazam is a thriving software startup with a global focus. Their primary focus lies in an audio identification application of the same name. As of \today, Shazam reports more than 85 million active users spanning 200 countries and 33 languages across the Android, iOS, Windows Phone and BlackBerry platforms. As a technology-centric company, it is essential that Shazam are able to deliver correct software on time and under budget. Modern development practices ensure these requirements are as closely met as possible.
@@ -47,6 +47,23 @@ One of the primary initial goals of this paper was to create a continuous integr
 
 Reaching a stage where we could analyze the gathered data proved to be far more challenging than expected. The relative youth of the Android platform was a clear stumbling block, since tried and tested instrumentation tools in the world of the Java Virtual Machine had only just begun to acknowledge their Dalvik sibling. As such, we document and discuss many of our design decisions along the way.
 
-\includegraphics[width=\linewidth]{images/architecture_overview}
+\flaky{} tests are hard to reproduce. In general, there are three stages during which we may intervene:
+\begin{enumerate}
+	\item Identification - which tests in the suite are flaky?
+	\item Prioritisation - why of the \flaky{} tests should we fix first?
+	\item Resolution - what information can we gather to speed the resolution of a test?
+\end{enumerate}
+
+Ultimately, the final stage is the target. In order to tackle the problem practically, knowledge gathered at each stage must be combined and considered.
+
+Existing tools (Shazam’s \flaky{} Test Monitor included) provide answers to 1. This information can be used to inform manual inspection of 2. As of yet, no tool exists to tackle 3.
+
+In a typical software development project, continuous integration systems will be set up from the beginning. Developers write code and commit to source control. A master server will detect the change and assign one of a number of build agents (other servers with the capability to build the project(s) - virtual or otherwise) an attached job.
+
+For a typical job, the chosen build agent pulls down the latest changes, compiles and run the tests and runs any post-build tasks. At the end, any build artifacts (distributable packages, test results, etc.) will be uploaded to the master server and the agent will be once again free to build the next iteration. Note that in reality, a job can comprise of any number of runnable steps - from executing a shell script to hitting an external server.
+
+\todo{A diagram of this flow would be nice.}
+
+It is obvious that, if we are to develop a tool to assist developers with \flaky{} tests, we should run as part of a modular continuous integration system.
 
 \todo{Walk the reader through the upcoming sections of the paper. Can only really do this at the end!}

@@ -14,6 +14,39 @@
 % 	\end{itemize}
 % \end{mdframed}
 
+This section will cover any formalisms that are necessary to understand and model the problem.
+
+\subsection{\Flaky{} Tests}
+
+% Noticed that 'A Hueristic Test Data Generation Approach for Program Fault Localization' has a nice definition for passing/failing test cases (no notion of flakiness though). See section 3.1, Definition 1.
+
+\begin{quote}
+	Test failure can be modelled probabilistically. A \flaky{} test is one known to fail with low probability.
+\end{quote}
+
+\begin{defn}[\Flaky{} Test]\label{def:flakytest}
+	Given a subject under test $f: \vec{I} -> \vec{O}$.
+
+	A test case is $(\vec{i},\vec{o})$
+
+	The “fixed f” condition needs fixing. It will need to be wrt the slice from the program point at which $\vec{o}$ is generated to entry, given $\vec{i}$. In others words, it’s impact analysis. Intuitively, a test can only be \flaky{} when its behavior is sensitive unknown inputs and not to changes to f that it, in fact, is designed to test.
+
+	A \emph{\flaky{} test case} is a test case where, for fixed $f$,
+	$p(f(\vec{i}) = \vec{o}) = 1 - \epsilon$
+
+	\todo{For non-negligible epsilon.}
+
+	Remark: A \flaky{} test case is an unfair coin.
+
+	Let $\vec{I}$ be the lifting of all inputs, including coin flips and environmental interactions, into a single input vector.
+
+	The key is the true $\vec{I}$ is only partially known;  we capture flakiness as unknown components of $\vec{I}$, like Todd Mytkowicz’ sensitivity to the length of environmental variables, etc.
+
+	Note: formalize how much data we will need to gather in order to discover the cause of flakiness as a function of epsilon. Rare events, like flakiness, are related to smoothing.
+
+	Combined with our budget b, we can determine what values of $\epsilon$ we can afford to detect!
+\end{defn}
+
 \subsection{Automated Testing}
 \label{sec:sec:automated_testing}
 
@@ -62,12 +95,6 @@ If each value of the vector $S_{1}$ is loaded asynchronously, the test must chec
 
 In practice, with hundreds of user interface elements, these types of problems can become quite prevalent. Often, the solutions are obvious, but sometimes there is not enough information to solve the problem.
 
-
-\subsection{This is a real problem}
-
-\todo{Heisentest is an answer to a real problem faced by myself and members of my team at Shazam. Despite limited personal experience in industry, it is obvious that others face the same issue. Mozilla, Shazam and Chromium have known \flaky{} tests. Android even includes an @\flaky{} annotation in its testing kit for automatic rerunning of known troublesome tests.}
-
-
 \subsection{Why are \flaky{} tests a problem?}
 
 A test suite is not a user facing feature.
@@ -94,12 +121,14 @@ When the latest changes are due to be released, the \flaky{} tests must be consi
 The set of \flaky{} tests cause confusion, obscure real failures and erode trust.
 
 
-\subsection{Why not just ‘suppress’ the \flaky{} tests?}
+\subsection{Why not just {\lq}suppress{\rq} the \flaky{} tests?}
 
 Informally, let a valid test be a test that asserts that some unit of the application behaves as expected. A redundant test might check behaviour that is not required, or is tested thoroughly elsewhere. Assuming all tests in a suite are valid, then any \flaky{} tests in the suite are also valid. A \flaky{} test may cover behaviour that is not tested elsewhere. Suppressing (temporarily retiring) the \flaky{} test may do more harm than good, since the behaviour it previously tested will now be go completely unchecked unless manually tested upon each commit.
 
 
 \subsection{Fixing \flaky{} tests --- the manual way}
+
+Sometimes, it is not possible to fix a \flaky{} test from the information output by the testrunner alone. Typically, the information includes logs, an assertion failure message and/or a stack trace. Applications with a user interface may also provide a number of screenshots. Often, a developer will have to manually gather information to build up an understanding of the intended flow vs. the actual flow on failing runs. For \flaky{} tests with a low failure rate, this can be a painstaking and time-consuming process. Indeed, if the \flaky{} test is a timing based issue, attaching a debugger may cause the test to pass indefinitely.
 
 There are many ways to fix a \flaky{} test. A developer relies on experience and intuition to determine the best approach.
 
