@@ -18,6 +18,7 @@ paper.pdf
 *.sublime-project
 *.sublime-workspace
 out/
+upload.sh
 
 ## Core latex/pdflatex auxiliary files:
 *.aux
