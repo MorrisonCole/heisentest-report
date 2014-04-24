@@ -39,7 +39,13 @@ Today, acceptance tests make up $n$ percent of the tests in the Shazam Android t
 
 Our goal is automate as much of the process for fixing a flaky test as possible, freeing developers to spend time developing the software, rather than debugging tests that are in fact intended to speed up the development process. Ultimately, each test case must be investigated and fixed by a developer, but as we will show, much of the legwork can be automated.
 
-The tool we propose --- \emph{\splatter} --- gathers and analyses information much in the same way as a developer would. First, it identifies the flaky tests in a test suite. Then, it employs techniques similar to those discussed by \citet{ArumugaNainar:2010:ABI:1806799.1806839} to gather relevant debugging information over a series of test runs. Finally we analyze the gathered data and identify predicates strongly associated with test failure. Our tool takes advantage of the continuous integration environment, gathering data each time an associated test suite is run.
+The tool we propose --- \emph{\splatter} --- gathers and analyses information much in the same way as a developer would. First, it identifies the flaky tests in a test suite. Then, it employs techniques similar to those discussed by \citet{ArumugaNainar:2010:ABI:1806799.1806839} to gather relevant debugging information over a series of test runs. Finally we analyze the gathered data and identify predicates strongly associated with test failure. Our tool takes advantage of the continuous integration environment, gathering data each time an associated test suite is run. Figure \ref{fig:developer_workflow} shows a high-level \splatter{} workflow.
+
+\begin{figure}[h]
+\includegraphics[width=\linewidth]{images/developer_workflow}
+\caption{}
+\label{fig:developer_workflow}
+\end{figure}
 
 Running as a continuous integration step is a natural application. For one, test suites are run as continuous integration steps themselves. In addition, we want to be as transparent as possible.
 

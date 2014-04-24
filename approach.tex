@@ -1,7 +1,15 @@
 \section{Approach}
 \label{sec:approach}
 
-Figure \ref{fig:architecture_overview} depicts the high-level architecture of \splatter{}.
+Figure \ref{fig:architecture_overview} depicts the high-level processes of \splatter{} that execute when an integrated project is built. There are three major phases.
+
+\textbf{Analysis.} Test run history is analysed and the probability of failure for each test is determined. Tests determined to be \flaky{} are prioritised in the next phase.
+
+\textbf{Instrumentation.} \splatter{} extracts the packaged application, examines its bytecode and injects state-monitoring probes. Probe placement is informed by historical data, if available, and is performed with respect to an adaptive budget.
+
+\textbf{Testing.} The test suite is run on the instrumented application; probes record events which are logged to files and stored in a database along with the test results after completion.
+
+We first present our criteria for ranking \flaky{} tests (Section \ref{sec:sec:flakiness}). After defining our notion of budget (Section \ref{sec:sec:budget}) we then describe how budget is allocated on the test level, before zooming in to budget allocation on a bytecode level.
 
 \begin{figure}[h]
 \includegraphics[width=\linewidth]{images/architecture_overview}
@@ -10,6 +18,7 @@ Figure \ref{fig:architecture_overview} depicts the high-level architecture of \s
 \end{figure}
 
 \subsection{Flakiness}
+\label{sec:sec:flakiness}
 
 Each test is assigned a value in the range $[0..1]$, representing its flakiness. The higher the flakiness, the less likely the test is to fail on any given run. This value is used during test suite budget allocation.
 
@@ -75,7 +84,8 @@ Figure~\ref{fig:app:flakiness} shows the failure rates that qualify as \flaky{}.
 \end{algorithm}
 
 
-\subsection{Determining Test Suite Budget}
+\subsection{Test Suite Budget}
+\label{sec:sec:budget}
 
 There are two factors to take into account when determining our overall budget:
 
