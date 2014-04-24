@@ -47,6 +47,44 @@ This section will cover any formalisms that are necessary to understand and mode
 	Combined with our budget b, we can determine what values of $\epsilon$ we can afford to detect!
 \end{defn}
 
+Figure~\ref{fig:flakiness} depicts \flaky{} tests in terms of probability of failure.
+
+\begin{figure}[h]
+\begin{center}
+	% See: http://www.texample.net/tikz/examples/line-plot-example/
+	\begin{tikzpicture}[thick, framed, x=6.5cm, y=1.6cm]
+		% Title
+		\draw (0.5, 1) node[above] {$\textsc{\flaky{} Tests}$};
+
+		% Axis
+		\draw (0,0) -- coordinate (x axis mid) (1,0);
+	    \draw (0,0) -- coordinate (y axis mid) (0,1);
+
+	    % Axis Labels
+	    \node (padding) [below] at (0.4, 0) {};
+		\node[below of = padding] at (x axis mid) {Probability of Failure};
+
+	    % Ticks
+	    \foreach \x in {0, 1}
+	    	\draw (\x, 1pt) -- (\x, -3pt) node[anchor=north] {\x};
+	    \foreach \y in {0, 1}
+	    	\draw (1pt, \y) -- (-3pt, \y) node[anchor=east] {\y};
+
+		% \flaky{} test range
+	    \draw[<-] (0, 0.5) -- (0.4, 0.5); % Draw horizontal line
+	    \draw (0.4, 0.42) -- (0.4, 0.58); % Draw right vertical tab
+
+	    % Flakiness label
+	    \node [above] at (0.2, 0.5) {$Flaky$};
+
+	    % Alpha label
+	    \node [right] at (0.4, 0.5) {$(\boldsymbol{\alpha})$};
+	\end{tikzpicture}
+\end{center}
+\caption{}
+\label{fig:flakiness}
+\end{figure}
+
 \subsection{Automated Testing}
 \label{sec:sec:automated_testing}
 

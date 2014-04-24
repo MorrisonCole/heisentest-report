@@ -20,48 +20,32 @@ We first present our criteria for ranking \flaky{} tests (Section \ref{sec:sec:f
 \subsection{Flakiness}
 \label{sec:sec:flakiness}
 
-Each test is assigned a value in the range $[0..1]$, representing its flakiness. The higher the flakiness, the less likely the test is to fail on any given run. This value is used during test suite budget allocation.
+\Flaky{} tests with a relatively low probability of failure are harder to reproduce. Since we are less likely to observe a test with a lower probability of failure fail, we allocate a larger portion of the budget to them.
 
-\begin{figure}[here]\label{fig:app:flakiness}
-\caption{}
-	\begin{center}
-		% See: http://www.texample.net/tikz/examples/line-plot-example/
-		\begin{tikzpicture}[thick, framed, x=6.5cm, y=1.6cm]
-			% Title
-			\draw (0.5, 1) node[above] {$\textsc{\flaky{} Tests}$};
+We define a normalised scalar value based on a test's probability of failure --- \emph{\flakiness{}}. A high \flakiness{} value corresponds to a low probability of failure.
 
-			% Axis
-			\draw (0,0) -- coordinate (x axis mid) (1,0);
-		    \draw (0,0) -- coordinate (y axis mid) (0,1);
+A test's \flaky{} budget is proportional to its \flakiness{}.
 
-		    % Axis Labels
-		    \node (padding) [below] at (0.4, 0) {};
-			\node[below of = padding] at (x axis mid) {Chance of Failure};
 
-		    % Ticks
-		    \foreach \x in {0, 0.4, 1}
-		    	\draw (\x, 1pt) -- (\x, -3pt) node[anchor=north] {\x};
-		    \foreach \y in {0, 1}
-		    	\draw (1pt, \y) -- (-3pt, \y) node[anchor=east] {\y};
 
-			% \flaky{} test range
-		    \draw[<-] (0, 0.5) -- (0.4, 0.5); % Draw horizontal line
-		    \draw (0.4, 0.42) -- (0.4, 0.58); % Draw right vertical tab
+We refer to the value used to rank \flaky{} tests for budget allocation as \emph{\flakiness{}}.
 
-		    % Flakiness label
-		    \node [above] at (0.2, 0.5) {$Flaky$};
+We normalise the value, so that we may use it to assign budget proportionally. Section \ref{sec:sec:allocating_budget} defines this process in detail.
 
-		    % Alpha label
-		    \node [right] at (0.4, 0.5) {$(\boldsymbol{\alpha})$};
-		\end{tikzpicture}
-	\end{center}
-\end{figure}
+\begin{defn}[\Flakiness{}]\label{def:flakiness}
 
-Figure~\ref{fig:app:flakiness} shows the failure rates that qualify as \flaky{}. If a tests' chance of failure lies within the range $(0, \alpha]$, its flakiness value will be $(0, 1]$; otherwise, it will be $0$.
+Given a test $T$ with probability of failure $T_{p}$, test \flakiness{} is calculated by:
+\[
+    f(T_{p})=
+	\begin{cases}
+	    1 - \frac{T_{p}}{\alpha},& \text{if } T_{p}< \alpha\\
+	    0,              & \text{otherwise}
+	\end{cases}
+\]
 
-\todo{What value is $\alpha$, how do we calculate it? 0.4 is arbitrary!}
-\todo{We ignore tests with failure rates greater than $\alpha$ since they could be reasonably reproduced by a developer?}
+\end{defn}
 
+% Possibly just shove this in the appendix...
 \algrenewcommand\algorithmicrequire{\textbf{Precondition:}}
 \algrenewcommand\algorithmicensure{\textbf{Postcondition:}}
 
@@ -100,6 +84,7 @@ There are two factors to take into account when determining our overall budget:
 Budget $B_{f} = B_{6} + B_{f!} + B_{nd}$}
 
 \subsection{Allocating Test Suite Budget}
+\label{sec:sec:allocating_budget}
 
 Test suite budget is distributed across all tests. We split our budget into two pools --- targeted and exploratory. We allocate targeted budget to tests with high flakiness, prioritising those with the highest flakiness and least historical data. Exploratory budget is randomly allocated to the remaining tests in the hopes that we get lucky and catch a previously stable test fail unexpectedly.
 
