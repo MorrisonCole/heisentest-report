@@ -17,6 +17,7 @@
 This section will cover any formalisms that are necessary to understand and model the problem.
 
 \subsection{\Flaky{} Tests}
+\label{sec:sec:flaky_tests}
 
 % Noticed that 'A Hueristic Test Data Generation Approach for Program Fault Localization' has a nice definition for passing/failing test cases (no notion of flakiness though). See section 3.1, Definition 1.
 
@@ -24,21 +25,16 @@ This section will cover any formalisms that are necessary to understand and mode
 	Test failure can be modelled probabilistically. A \flaky{} test is one known to fail with low probability.
 \end{quote}
 
-\begin{defn}[\Flaky{} Test]\label{def:flakytest}
-	Given a subject under test $f: \vec{I} -> \vec{O}$.
+\begin{defn}[\Flaky{} Test]\label{def:flaky_test}
+	Let $\vec{I}$ be the lifting of all inputs, including coin flips and environmental interactions, into a single input vector.
 
-	A test case is $(\vec{i},\vec{o})$
+	Given a subject under test $f: \vec{I} -> \vec{O}$, a \emph{test case} is $(\vec{i},\vec{o})$.
 
 	The “fixed f” condition needs fixing. It will need to be wrt the slice from the program point at which $\vec{o}$ is generated to entry, given $\vec{i}$. In others words, it’s impact analysis. Intuitively, a test can only be \flaky{} when its behavior is sensitive unknown inputs and not to changes to f that it, in fact, is designed to test.
 
-	A \emph{\flaky{} test case} is a test case where, for fixed $f$,
-	$p(f(\vec{i}) = \vec{o}) = 1 - \epsilon$
-
-	\todo{For non-negligible epsilon.}
-
-	Remark: A \flaky{} test case is an unfair coin.
-
-	Let $\vec{I}$ be the lifting of all inputs, including coin flips and environmental interactions, into a single input vector.
+	A \emph{\flaky{} test case} is a test case where, for fixed $f$
+	$$p(f(\vec{i}) = \vec{o}) = 1 - \epsilon$$
+	for non-negligible $\epsilon$.
 
 	The key is the true $\vec{I}$ is only partially known;  we capture flakiness as unknown components of $\vec{I}$, like Todd Mytkowicz’ sensitivity to the length of environmental variables, etc.
 

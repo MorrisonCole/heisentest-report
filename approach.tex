@@ -1,15 +1,15 @@
 \section{Approach}
 \label{sec:approach}
 
-Figure \ref{fig:architecture_overview} depicts the high-level processes of \splatter{} that execute when an integrated project is built. There are three major phases.
+Figure \ref{fig:architecture_overview} depicts the high-level processes of \splatter{} that execute when an integrated project is built. There are three major phases:
 
-\textbf{Analysis.} Test run history is analysed and the probability of failure for each test is determined. Tests determined to be \flaky{} are prioritised in the next phase.
+\textbf{Analysis.} Test run history is analysed and the probability of failure for each test is calculated.
 
-\textbf{Instrumentation.} \splatter{} extracts the packaged application, examines its bytecode and injects state-monitoring probes. Probe placement is informed by historical data, if available, and is performed with respect to an adaptive budget.
+\textbf{Instrumentation.} \splatter{} extracts the packaged application, examines its bytecode and injects state-monitoring probes. Probe placement is informed by available historical data and is performed with respect to a budget. Tests determined to be \flaky{} are prioritised and are more heavily instrumented.
 
-\textbf{Testing.} The test suite is run on the instrumented application; probes record events which are logged to files and stored in a database along with the test results after completion.
+\textbf{Testing.} The test suite is run on the instrumented application; probes fire events which are processed and logged to files. Logs are stored in a database along with the test results after completion.
 
-We first present our criteria for ranking \flaky{} tests (Section \ref{sec:sec:flakiness}). After defining our notion of budget (Section \ref{sec:sec:budget}) we then describe how budget is allocated on the test level, before zooming in to budget allocation on a bytecode level.
+We first define our notion of budget (Section \ref{sec:sec:budget}). Then, we present a criteria for ranking \flaky{} tests (Section \ref{sec:sec:flakiness}) so that budget may be allocated intelligently. Finally, we detail algorithms that can be used to allocate budget to tests in a suite (Section {\ref{sec:sec:allocating_budget}).
 
 \begin{figure}[h]
 \includegraphics[width=\linewidth]{images/architecture_overview}
@@ -20,21 +20,11 @@ We first present our criteria for ranking \flaky{} tests (Section \ref{sec:sec:f
 \subsection{Flakiness}
 \label{sec:sec:flakiness}
 
-\Flaky{} tests with a relatively low probability of failure are harder to reproduce. Since we are less likely to observe a test with a lower probability of failure fail, we allocate a larger portion of the budget to them.
-
-We define a normalised scalar value based on a test's probability of failure --- \emph{\flakiness{}}. A high \flakiness{} value corresponds to a low probability of failure.
-
-A test's \flaky{} budget is proportional to its \flakiness{}.
-
-
-
-We refer to the value used to rank \flaky{} tests for budget allocation as \emph{\flakiness{}}.
-
-We normalise the value, so that we may use it to assign budget proportionally. Section \ref{sec:sec:allocating_budget} defines this process in detail.
+\Flaky{} tests with a relatively low probability of failure are harder to reproduce. We define a normalised scalar value --- \emph{\flakiness} (Definition \ref{def:flakiness}) --- based on probability of test failure. We favour tests with high \flakiness{} and instrument them more heavily by assigning \flaky{} test budget proportionaly to \flakiness{}; Section \ref{sec:sec:allocating_budget} describes the process in detail. Algorithm \ref{alg:calculate_flakiness} presents a possible method of calculating \flakiness{}.
 
 \begin{defn}[\Flakiness{}]\label{def:flakiness}
 
-Given a test $T$ with probability of failure $T_{p}$, test \flakiness{} is calculated by:
+Given a test $T$ with probability of failure $T_{p}$, test \flakiness{} is calculated by
 \[
     f(T_{p})=
 	\begin{cases}
@@ -42,31 +32,28 @@ Given a test $T$ with probability of failure $T_{p}$, test \flakiness{} is calcu
 	    0,              & \text{otherwise}
 	\end{cases}
 \]
+where $\alpha$ is the \flaky{} test threshold; \ie, the point at which $\epsilon$ (as defined in Definition \ref{def:flaky_test}) becomes significant.
 
 \end{defn}
 
-% Possibly just shove this in the appendix...
-\algrenewcommand\algorithmicrequire{\textbf{Precondition:}}
-\algrenewcommand\algorithmicensure{\textbf{Postcondition:}}
-
-\begin{algorithm}[here]\label{alg:app:calculateFlakiness}
-\caption{Calculating the flakiness of a test}
+\begin{algorithm}[h]
+\caption{}
+\label{alg:calculate_flakiness}
 \begin{algorithmic}
-	\Require{$chanceOfFailure$ and $threshold$ are decimal values within ranges $[0, 1]$ and $(0,1]$ respectively.}
+	\Require{$probOfFailure$ and $threshold$ are decimal values within ranges $[0..1]$ and $(0..1]$ respectively.}
     \Statex
 
-	\Function{calculateFlakiness}{$chanceOfFailure$, $threshold$}
+	\Function{calculateFlakiness}{$probOfFailure$, $threshold$}
 
-	\If{$chanceOfFailure \geq threshold$ OR $chanceOfFailure \eq 0$}
+	\If{$(probOfFailure \geq threshold)$ OR $(probOfFailure \eq 0)$}
 		\State \Return $0$
 	\Else
-		\State \Return $1 - (chanceOfFailure / threshold)$
+		\State \Return $1 - (probOfFailure / threshold)$
 	\EndIf
 
 	\EndFunction
 \end{algorithmic}
 \end{algorithm}
-
 
 \subsection{Test Suite Budget}
 \label{sec:sec:budget}
@@ -289,3 +276,8 @@ Given an entry point, in our case, a test or setup method, we simply take the ne
 The main strategy is to place probes further and further down the control dependence graph until we are able to detect a failure-predicting predicate.
 
 Once we have detected a failure-predicting predicate, we can assign the majority of our budget to drill down in related areas. Still, we reserve a portion to ‘scout’ in case we get lucky and find another failure predicting predicate elsewhere.
+
+
+\subsection{Countering the {\lq}Observer Effect{\rq}}
+
+If our instrumentation happens to perturb the behaviour of a \flaky{} test in such a way that $\epsilon$ is observed to have changed, we reduce the budget allocated to the test until $\epsilon$ returns to its previous value.
