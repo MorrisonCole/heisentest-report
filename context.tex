@@ -25,15 +25,39 @@ This section will cover any formalisms that are necessary to understand and mode
 	Test failure can be modelled probabilistically. A \flaky{} test is one known to fail with low probability.
 \end{quote}
 
-\begin{defn}[\Flaky{} Test]\label{def:flaky_test}
-	Let $\vec{I}$ be the lifting of all inputs, including coin flips and environmental interactions, into a single input vector. Given a \textit{subject under test} $f: \vec{I} \rightarrow \vec{O}$, a \textit{test case} is $(\vec{i},\vec{o})$. A \textit{\flaky{} test case} is a \textit{test case} where, for fixed $f$
-	$$p(f(\vec{i}) = \vec{o}) = 1 - \epsilon$$
-	for non-negligible $\epsilon$.
+\mc{Set up this intuitive, informal definition.  Explicitly identify the terms
+that require formalism.}
+
+\begin{defn}[\Flaky{} Test]
+  \label{def:flaky_test}
+
+Let $\vec{I}$ be the lifting of all inputs, including coin flips and
+environmental interactions, into a single input vector. Given a subject
+under test $f: \vec{I} \rightarrow \vec{O}$, a test case is
+$(\vec{i},\vec{o})$. A \emph{\flaky{} test case} is one
+where
+%
+\begin{align*}
+  p(f(\vec{i}) \ne \vec{o}) = \epsilon
+\end{align*}
+%
+for non-negligible probability $\epsilon \in (0..\alpha]$.
+
 \end{defn}
 
-The key is the true $\vec{I}$ is only partially known; we capture flakiness as unknown components of $\vec{I}$. Combined with our budget $B$, we can determine what values of $\epsilon$ we can afford to detect.
+Flaky tests fail rarely.  What is “rare" depends on the problem and the cost of
+the test.  If a test fails frequently enough, it can be converted into a
+standard failing test by repeatedly running the test, subject to the cost of
+that test.  The parameter $\alpha$ represents this threshold between
+reproducible via repetition and not.  The exact probability $\epsilon$ must be
+non-negligible so that repeated trials are likely to trigger the failure.  In
+practice, this constraint is easily met, since it is hard to image that a
+negligible $\epsilon$ matters.  Combined with our budget $B$, we can determine
+what values of $\epsilon$ we can afford to detect. \mc{We have make this
+connection explicit:  maybe not here in this report, but certainly for ICSE.}
 
-Figure~\ref{fig:flakiness} depicts \flaky{} tests in terms of probability of failure.
+Figure~\ref{fig:flakiness} depicts \flaky{} tests in terms of probability of
+failure.
 
 \begin{figure}[h]
 \begin{center}
