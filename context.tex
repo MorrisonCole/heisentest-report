@@ -26,22 +26,12 @@ This section will cover any formalisms that are necessary to understand and mode
 \end{quote}
 
 \begin{defn}[\Flaky{} Test]\label{def:flaky_test}
-	Let $\vec{I}$ be the lifting of all inputs, including coin flips and environmental interactions, into a single input vector.
-
-	Given a subject under test $f: \vec{I} -> \vec{O}$, a \emph{test case} is $(\vec{i},\vec{o})$.
-
-	The “fixed f” condition needs fixing. It will need to be wrt the slice from the program point at which $\vec{o}$ is generated to entry, given $\vec{i}$. In others words, it’s impact analysis. Intuitively, a test can only be \flaky{} when its behavior is sensitive unknown inputs and not to changes to f that it, in fact, is designed to test.
-
-	A \emph{\flaky{} test case} is a test case where, for fixed $f$
+	Let $\vec{I}$ be the lifting of all inputs, including coin flips and environmental interactions, into a single input vector. Given a \textit{subject under test} $f: \vec{I} \rightarrow \vec{O}$, a \textit{test case} is $(\vec{i},\vec{o})$. A \textit{\flaky{} test case} is a \textit{test case} where, for fixed $f$
 	$$p(f(\vec{i}) = \vec{o}) = 1 - \epsilon$$
 	for non-negligible $\epsilon$.
-
-	The key is the true $\vec{I}$ is only partially known;  we capture flakiness as unknown components of $\vec{I}$, like Todd Mytkowicz’ sensitivity to the length of environmental variables, etc.
-
-	Note: formalize how much data we will need to gather in order to discover the cause of flakiness as a function of epsilon. Rare events, like flakiness, are related to smoothing.
-
-	Combined with our budget b, we can determine what values of $\epsilon$ we can afford to detect!
 \end{defn}
+
+The key is the true $\vec{I}$ is only partially known; we capture flakiness as unknown components of $\vec{I}$. Combined with our budget $B$, we can determine what values of $\epsilon$ we can afford to detect.
 
 Figure~\ref{fig:flakiness} depicts \flaky{} tests in terms of probability of failure.
 
@@ -50,7 +40,7 @@ Figure~\ref{fig:flakiness} depicts \flaky{} tests in terms of probability of fai
 	% See: http://www.texample.net/tikz/examples/line-plot-example/
 	\begin{tikzpicture}[thick, framed, x=6.5cm, y=1.6cm]
 		% Title
-		\draw (0.5, 1) node[above] {$\textsc{\flaky{} Tests}$};
+		\draw (0.5, 1) node[above] {$\textsc{\flaky{} Test}$};
 
 		% Axis
 		\draw (0,0) -- coordinate (x axis mid) (1,0);
@@ -92,7 +82,7 @@ Automated tests serve a simple purpose --- ensure the software under test behave
 
 A good test suite achieves this by exercising discrete chunks of the program's code to ensure it behaves in some expected way. At a high level, each test can be broken into three steps - arrangement, action and assertion.
 
-Anecdotally, the higher-level the behaviour being tested, the more likely a test is to fail due to inputs unaccounted for. Tests that exercise valid code can fail unexpectedly and unpredictably.
+Anecdotally, the higher-level the behaviour being tested, the more likely a test is to fail due to inputs unaccounted for. Tests that exercise seemingly valid code can fail unexpectedly and unpredictably.
 
 Developers working with such tests face a dilemma --- {\lq}suppress{\rq} the tests until they are fixed, or acknowledge them but keep them active, potentially randomly breaking the build from time to time until they are fixed.
 
