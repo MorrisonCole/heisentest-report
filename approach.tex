@@ -77,8 +77,6 @@ Test suite budget is distributed across all tests. We split our budget into two 
 
 We start from a pesimistic; new tests are assumed to have a flakiness value of 1. As the test is run, the flakiness value is adjusted as usual until it represents a more accurate value. New tests will therefore be heavily instrumented, and gradually less so as they prove themselves to be reliable.
 
-% The {algorithm} wrapper is pretty unattractive as far as I'm concerned.
-% Need to look into alternative ways of formatting this.
 \begin{algorithm}[h]
 \caption{Instrumenting the test suite with respect to a budget}
 \label{alg:splatter}
