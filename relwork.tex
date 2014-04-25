@@ -1,36 +1,73 @@
 \section{Related Work}
 \label{sec:relwork}
 
-Liblit’s Adaptive Bug Isolation [] and other papers have taken a conservative approach to information gathering. The projects have targeted production code, so privacy and performance are major concerns.
+Liblit’s Adaptive Bug Isolation [] and other papers have taken a conservative
+approach to information gathering. The projects have targeted production code,
+so privacy and performance are major concerns.
 
 \todo{Citations - there are a lot to add here!}
 
 \subsubsection{Ordering}
 
-In previous statistical bug isolation projects, ordering is completely discarded due to privacy concerns []. Recording a play-by-play execution is invasive to the common user.
+In previous statistical bug isolation projects, ordering is completely discarded
+due to privacy concerns []. Recording a play-by-play execution is invasive to
+the common user.
 
-Since our instrumentation will run in a development environment, there are no user concerns - the tests are automated. We can maintain ordering with a little more overhead.
+Since our instrumentation will run in a development environment, there are no
+user concerns - the tests are automated. We can maintain ordering with a little
+more overhead.
 
-Multi-threaded environments are commonplace. In order to record the execution order of multiple threads, we include the system time in each log event. Each thread logs to a separate sink. After the tests run completes, we merge and interleave the individual logs before storing them. We end up with a single log file with times and thread IDs.
-
+Multi-threaded environments are commonplace. In order to record the execution
+order of multiple threads, we include the system time in each log event. Each
+thread logs to a separate sink. After the tests run completes, we merge and
+interleave the individual logs before storing them. We end up with a single log
+file with times and thread IDs.
 
 \subsubsection{Storage/Result Collection}
 
-Again, the context of our execution allows more flexibility. In production systems, logs have to be stored on user devices and (eventually) transferred to a central location for analysis. User storage space and bandwidth is precious, so it is essential to minimise both.
+Again, the context of our execution allows more flexibility. In production
+systems, logs have to be stored on user devices and (eventually) transferred to
+a central location for analysis. User storage space and bandwidth is precious,
+so it is essential to minimise both.
 
-In our case, tests will be run internally on project-owned machines and devices. Log files can be transferred to the central database immediately following a test run. Each test run by definition requires a clean device, so build agents will almost certainly never run out of space since they will at any moment be storing the logs from at most one test run.
+In our case, tests will be run internally on project-owned machines and devices.
+Log files can be transferred to the central database immediately following a
+test run. Each test run by definition requires a clean device, so build agents
+will almost certainly never run out of space since they will at any moment be
+storing the logs from at most one test run.
 
-The only real storage concern is that of the central database. But, this can be managed effectively by limiting the number of historical test run logs to keep - much in the same way Jenkins and other CI tools do by default.
-
+The only real storage concern is that of the central database. But, this can be
+managed effectively by limiting the number of historical test run logs to keep -
+much in the same way Jenkins and other CI tools do by default.
 
 \subsubsection{Performance}
 
-Instrumentation adds performance overhead. In the case of a production system, this is a major problem since performance directly affects a user’s experience. Nainar and Liblit \cite{ArumugaNainar:2010:ABI:1806799.1806839} propose an adaptive bug isolation system with a performance overhead of just 1\%.
+Instrumentation adds performance overhead. In the case of a production system,
+this is a major problem since performance directly affects a user’s experience.
+Nainar and Liblit \cite{ArumugaNainar:2010:ABI:1806799.1806839} propose an
+adaptive bug isolation system with a performance overhead of just 1\%.
 
-In a test environment, smoothness and load times rarely matter. Of course, there are exceptions (performance regression tests, etc.), but we expect to mainly be dealing with system tests. We can safely add instrumentation and ignore performance, unless it begins to affect the thread-wise execution. If a \flaky test begins consistently passing when heavily instrumented, we can simply reduce the instrumentation until the previous \flaky behaviour is once again observed.
+In a test environment, smoothness and load times rarely matter. Of course, there
+are exceptions (performance regression tests, etc.), but we expect to mainly be
+dealing with system tests. We can safely add instrumentation and ignore
+performance, unless it begins to affect the thread-wise execution. If a \flaky
+test begins consistently passing when heavily instrumented, we can simply reduce
+the instrumentation until the previous \flaky behaviour is once again observed.
 
 \subsubsection{Adaptivity}
 
-Both fixed and adaptive approaches have been proposed[] in the past. All of these approaches were developed with the underlying constraint of deploying the instrumented software to real users. [adaptive bug isolation] makes use of binary instrumentation to iteratively re-instrument deployed applications to hone in on a bug-predicting predicates. Whilst the adaptive approach has many benefits in terms of overhead, it relies on a specialized API - Dyninst - for code patching to support the injection of  instrumentation at runtime. This has additional runtime costs \cite{DyninstGuide} associated with saving and restoring registers and performing protective checks not present in a fixed instrumentation.
+Both fixed and adaptive approaches have been proposed[] in the past. All of
+these approaches were developed with the underlying constraint of deploying the
+instrumented software to real users. [adaptive bug isolation] makes use of
+binary instrumentation to iteratively re-instrument deployed applications to
+hone in on a bug-predicting predicates. Whilst the adaptive approach has many
+benefits in terms of overhead, it relies on a specialized API - Dyninst - for
+code patching to support the injection of  instrumentation at runtime. This has
+additional runtime costs \cite{DyninstGuide} associated with saving and
+restoring registers and performing protective checks not present in a fixed
+instrumentation.
 
-Again, our context allows more freedom. Every run requires a new build by nature, so simply apply a unique fixed instrumentation every time. In other words, we retain the optimisation benefits of a fixed instrumentation whilst gaining those of the adaptive solution.
+Again, our context allows more freedom. Every run requires a new build by
+nature, so simply apply a unique fixed instrumentation every time. In other
+words, we retain the optimisation benefits of a fixed instrumentation whilst
+gaining those of the adaptive solution.

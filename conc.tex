@@ -3,9 +3,14 @@
 
 \begin{mdframed}
 	\begin{itemize}
-		\item A summary of what the project has achieved. Address each goal set out in the introduction.
-		\item A critical evaluation of the results of the project (e.g., how well were the goals met, is the application fit for purpose, has good design and implementation practice been followed, was the right implementation technology chosen and so on).
-		\item Future work. How could the project be developed if you had another 6 months.
+		\item A summary of what the project has achieved. Address each goal set out
+		in the introduction.
+		\item A critical evaluation of the results of the project (e.g., how well
+		were the goals met, is the application fit for purpose, has good design and
+		implementation practice been followed, was the right implementation
+		technology chosen and so on).
+		\item Future work. How could the project be developed if you had another 6
+		months.
 		\item Wrap-up and final thoughts on your project.
 	\end{itemize}
 \end{mdframed}
@@ -13,40 +18,83 @@
 
 \subsection{Design Failures}
 
-Could have used Soot to convert Dalvik bytecode into standard Java .class files using Dexpler \cite{bartel:soap2012} and instrumented from then on. However, the DEX code output by Dexpler is often invalid, as is evident from the bug reports and ongoing development at GitHub. Perhaps in the future, Soot would be a more viable option. Certainly the features it boasts are attractive for the Heisentest project.
+Could have used Soot to convert Dalvik bytecode into standard Java .class files
+using Dexpler \cite{bartel:soap2012} and instrumented from then on. However, the
+DEX code output by Dexpler is often invalid, as is evident from the bug reports
+and ongoing development at GitHub. Perhaps in the future, Soot would be a more
+viable option. Certainly the features it boasts are attractive for the
+Heisentest project.
 
 
 \subsection{Future Work}
 
-We have assumed that flaky tests are costly to practitioners that encounter them in their projects. To determine whether this is indeed the case within the context of at least one real-world software development project, we plan to do a case study with the developers at Shazam. We hope to gain an understanding of the ways developers deal with \flaky tests, what tools they use and how they feel \flaky tests effect the team.
+We have assumed that flaky tests are costly to practitioners that encounter them
+in their projects. To determine whether this is indeed the case within the
+context of at least one real-world software development project, we plan to do a
+case study with the developers at Shazam. We hope to gain an understanding of
+the ways developers deal with \flaky tests, what tools they use and how they
+feel \flaky tests effect the team.
 
-In order to support the development of the tool, we plan to deploy \splatter to the Android team at Shazam in the near future. Seeing how it behaves and how developers interact with it will be critical in steering the engineering work.
+In order to support the development of the tool, we plan to deploy \splatter to
+the Android team at Shazam in the near future. Seeing how it behaves and how
+developers interact with it will be critical in steering the engineering work.
 
-Finally, we also plan to evaluate the performance of \splatter. For some known \flaky tests that have been fixed, we will apply \splatter and analyse its performance. We will measure probe proximity to the source of the \flaky test over a series of runs. Presuming \splatter works as expected, we would hope to see probes placed in locations closer to the bug as a test is run repeatedly.
+Finally, we also plan to evaluate the performance of \splatter. For some known
+\flaky tests that have been fixed, we will apply \splatter and analyse its
+performance. We will measure probe proximity to the source of the \flaky test
+over a series of runs. Presuming \splatter works as expected, we would hope to
+see probes placed in locations closer to the bug as a test is run repeatedly.
 
-In order to be helpful in practice, \splatter would ideally reduce the expected time to fix a flaky test for some or all types of developer (experienced, inexperienced, \etc.). We would need to compare a set of developers using the tool to a set of developers without the tool in experimental conditions. The developer sets could either be of mixed or similar experience, and working on a familiar or unfamiliar codebase. Familiarity of the group using \splatter with the tool will also need to be accounted for.
+In order to be helpful in practice, \splatter would ideally reduce the expected
+time to fix a flaky test for some or all types of developer (experienced,
+inexperienced, \etc.). We would need to compare a set of developers using the
+tool to a set of developers without the tool in experimental conditions. The
+developer sets could either be of mixed or similar experience, and working on a
+familiar or unfamiliar codebase. Familiarity of the group using \splatter with
+the tool will also need to be accounted for.
 
 \subsubsection{Gathering data from local test runs}
 
-In a typical test driven development cycle, tests are run constantly --- both by the developers and the continuous integration build agents. We could gather test run data from the tests run by developers themselves by sending the results over the network to the Splatter CI plugin.
+In a typical test driven development cycle, tests are run constantly --- both by
+the developers and the continuous integration build agents. We could gather test
+run data from the tests run by developers themselves by sending the results over
+the network to the Splatter CI plugin.
 
 \begin{itemize}
-	\item This would require {\lq}noise{\rq} reduction --- developers break tests locally often, we wouldn't want to adjust our flakiness values based on changes that never make it onto the development branch.
-	\item It should be easy to {\lq}opt-out{\rq} of this --- our instrumentation does affect build times and developers may not appreciate the extra overhead!
+	\item This would require {\lq}noise{\rq} reduction --- developers break tests
+	locally often, we wouldn't want to adjust our flakiness values based on
+	changes that never make it onto the development branch.
+	\item It should be easy to {\lq}opt-out{\rq} of this --- our instrumentation
+	does affect build times and developers may not appreciate the extra overhead!
 \end{itemize}
 
 \subsubsection{Commit blaming}
 
-Our CI plugin could display an estimated commit {\lq}blame{\rq} range, along with relevant build numbers if a previously stable test is suddenly observed to be \flaky.
+Our CI plugin could display an estimated commit {\lq}blame{\rq} range, along
+with relevant build numbers if a previously stable test is suddenly observed to
+be \flaky.
 
 \subsubsection{Retiring trusted tests}
 
-Projects with a huge number of tests face lengthy build times. It may be in a teams' interest to remove trusted tests from the per-commit build and instead run them on a seperate cycle to tighten the immediate feedback loop. We could provide a listing of {\lq}most trusted{\rq} tests (\ie, tests that have exhibited no flakiness over a significant period).
+Projects with a huge number of tests face lengthy build times. It may be in a
+teams' interest to remove trusted tests from the per-commit build and instead
+run them on a seperate cycle to tighten the immediate feedback loop. We could
+provide a listing of {\lq}most trusted{\rq} tests (\ie, tests that have
+exhibited no flakiness over a significant period).
 
 \subsubsection{Porting the plugin}
 
-Jenkins is but one of many available continuous integration tools \cite{ContinuousIntegrationSoftware}. Hudson, TeamCity, CruiseControl and Team Foundation Server are amongst the notable alternatives. A Hudson port would be especially trivial, since the Jenkins codebase is still fairly similar. In fact, the code-bases have not diverged significantly since 2010 when Jenkins materialised.
+Jenkins is but one of many available continuous integration tools
+\cite{ContinuousIntegrationSoftware}. Hudson, TeamCity, CruiseControl and Team
+Foundation Server are amongst the notable alternatives. A Hudson port would be
+especially trivial, since the Jenkins codebase is still fairly similar. In fact,
+the code-bases have not diverged significantly since 2010 when Jenkins
+materialised.
 
-TeamCity \cite{TeamCity} has a significant community and a growing number of plugins, but is a closed source project maintained by JetBrains.
+TeamCity \cite{TeamCity} has a significant community and a growing number of
+plugins, but is a closed source project maintained by JetBrains.
 
-\todo{The instrumentation does not have to be run locally. Indeed, this may damage the inferred data anyway (especially if there are common but obvious failures which are then fixed without issue). Instead, it should be run with the standard build or on it’s own dedicated job (e.g. an overnight build).}
+\todo{The instrumentation does not have to be run locally. Indeed, this may
+damage the inferred data anyway (especially if there are common but obvious
+failures which are then fixed without issue). Instead, it should be run with the
+standard build or on it’s own dedicated job (e.g. an overnight build).}

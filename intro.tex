@@ -1,65 +1,161 @@
 \section{Introduction}
 \label{sec:intro}
 
-Software is ubiquitous. With applications targeting a diverse set of environments and platforms, developers commonly turn to automated testing in the hopes of reducing defects. A test can be treated as a trust mechanism. In theory, each test allows changes --- functional or otherwise --- to be made to the code under test with the confidence that existing behaviour will not be modified. Test suites are run regularly as part of a tightly controlled feedback loop; unintended regressions are brought to the developers attention by one or more failing tests. Automated tests are ultimately just more software though, and just as software is rarely bug free, automated tests are often plagued with bugs of their own.
+Software is ubiquitous. With applications targeting a diverse set of
+environments and platforms, developers commonly turn to automated testing in the
+hopes of reducing defects. A test can be treated as a trust mechanism. In
+theory, each test allows changes --- functional or otherwise --- to be made to
+the code under test with the confidence that existing behaviour will not be
+modified. Test suites are run regularly as part of a tightly controlled feedback
+loop; unintended regressions are brought to the developers attention by one or
+more failing tests. Automated tests are ultimately just more software though,
+and just as software is rarely bug free, automated tests are often plagued with
+bugs of their own.
 
 \subsubsection{The Testing Pyramid}
 \label{sec:sec:sec:the_testing_pyramid}
 
-Tests can be divided into three groups, each targetting an increasingly abstract layer of an application \citep[see][Chapter~16]{cohn2009succeeding}. At the lowest level, we have \emph{unit} tests, which verify the behaviour of functions through their public interfaces. \emph{Service} (or \emph{integration}) tests target a layer above, focusing on the interactions of groups of subsystems and their responses to various inputs. Finally, at the highest level, we have \emph{user interface} (or \emph{acceptance}) tests, which verify the functionality of an application as a whole system.
+Tests can be divided into three groups, each targetting an increasingly abstract
+layer of an application \citep[see][Chapter~16]{cohn2009succeeding}. At the
+lowest level, we have \emph{unit} tests, which verify the behaviour of functions
+through their public interfaces. \emph{Service} (or \emph{integration}) tests
+target a layer above, focusing on the interactions of groups of subsystems and
+their responses to various inputs. Finally, at the highest level, we have
+\emph{user interface} (or \emph{acceptance}) tests, which verify the
+functionality of an application as a whole system.
 
-Environmental factors are often related to intermittent test failure. The further we travel up the layers of the pyramid, the more environmental factors we introduce. Unit tests target and exercise isolated sections of code. A well written unit test's outcome is almost guaranteed to depend only on the behaviour of the code it exercises. Integration tests may depend on an external service (\eg, a database), so may sometimes fail unexpectedly. Most vulnerable are acceptance tests. Since they run on a complete system, they are potentially open to interference by any number of environmental events or characteristics. For example, an operating system starved of memory could kill the application, or, a particularly slow start-up time could cause a timeout to occur.
+Environmental factors are often related to intermittent test failure. The
+further we travel up the layers of the pyramid, the more environmental factors
+we introduce. Unit tests target and exercise isolated sections of code. A well
+written unit test's outcome is almost guaranteed to depend only on the behaviour
+of the code it exercises. Integration tests may depend on an external service
+(\eg, a database), so may sometimes fail unexpectedly. Most vulnerable are
+acceptance tests. Since they run on a complete system, they are potentially open
+to interference by any number of environmental events or characteristics. For
+example, an operating system starved of memory could kill the application, or, a
+particularly slow start-up time could cause a timeout to occur.
 
-\todo{Heisentest is an answer to a real problem faced by myself and members of my team at Shazam. Despite limited personal experience in industry, it is obvious that others face the same issue. Mozilla, Shazam and Chromium have known \flaky tests. Android even includes an @\flaky annotation in its testing kit for automatic rerunning of known troublesome tests.}
+\todo{Heisentest is an answer to a real problem faced by myself and members of
+my team at Shazam. Despite limited personal experience in industry, it is
+obvious that others face the same issue. Mozilla, Shazam and Chromium have
+known flaky tests. Android even includes an @flaky annotation in its testing
+kit for automatic rerunning of known troublesome tests.}
+
 
 \subsection{Shazam}
 
-Shazam is a thriving software startup with a global focus. Their primary focus lies in an audio identification application of the same name. As of \today, Shazam reports more than 85 million active users spanning 200 countries and 33 languages across the Android, iOS, Windows Phone and BlackBerry platforms. As a technology-centric company, it is essential that Shazam are able to deliver correct software on time and under budget. Modern development practices ensure these requirements are as closely met as possible.
+Shazam is a thriving software startup with a global focus. Their primary focus
+lies in an audio identification application of the same name. As of \today,
+Shazam reports more than 85 million active users spanning 200 countries and 33
+languages across the Android, iOS, Windows Phone and BlackBerry platforms. As a
+technology-centric company, it is essential that Shazam are able to deliver
+correct software on time and under budget. Modern development practices ensure
+these requirements are as closely met as possible.
 
-Development at Shazam is approached in a style resembling the Test Driven Development described by \citet*{freeman2009growing}. A developer tasked with the implementation of a new feature will first write an acceptance test to cover the feature. After the acceptance test is seen to fail (care is taken to ensure the test fails for the right reason --- in this case, the lack of the feature), it is used to drive the implementation of progressively lower level components --- each thoroughly tested in their own right --- until the original acceptance test passes.
+Development at Shazam is approached in a style resembling the Test Driven
+Development described by \citet*{freeman2009growing}. A developer tasked with
+the implementation of a new feature will first write an acceptance test to cover
+the feature. After the acceptance test is seen to fail (care is taken to ensure
+the test fails for the right reason --- in this case, the lack of the feature),
+it is used to drive the implementation of progressively lower level components
+--- each thoroughly tested in their own right --- until the original acceptance
+test passes.
 
-Client platforms are developed by dedicated teams, Android and iOS necessarily being the largest in terms of developers due to high platform adoption rates. Of the two major client platforms, Android faces the most significant fragmentation \cite{AndroidFragmentationVisualized}.
+Client platforms are developed by dedicated teams, Android and iOS necessarily
+being the largest in terms of developers due to high platform adoption rates. Of
+the two major client platforms, Android faces the most significant fragmentation
+\cite{AndroidFragmentationVisualized}.
 
-As would be expected, the Android team faces an growing number of tests as the application is developed. \todo{Ask Shazam if we can show a trend graph to illustrate this point.} These tests give the team the confidence to deploy the application across a huge number of devices, each differing in characteristics such as manufacturer, hardware, operating system, API version, form factor and screen size.
+As would be expected, the Android team faces an growing number of tests as the
+application is developed. \todo{Ask Shazam if we can show a trend graph to
+illustrate this point.} These tests give the team the confidence to deploy the
+application across a huge number of devices, each differing in characteristics
+such as manufacturer, hardware, operating system, API version, form factor and
+screen size.
 
-Today, acceptance tests make up $n$ percent of the tests in the Shazam Android test suite. Like any real world project with a significant acceptance test suite, Shazam on Android is no stranger to flaky tests. Over the period \todo{length in terms of build history} during which we collected build results from their codebase, we saw $N$ tests fail unexpectedly.
+Today, acceptance tests make up $n$ percent of the tests in the Shazam Android
+test suite. Like any real world project with a significant acceptance test
+suite, Shazam on Android is no stranger to flaky tests. Over the period
+\todo{length in terms of build history} during which we collected build results
+from their codebase, we saw $N$ tests fail unexpectedly.
 
 
 \subsection{Automating the Diagnostic Process}
 
-Our goal is automate as much of the process for fixing a flaky test as possible, freeing developers to spend time developing the software, rather than debugging tests that are in fact intended to speed up the development process. Ultimately, each test case must be investigated and fixed by a developer, but as we will show, much of the legwork can be automated.
+Our goal is automate as much of the process for fixing a flaky test as possible,
+freeing developers to spend time developing the software, rather than debugging
+tests that are in fact intended to speed up the development process. Ultimately,
+each test case must be investigated and fixed by a developer, but as we will
+show, much of the legwork can be automated.
 
-The tool we propose --- \emph{\splatter} --- gathers and analyses information much in the same way as a developer would. First, it identifies the flaky tests in a test suite. Then, it employs techniques similar to those discussed by \citet{ArumugaNainar:2010:ABI:1806799.1806839} to gather relevant debugging information over a series of test runs. Finally we analyze the gathered data and identify predicates strongly associated with test failure. Our tool takes advantage of the continuous integration environment, gathering data each time an associated test suite is run. Figure \ref{fig:developer_workflow} shows a high-level \splatter workflow.
+The tool we propose --- \textit{\splatter} --- gathers and analyses information
+much in the same way as a developer would. First, it identifies the flaky tests
+in a test suite. Then, it employs techniques similar to those discussed by
+\citet{ArumugaNainar:2010:ABI:1806799.1806839} to gather relevant debugging
+information over a series of test runs. Finally we analyze the gathered data and
+identify predicates strongly associated with test failure. Our tool takes
+advantage of the continuous integration environment, gathering data each time an
+associated test suite is run. Figure \ref{fig:developer_workflow} shows a high-
+level \splatter workflow.
 
 \begin{figure}[h]
+
 \includegraphics[width=\linewidth]{Images/developer_workflow}
+
 \caption{}
 \label{fig:developer_workflow}
 \end{figure}
 
-Running as a continuous integration step is a natural application. For one, test suites are run as continuous integration steps themselves. In addition, we want to be as transparent as possible.
+Running as a continuous integration step is a natural application. For one, test
+suites are run as continuous integration steps themselves. In addition, we want
+to be as transparent as possible.
 
-One of the primary initial goals of this paper was to create a continuous integration plugin to present the data gathered during the identification of the \flaky tests. As we researched the area, we realised that the indentification of \flaky tests is the most well-covered and least interesting area. The more experimental and relatively untouched area dealing with adaptive instrumentation and analysis of collected information eventually became our primary focus.
+One of the primary initial goals of this paper was to create a continuous
+integration plugin to present the data gathered during the identification of the
+\flaky tests. As we researched the area, we realised that the indentification of
+\flaky tests is the most well-covered and least interesting area. The more
+experimental and relatively untouched area dealing with adaptive instrumentation
+and analysis of collected information eventually became our primary focus.
 
-Reaching a stage where we could analyze the gathered data proved to be far more challenging than expected. The relative youth of the Android platform was a clear stumbling block, since tried and tested instrumentation tools in the world of the Java Virtual Machine had only just begun to acknowledge their Dalvik sibling. As such, we document and discuss many of our design decisions along the way.
+Reaching a stage where we could analyze the gathered data proved to be far more
+challenging than expected. The relative youth of the Android platform was a
+clear stumbling block, since tried and tested instrumentation tools in the world
+of the Java Virtual Machine had only just begun to acknowledge their Dalvik
+sibling. As such, we document and discuss many of our design decisions along the
+way.
 
-\flaky tests are hard to reproduce. In general, there are three stages during which we may intervene:
+\flaky tests are hard to reproduce. In general, there are three stages during
+which we may intervene:
 \begin{enumerate}
 	\item Identification - which tests in the suite are flaky?
 	\item Prioritisation - why of the \flaky tests should we fix first?
 	\item Resolution - what information can we gather to speed the resolution of a test?
 \end{enumerate}
 
-Ultimately, the final stage is the target. In order to tackle the problem practically, knowledge gathered at each stage must be combined and considered.
+Ultimately, the final stage is the target. In order to tackle the problem
+practically, knowledge gathered at each stage must be combined and considered.
 
-Existing tools (Shazam’s \flaky Test Monitor included) provide answers to 1. This information can be used to inform manual inspection of 2. As of yet, no tool exists to tackle 3.
+Existing tools (Shazam’s \flaky Test Monitor included) provide answers to 1.
+This information can be used to inform manual inspection of 2. As of yet, no
+tool exists to tackle 3.
 
-In a typical software development project, continuous integration systems will be set up from the beginning. Developers write code and commit to source control. A master server will detect the change and assign one of a number of build agents (other servers with the capability to build the project(s) - virtual or otherwise) an attached job.
+In a typical software development project, continuous integration systems will
+be set up from the beginning. Developers write code and commit to source
+control. A master server will detect the change and assign one of a number of
+build agents (other servers with the capability to build the project(s) -
+virtual or otherwise) an attached job.
 
-For a typical job, the chosen build agent pulls down the latest changes, compiles and run the tests and runs any post-build tasks. At the end, any build artifacts (distributable packages, test results, etc.) will be uploaded to the master server and the agent will be once again free to build the next iteration. Note that in reality, a job can comprise of any number of runnable steps - from executing a shell script to hitting an external server.
+For a typical job, the chosen build agent pulls down the latest changes,
+compiles and run the tests and runs any post-build tasks. At the end, any build
+artifacts (distributable packages, test results, etc.) will be uploaded to the
+master server and the agent will be once again free to build the next iteration.
+Note that in reality, a job can comprise of any number of runnable steps - from
+executing a shell script to hitting an external server.
 
 \todo{A diagram of this flow would be nice.}
 
-It is obvious that, if we are to develop a tool to assist developers with \flaky tests, we should run as part of a modular continuous integration system.
+It is obvious that, if we are to develop a tool to assist developers with \flaky
+tests, we should run as part of a modular continuous integration system.
 
-\todo{Walk the reader through the upcoming sections of the paper. Can only really do this at the end!}
+\todo{Walk the reader through the upcoming sections of the paper. Can only
+really do this at the end!}
