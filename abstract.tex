@@ -1,11 +1,25 @@
 \begin{abstract}
 
-We present a framework for identifying and accelerating the resolution of flaky test cases in a test suite. A flaky test case is one whose outcome is sensitive to some unknown input.
+We present a framework for identifying and accelerating the resolution of flaky
+test cases in a test suite. A flaky test case is one whose outcome is sensitive
+to some unknown input.
 
-The framework operates on a continuous lifecycle. To begin, each test's probability of failure is calculated. Then, each test is adaptively instrumented with respect to a budget --- state-logging probes are placed in choice locations. Finally, aggregated data is analysed to identify predicates strongly associated with test failure. At each stage, the framework can work autonomously or with input from a developer.
+The framework operates on a continuous lifecycle. To begin, each test's
+probability of failure is calculated. Then, each test is adaptively instrumented
+with respect to a budget --- state-logging probes are placed in choice
+locations. Finally, aggregated data is analysed to identify predicates strongly
+associated with test failure. At each stage, the framework can work autonomously
+or with input from a developer.
 
-Our instrumentation approach applies bug isolation techniques in an ideal environment, allowing us to record and analyse a huge amount of runtime data over time. We improve probe placement by taking into account control flow graphs and loops. Finally, we introduce the notion of an instrumentation budget and allocate probes based on learned cost.
+Our instrumentation approach applies bug isolation techniques in an ideal
+environment, allowing us to record and analyse a huge amount of runtime data
+over time. We improve probe placement by taking into account control flow graphs
+and loops. Finally, we introduce the notion of an instrumentation budget and
+allocate probes based on learned cost.
 
-We discuss and document the implementation of a working proof of concept, named \splatter, that targets Android applications and integrates with a popular open-source continuous integration tool. We present preliminary results from the use of the tool on tests from a commercial product's test suite.
+We discuss and document the implementation of a working proof of concept, named
+\splatter, that targets Android applications and integrates with a popular open-
+source continuous integration tool. We present preliminary results from the use
+of the tool on tests from a commercial product's test suite.
 
 \end{abstract}

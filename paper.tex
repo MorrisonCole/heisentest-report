@@ -1,4 +1,3 @@
-% TODO: Re-enable twopage when printing
 \documentclass[12pt,a4paper,twopage]{report}
 
 \usepackage{graphicx,color}
@@ -157,7 +156,8 @@ pdftitle={\ourtitle},
 
 %% Contents. Perhaps use figures / tables.
 
-% Force top-level sections to enumerate with natural numbers even on the 'report' type document.
+% Force top-level sections to enumerate with natural numbers even on the
+% 'report' type document.
 \renewcommand\thesection{\arabic{section}}
 
 \tableofcontents
@@ -165,10 +165,12 @@ pdftitle={\ourtitle},
 %\listoffigures
 %\listoftables
 
-% Makes all pages the height of the text on the page. No extra vertical space is added.
+% Makes all pages the height of the text on the page. No extra vertical space is
+% added.
 \raggedbottom
 
-\noindent``\textit{Left uncontrolled, non-deterministic tests can completely destroy the value of an automated regression suite.}''
+\noindent``\textit{Left uncontrolled, non-deterministic tests can completely
+destroy the value of an automated regression suite.}''
 
 \hfill Martin Fowler
 
@@ -184,7 +186,8 @@ pdftitle={\ourtitle},
 
 %% Citations
 
-% Causes all items in the database to be included in the references, regardless of whether or not they are cited.
+% Causes all items in the database to be included in the references, regardless
+% of whether or not they are cited.
 \nocite{*}
 
 % TODO: Check with Earl what citation style we want.
