@@ -10,7 +10,7 @@ Tests can be divided into three groups, each targetting an increasingly abstract
 
 Environmental factors are often related to intermittent test failure. The further we travel up the layers of the pyramid, the more environmental factors we introduce. Unit tests target and exercise isolated sections of code. A well written unit test's outcome is almost guaranteed to depend only on the behaviour of the code it exercises. Integration tests may depend on an external service (\eg, a database), so may sometimes fail unexpectedly. Most vulnerable are acceptance tests. Since they run on a complete system, they are potentially open to interference by any number of environmental events or characteristics. For example, an operating system starved of memory could kill the application, or, a particularly slow start-up time could cause a timeout to occur.
 
-\todo{Heisentest is an answer to a real problem faced by myself and members of my team at Shazam. Despite limited personal experience in industry, it is obvious that others face the same issue. Mozilla, Shazam and Chromium have known \flaky{} tests. Android even includes an @\flaky{} annotation in its testing kit for automatic rerunning of known troublesome tests.}
+\todo{Heisentest is an answer to a real problem faced by myself and members of my team at Shazam. Despite limited personal experience in industry, it is obvious that others face the same issue. Mozilla, Shazam and Chromium have known \flaky tests. Android even includes an @\flaky annotation in its testing kit for automatic rerunning of known troublesome tests.}
 
 \subsection{Shazam}
 
@@ -29,7 +29,7 @@ Today, acceptance tests make up $n$ percent of the tests in the Shazam Android t
 
 Our goal is automate as much of the process for fixing a flaky test as possible, freeing developers to spend time developing the software, rather than debugging tests that are in fact intended to speed up the development process. Ultimately, each test case must be investigated and fixed by a developer, but as we will show, much of the legwork can be automated.
 
-The tool we propose --- \emph{\splatter} --- gathers and analyses information much in the same way as a developer would. First, it identifies the flaky tests in a test suite. Then, it employs techniques similar to those discussed by \citet{ArumugaNainar:2010:ABI:1806799.1806839} to gather relevant debugging information over a series of test runs. Finally we analyze the gathered data and identify predicates strongly associated with test failure. Our tool takes advantage of the continuous integration environment, gathering data each time an associated test suite is run. Figure \ref{fig:developer_workflow} shows a high-level \splatter{} workflow.
+The tool we propose --- \emph{\splatter} --- gathers and analyses information much in the same way as a developer would. First, it identifies the flaky tests in a test suite. Then, it employs techniques similar to those discussed by \citet{ArumugaNainar:2010:ABI:1806799.1806839} to gather relevant debugging information over a series of test runs. Finally we analyze the gathered data and identify predicates strongly associated with test failure. Our tool takes advantage of the continuous integration environment, gathering data each time an associated test suite is run. Figure \ref{fig:developer_workflow} shows a high-level \splatter workflow.
 
 \begin{figure}[h]
 \includegraphics[width=\linewidth]{images/developer_workflow}
@@ -39,20 +39,20 @@ The tool we propose --- \emph{\splatter} --- gathers and analyses information mu
 
 Running as a continuous integration step is a natural application. For one, test suites are run as continuous integration steps themselves. In addition, we want to be as transparent as possible.
 
-One of the primary initial goals of this paper was to create a continuous integration plugin to present the data gathered during the identification of the \flaky{} tests. As we researched the area, we realised that the indentification of \flaky{} tests is the most well-covered and least interesting area. The more experimental and relatively untouched area dealing with adaptive instrumentation and analysis of collected information eventually became our primary focus.
+One of the primary initial goals of this paper was to create a continuous integration plugin to present the data gathered during the identification of the \flaky tests. As we researched the area, we realised that the indentification of \flaky tests is the most well-covered and least interesting area. The more experimental and relatively untouched area dealing with adaptive instrumentation and analysis of collected information eventually became our primary focus.
 
 Reaching a stage where we could analyze the gathered data proved to be far more challenging than expected. The relative youth of the Android platform was a clear stumbling block, since tried and tested instrumentation tools in the world of the Java Virtual Machine had only just begun to acknowledge their Dalvik sibling. As such, we document and discuss many of our design decisions along the way.
 
-\flaky{} tests are hard to reproduce. In general, there are three stages during which we may intervene:
+\flaky tests are hard to reproduce. In general, there are three stages during which we may intervene:
 \begin{enumerate}
 	\item Identification - which tests in the suite are flaky?
-	\item Prioritisation - why of the \flaky{} tests should we fix first?
+	\item Prioritisation - why of the \flaky tests should we fix first?
 	\item Resolution - what information can we gather to speed the resolution of a test?
 \end{enumerate}
 
 Ultimately, the final stage is the target. In order to tackle the problem practically, knowledge gathered at each stage must be combined and considered.
 
-Existing tools (Shazam’s \flaky{} Test Monitor included) provide answers to 1. This information can be used to inform manual inspection of 2. As of yet, no tool exists to tackle 3.
+Existing tools (Shazam’s \flaky Test Monitor included) provide answers to 1. This information can be used to inform manual inspection of 2. As of yet, no tool exists to tackle 3.
 
 In a typical software development project, continuous integration systems will be set up from the beginning. Developers write code and commit to source control. A master server will detect the change and assign one of a number of build agents (other servers with the capability to build the project(s) - virtual or otherwise) an attached job.
 
@@ -60,6 +60,6 @@ For a typical job, the chosen build agent pulls down the latest changes, compile
 
 \todo{A diagram of this flow would be nice.}
 
-It is obvious that, if we are to develop a tool to assist developers with \flaky{} tests, we should run as part of a modular continuous integration system.
+It is obvious that, if we are to develop a tool to assist developers with \flaky tests, we should run as part of a modular continuous integration system.
 
 \todo{Walk the reader through the upcoming sections of the paper. Can only really do this at the end!}

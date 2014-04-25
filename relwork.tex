@@ -27,7 +27,7 @@ The only real storage concern is that of the central database. But, this can be 
 
 Instrumentation adds performance overhead. In the case of a production system, this is a major problem since performance directly affects a user’s experience. Nainar and Liblit \cite{ArumugaNainar:2010:ABI:1806799.1806839} propose an adaptive bug isolation system with a performance overhead of just 1\%.
 
-In a test environment, smoothness and load times rarely matter. Of course, there are exceptions (performance regression tests, etc.), but we expect to mainly be dealing with system tests. We can safely add instrumentation and ignore performance, unless it begins to affect the thread-wise execution. If a \flaky{} test begins consistently passing when heavily instrumented, we can simply reduce the instrumentation until the previous \flaky{} behaviour is once again observed.
+In a test environment, smoothness and load times rarely matter. Of course, there are exceptions (performance regression tests, etc.), but we expect to mainly be dealing with system tests. We can safely add instrumentation and ignore performance, unless it begins to affect the thread-wise execution. If a \flaky test begins consistently passing when heavily instrumented, we can simply reduce the instrumentation until the previous \flaky behaviour is once again observed.
 
 \subsubsection{Adaptivity}
 

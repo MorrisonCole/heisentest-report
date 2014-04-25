@@ -14,7 +14,7 @@ calculateAllowedBudgets(targetedBudget, exploratoryBudget, tests[])
 
 	tests.sortByFlakinessDescending
 
-	// First allocate targeted budget to the \flaky{} tests
+	// First allocate targeted budget to the \flaky tests
 	for test in tests:
 		test.allowedBudget = calculateTestTargetedBudget(test, totalFlakiness, targetedBudget)
 

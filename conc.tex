@@ -18,13 +18,13 @@ Could have used Soot to convert Dalvik bytecode into standard Java .class files 
 
 \subsection{Future Work}
 
-We have assumed that flaky tests are costly to practitioners that encounter them in their projects. To determine whether this is indeed the case within the context of at least one real-world software development project, we plan to do a case study with the developers at Shazam. We hope to gain an understanding of the ways developers deal with \flaky{} tests, what tools they use and how they feel \flaky{} tests effect the team.
+We have assumed that flaky tests are costly to practitioners that encounter them in their projects. To determine whether this is indeed the case within the context of at least one real-world software development project, we plan to do a case study with the developers at Shazam. We hope to gain an understanding of the ways developers deal with \flaky tests, what tools they use and how they feel \flaky tests effect the team.
 
-In order to support the development of the tool, we plan to deploy \splatter{} to the Android team at Shazam in the near future. Seeing how it behaves and how developers interact with it will be critical in steering the engineering work.
+In order to support the development of the tool, we plan to deploy \splatter to the Android team at Shazam in the near future. Seeing how it behaves and how developers interact with it will be critical in steering the engineering work.
 
-Finally, we also plan to evaluate the performance of \splatter{}. For some known \flaky{} tests that have been fixed, we will apply \splatter{} and analyse its performance. We will measure probe proximity to the source of the \flaky{} test over a series of runs. Presuming \splatter{} works as expected, we would hope to see probes placed in locations closer to the bug as a test is run repeatedly.
+Finally, we also plan to evaluate the performance of \splatter. For some known \flaky tests that have been fixed, we will apply \splatter and analyse its performance. We will measure probe proximity to the source of the \flaky test over a series of runs. Presuming \splatter works as expected, we would hope to see probes placed in locations closer to the bug as a test is run repeatedly.
 
-In order to be helpful in practice, \splatter{} would ideally reduce the expected time to fix a flaky test for some or all types of developer (experienced, inexperienced, \etc.). We would need to compare a set of developers using the tool to a set of developers without the tool in experimental conditions. The developer sets could either be of mixed or similar experience, and working on a familiar or unfamiliar codebase. Familiarity of the group using \splatter{} with the tool will also need to be accounted for.
+In order to be helpful in practice, \splatter would ideally reduce the expected time to fix a flaky test for some or all types of developer (experienced, inexperienced, \etc.). We would need to compare a set of developers using the tool to a set of developers without the tool in experimental conditions. The developer sets could either be of mixed or similar experience, and working on a familiar or unfamiliar codebase. Familiarity of the group using \splatter with the tool will also need to be accounted for.
 
 \subsubsection{Gathering data from local test runs}
 
@@ -37,7 +37,7 @@ In a typical test driven development cycle, tests are run constantly --- both by
 
 \subsubsection{Commit blaming}
 
-Our CI plugin could display an estimated commit {\lq}blame{\rq} range, along with relevant build numbers if a previously stable test is suddenly observed to be \flaky{}.
+Our CI plugin could display an estimated commit {\lq}blame{\rq} range, along with relevant build numbers if a previously stable test is suddenly observed to be \flaky.
 
 \subsubsection{Retiring trusted tests}
 
