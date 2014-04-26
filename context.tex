@@ -1,27 +1,30 @@
 \section{Context}
 \label{sec:context}
 
-This section will cover any formalisms that are necessary to understand and model the problem.
+\mc{This section will cover any formalisms that are necessary to understand and
+model the problem.}
 
 
 \subsection{\Flaky Tests}
 \label{sec:sec:flaky_tests}
 
+A test consists of a set of inputs and a corresponding expected output, over
+some subject under test. In a perfect world, a test always produces the expected
+output provided the subject's behaviour is fixed. In reality, environmental and
+chance factors can effect the actual output. We can model the expected output
+probabilistically.
+
 \begin{quote}
-	Test failure can be modelled probabilistically. A \flaky test is one known to
-	fail with low probability.
+	A \flaky test is one known to fail with low probability.
 \end{quote}
 
-\mc{Set up this intuitive, informal definition.  Explicitly identify the terms
-that require formalism.}
-
-\begin{defn}[\flaky Test]
-  \label{def:flaky_test}
+\begin{defn}[\Flaky Test]
+\label{def:flaky_test}
 
 Let $\vec{I}$ be the lifting of all inputs, including coin flips and
-environmental interactions, into a single input vector. Given a subject
-under test $f: \vec{I} \rightarrow \vec{O}$, a test case is
-$(\vec{i},\vec{o})$. A \emph{\flaky test case} is one
+environmental interactions, into a single input vector. $\vec{O}$ is the
+corresponding desired output. Given a subject under test $f: \vec{I} \rightarrow
+\vec{O}$, a test case is $(\vec{i},\vec{o})$. A \emph{\flaky test case} is one
 where
 %
 \begin{align*}
@@ -38,7 +41,7 @@ standard failing test by repeatedly running the test, subject to the cost of
 that test.  The parameter $\alpha$ represents this threshold between
 reproducible via repetition and not.  The exact probability $\epsilon$ must be
 non-negligible so that repeated trials are likely to trigger the failure.  In
-practice, this constraint is easily met, since it is hard to image that a
+practice, this constraint is easily met, since it is hard to imagine that a
 negligible $\epsilon$ matters.  Combined with our budget $B$, we can determine
 what values of $\epsilon$ we can afford to detect. \mc{We have make this
 connection explicit:  maybe not here in this report, but certainly for ICSE.}
