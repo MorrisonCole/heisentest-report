@@ -401,7 +401,11 @@ The tests were run on a Nexus 5 with Android version 4.2.2.
 
 \begin{center}
   \begin{tikzpicture}
-		\begin{axis}
+		\begin{axis}[
+			xlabel = Number of Arguments,
+			ylabel = Duration\,/\,ms,
+			xtick={1, 2, 3},
+		]
 			\addplot[
 				color = black,
 				mark = x,
@@ -409,6 +413,7 @@ The tests were run on a Nexus 5 with Android version 4.2.2.
 			( 1, 0.2626 )
 			( 2, 0.3652 )
 			( 3, 0.0645 )
+			( 4, 0.0364 )
 			};
 			\addplot[
 				color = blue,
@@ -417,6 +422,7 @@ The tests were run on a Nexus 5 with Android version 4.2.2.
 			( 1, 24.17 )
 			( 2, 22.23 )
 			( 3, 25.58 )
+			( 4, 10.49 )
 			};
 			\addplot[
 				color = red,
@@ -425,6 +431,7 @@ The tests were run on a Nexus 5 with Android version 4.2.2.
 			( 1, 67.27 )
 			( 2, 49.52 )
 			( 3, 108.3 )
+			( 4, 99.91 )
 			};
 		\end{axis}
 	\end{tikzpicture}
