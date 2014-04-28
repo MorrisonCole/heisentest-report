@@ -106,7 +106,7 @@ to a test's flakiness. Exploratory budget is randomly allocated to all tests.
 Exploratory budget gives us a chance of gathering data from newly flaky tests.
 
 For a total exploratory budget $B_{e}$ and total flaky test budget $B_{f}$, we
-have total test suite budget $B$, where
+have
 \begin{align*}
 B = B_{e} + B_{f}
 \end{align*}
@@ -123,7 +123,7 @@ f(T_{i_p})} + B_{remainder}
 
 \begin{algorithmic}
 	\Require{$tests$ is a set comprising all the tests in the test suite}
-	\Require{$proportionTargeted$ is a decimal value in the range $[0, 1]$}
+	\Require{$proportionTargeted$ is a decimal value in the range $[0..1]$}
 	\Statex
 
 	\Function{splatter}{$tests$, $proportionTargeted$}
@@ -144,11 +144,11 @@ f(T_{i_p})} + B_{remainder}
 
 	\Function{allocateBudget}{$tests$, $suiteBudget$, $proportionTargeted$}
 
-	\State{$targetedBudget \gets suiteBudget * proportionTargeted$}
+	\State{$flakyBudget \gets suiteBudget * proportionTargeted$}
 	\State{$exploratoryBudget \gets suiteBudget * (1 - proportionTargeted)$}
 	\Statex
 
-	\State{allocateTargetedBudget($tests$, $targetedBudget$)}
+	\State{allocateTargetedBudget($tests$, $flakyBudget$)}
 	\State{allocateExploratoryBudget($tests$, $exploratoryBudget$)}
 
 	\EndFunction
@@ -161,15 +161,15 @@ instrumentation. First a per-test budget is calculated based on our knowledge
 base; finally the instrumentation is performed. It is during the second step
 that the application is actually modified.
 
-\subsubsection{Targeted Budget Allocation}
-\label{sec:sec:targeted_budget_alloc}
+\subsubsection{\Flaky Budget Allocation}
+\label{sec:sec:flaky_budget_alloc}
 
 \begin{algorithm}[H]
-\caption{Allocating targeted budget to tests}
-\label{alg:allocateTargetedBudget}
+\caption{Allocating flaky budget to tests}
+\label{alg:allocateFlakyBudget}
 
 \begin{algorithmic}
-	\Function{AllocateTargetedBudget}{$tests$, $targetedBudget$}
+	\Function{AllocateFlakyBudget}{$tests$, $flakyBudget$}
 
 	\State $totalFlakiness \gets 0$
 
@@ -181,22 +181,24 @@ that the application is actually modified.
 	\State $tests \gets \text{sortByFlakinessDescending(}tests$)
 
 	\ForAll{$test \in tests$}
-		\State $test.budget \gets$ calculateTestTargetedBudget($test$,
-		$totalFlakiness$, $targetedBudget$)
+		\State $test.budget \gets$ calculateTestFlakyBudget($test$,
+		$totalFlakiness$, $flakyBudget$)
 	\EndFor
 
 	\EndFunction
 	\Statex
 
-	\Require{$B_{t}^{max}$ is the maximum targeted budget for a test $t$}
-	\Function{calculateTestTargetedBudget}{$test$, $targetedBudget$}
-
-	\State $maximumTargetedBudget \gets t_{b_max}$
-
-	\State $budget \gets (test.flakiness / totalFlakiness) * targetedBudget$
+	\Require{$B_{f}^{max}$ is the maximum \flaky budget for a test $t$}
 	\Statex
 
-	\Return minimum($testTargetedBudget$, $maximumTargetedBudget$)
+	\Function{calculateTestFlakyBudget}{$test$, $flakyBudget$}
+
+	\State $maximumFlakyBudget \gets B_{f}^{max}$
+
+	\State $budget \gets (test.flakiness / totalFlakiness) * flakyBudget$
+	\Statex
+
+	\Return minimum($testFlakyBudget$, $maximumFlakyBudget$)
 
 	\EndFunction
 \end{algorithmic}
@@ -225,9 +227,13 @@ that the application is actually modified.
 
 	\EndFunction
 	\Statex
+
+	\Require{$B_{e}^{max}$ is the maximum exploratory budget for a test $t$}
+	\Statex
+
 	\Function{CalculateTestExploratoryBudget}{test, exploratoryBudget}
 
-	\State $maximumExploratoryBudget \gets \todo{someNumberThatWeCalculate}$
+	\State $maximumExploratoryBudget \gets B_{e}^{max}$
 
 	\If{$test.budget > 0$}
 		\Return $0$
