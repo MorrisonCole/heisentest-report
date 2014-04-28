@@ -312,15 +312,13 @@ useful to examine test failure over time --- trends in failure may stand out.
 
 A couple of projects have tackled this preliminary step of \flaky test
 identification; namely, the Chromium Flakiness
-Dashboard\cite{flakinessDashboard}, Shazam’s internal {\lq}\Flaky Test
-Monitor{\rq} and various Jenkins plugins. These tools typically run as a
-continuous integration step. Some simply attach a value to each test
-representing its likelihood of failure during any given test run. Others also
-expose statistics such as \emph{stability($N$)} (the test's chance of failure
-across the previous $N$ runs), successful runs since last failure and first
-known failure. Both the Shazam Android and Chromium dashboards include a
-graphical matrix view for visual detection of trends, displaying tests and their
-binary results over time.
+Dashboard\cite{flakinessDashboard} and various Jenkins plugins. These tools
+typically run as a continuous integration step. Some simply attach a value to
+each test representing its likelihood of failure during any given test run.
+Others also expose statistics such as \emph{stability($N$)} (the test's chance
+of failure across the previous $N$ runs), successful runs since last failure and
+first known failure. The Chromium dashboard includes a graphical matrix view for
+visual detection of trends, displaying tests and their binary results over time.
 
 \subsubsection{Prioritisation}
 
@@ -375,25 +373,3 @@ instrumentation, gather this information ahead of time. If we knew a test to be
 \flaky, we could attach instrumentation to automatically gather and save
 sections of program state. Using Adaptive Bug Isolation techniques, we could
 output a ranked list of strongly associated program statements.
-
-
-\subsection{Application at Shazam}
-
-Of the teams at Shazam, the Android project arguably has the largest number of
-target environments. The application is deployed across hundreds of devices
-differing in operating system version, form factor and hardware specification.
-This diversity combined with the relative youth of the platform has been the
-cause of many \flaky tests.
-
-The Android team at Shazam use a standard workflow and are able to deploy
-frequently. Code is eventually committed to a master branch where it is picked
-up by a continuous integration server and built. Tests (unit, integration and
-acceptance) are run on an array of physical Android devices connected to build
-agents. \todo{Mention built times? Shazam's permission.}.
-
-Instrumenting Android applications is possible, but less well-tested than Java.
-Android specifies its own virtual machine, Dalvik\cite{dalvik} --- a register-
-based implementation designed for resource constrained devices.
-
-Two notable tools facilitate the manipulation of Dalvik bytecode;
-ASMDEX\cite{asmDex} and Soot\cite{vall99soot}.

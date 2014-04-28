@@ -35,49 +35,10 @@ to interference by any number of environmental events or characteristics. For
 example, an operating system starved of memory could kill the application, or, a
 particularly slow start-up time could cause a timeout to occur.
 
-\todo{Heisentest is an answer to a real problem faced by myself and members of
-my team at Shazam. Despite limited personal experience in industry, it is
-obvious that others face the same issue. Mozilla, Shazam and Chromium have
-known flaky tests. Android even includes an @flaky annotation in its testing
-kit for automatic rerunning of known troublesome tests.}
-
-
-\subsection{Shazam}
-
-Shazam is a thriving software startup with a global focus. Their primary focus
-lies in an audio identification application of the same name. As of \today,
-Shazam reports more than 85 million active users spanning 200 countries and 33
-languages across the Android, iOS, Windows Phone and BlackBerry platforms. As a
-technology-centric company, it is essential that Shazam are able to deliver
-correct software on time and within budget. Modern development practices ensure
-these requirements are as closely met as possible.
-
-Development at Shazam is approached in a style resembling the Test Driven
-Development described by \citet*{freeman2009growing}. A developer tasked with
-the implementation of a new feature will first write an acceptance test to cover
-the feature. After the acceptance test is seen to fail (care is taken to ensure
-the test fails for the right reason --- in this case, the lack of the feature),
-it is used to drive the implementation of progressively lower level components
---- each thoroughly tested in their own right --- until the original acceptance
-test passes.
-
-Client platforms are developed by dedicated teams, Android and iOS necessarily
-being the largest in terms of developers due to high platform adoption rates. Of
-the two major client platforms, Android faces the most significant fragmentation
-\cite{AndroidFragmentationVisualized}.
-
-As would be expected, the Android team faces an growing number of tests as the
-application is developed. \todo{Ask Shazam if we can show a trend graph to
-illustrate this point.} These tests give the team the confidence to deploy the
-application across a huge number of devices, each differing in characteristics
-such as manufacturer, hardware, operating system, API version, form factor and
-screen size.
-
-Today, acceptance tests make up $n$ percent of the tests in the Shazam Android
-test suite. Like any real world project with a significant acceptance test
-suite, Shazam on Android is no stranger to flaky tests. Over the period
-\todo{length in terms of build history} during which we collected build results
-from their codebase, we saw $N$ tests fail unexpectedly.
+\todo{Heisentest is an answer to a real problem. It is obvious that others face
+the same issue - Mozilla and Chromium have known flaky tests. Android even
+includes an @flaky annotation in its testing kit for automatic rerunning of
+known troublesome tests.}
 
 
 \subsection{Automating the Diagnostic Process}
@@ -135,9 +96,8 @@ which we may intervene:
 Ultimately, the final stage is the target. In order to tackle the problem
 practically, knowledge gathered at each stage must be combined and considered.
 
-Existing tools (Shazam’s \Flaky Test Monitor included) provide answers to 1.
-This information can be used to inform manual inspection of 2. As of yet, no
-tool exists to tackle 3.
+Existing tools provide answers to 1. This information can be used to inform
+manual inspection of 2. As of yet, no tool exists to tackle 3.
 
 In a typical software development project, continuous integration systems will
 be set up from the beginning. Developers write code and commit to source
