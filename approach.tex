@@ -442,6 +442,16 @@ Entry probe will have an associated overhead of approximately 250 times that of
 the original method call, with a Simple Instance Method Entry probe having less
 at roughly 60.
 
+Our collected data is not ideal. Each of the data points is backed by only one
+measured value and it is clear that the Android platform has intefered with
+the results. In order to properly evaluate the cost of our probes, we will need
+to measure a large number of methods over multiple runs to smooth out the data.
+
+In the case of Complex Instance Method Entry probes, we would expect an increase
+in overhead as a function of the number of parameters of the instrumented
+instance method. To a certain extent, the data shows that it is indeed the case,
+but it is impossible to be sure with so few data points.
+
 \subsection{Instrumentation Points}
 \label{sec:sec:instrumentation_points}
 
