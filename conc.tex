@@ -96,3 +96,11 @@ materialised.
 
 TeamCity \cite{TeamCity} has a significant community and a growing number of
 plugins, but is a closed source project maintained by JetBrains.
+
+\subsubsection{Logging Performance}
+
+We could log to a seperate blocking queue and file per application thread. After
+the test run is complete, a simple script could {\lq}weave{\rq} the files back
+together using thread IDs and system times. This would reduce runtime blocking.
+However, we should measure performance in more detail to identify the real
+bottlenecks before applying theoretical performance improvements.

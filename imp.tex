@@ -453,11 +453,6 @@ Each event is created as a bean and held in a queue until it can be written to a
 JSON output file. We define an abstract LogEvent bean with common values (System
 Time, Thread, EventName etc.) and subclass for specific events.
 
-\todo{We should log to a seperate blocking queue / file per thread since then we
-won't get blocking occuring at runtime. We can then weave the seperate log files
-together upon teardown.}
-
-
 \subsection{A Solution}
 
 \subsubsection{Identification}
