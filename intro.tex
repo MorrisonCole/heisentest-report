@@ -35,10 +35,11 @@ to interference by any number of environmental events or characteristics. For
 example, an operating system starved of memory could kill the application, or, a
 particularly slow start-up time could cause a timeout to occur.
 
-\todo{Heisentest is an answer to a real problem. It is obvious that others face
-the same issue - Mozilla and Chromium have known flaky tests. Android even
-includes an @flaky annotation in its testing kit for automatic rerunning of
-known troublesome tests.}
+\Flaky tests are no small issue. Mozilla\cite{mozillaFlakyTestBug} and Chromium
+have known flaky tests. Android even includes an {\tt @FlakyTest}
+annotation\cite{androidFlakyInterface} in its testing kit for automatic re-
+running of known \flaky tests. The {\tt @FlakyTest} Android annotation has been
+present since the initial release of Android.
 
 
 \subsection{Automating the Diagnostic Process}
