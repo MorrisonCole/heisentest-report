@@ -252,16 +252,20 @@ that the application is actually modified.
 
 \subsection{Instrumentation}
 
-\todo{Pseudocode should show instrumentation of an individual test based on
-previous instrumentation sites, budget, etc.}
+\algref{alg:instrument_test} details the basic process for instrumenting a test
+with respect to a given budget. {\tt GetNextSetInstrumentationPoints()} returns
+a list of instrumentation points ordered by descending priority. An ideal
+implementation of the function would take into account previous probe
+allocations, test outcomes and budgets.
 
 \begin{algorithm}[H]
 \caption{Instrument a test with respect its allocated budget}
-\label{alg:instrument}
+\label{alg:instrument_test}
 
 \begin{algorithmic}
-	\State{\textbf{instrument} (test)}
-	\State{$sites \gets test.instrumentationSites$}
+	\Function{Instrument}{test}
+
+	\State{$sites \gets GetNextSetInstrumentationPoints()$}
 	\While{$test.budget > 0$}
 		\ForAll{$site \in sites$}
 			\State{$cost \gets site.cost$}
@@ -275,6 +279,8 @@ previous instrumentation sites, budget, etc.}
 			\EndIf
 		\EndFor
 	\EndWhile
+
+	\EndFunction
 \end{algorithmic}
 
 \end{algorithm}
