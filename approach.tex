@@ -300,6 +300,7 @@ therefore be heavily instrumented, and gradually less so as they prove
 themselves to be reliable.
 
 \subsection{Monitoring Application State with Probes}
+\label{sec:probes}
 
 There are a number of types of points at which it is useful to gather
 information about application state. We extend the common approach of counters
@@ -369,6 +370,53 @@ individual test to run over budget, we risk running over budget at the suite
 level. We refine probe costs by comparing expected overhead to measured
 overhead.
 
+We measured the effects of both the Complex and Simple Method Entry Probes. We
+wrote and ran three tests, each of which called an empty method with one
+primitive parameter 100 times. The tests were annotated with {\tt COMPLEX},
+{\tt SIMPLE} and {\tt NONE} policy types. The uninstrumented test is used as
+a baseline. \autoref{lst:uninstrumented_test} shows the basic structure of the
+uninstrumented test.
+
+\begin{lstlisting}[caption=Uninstrumented Test,label= lst:uninstrumented_test]
+@Splatter(instrumentationPolicy = NONE)
+public void testUninstrumentedEmptyMethod() {
+	Stopwatch.createStarted();
+  for (int i = 0; i < 100; i++) {
+    anUninstrumentedEmptyMethod(i);
+  }
+  Stopwatch.stop();
+}
+
+@Splatter(instrumentationPolicy = NONE)
+private void anUninstrumentedEmptyMethod(int unusedParameter) {
+}
+\end{lstlisting}
+
+The tests were run on a Nexus 5 with Android version 4.2.2.
+
+\begin{figure}[h]
+\caption{}
+\label{fig:test_perf_results}
+
+\begin{center}
+  \begin{tabular}{| l | p{2.4cm} | l | l |}
+	  \hline
+	    \textbf{Probe Type} & \textbf{Number of Arguments} & \textbf{Duration
+	    (ms)} & \textbf{Increase Scale Factor} \\
+	  \hline
+			{\tt NONE} & 1 & 0.2626 & 1 (Baseline) \\
+		\hline
+	    {\tt SIMPLE} & 1 & 24.17 & 92 \\
+	  \hline
+	    {\tt COMPLEX} & 1 & 67.27 & 256 \\
+	  \hline
+  \end{tabular}
+\end{center}
+
+\end{figure}
+
+With the initial results performance tests (\autoref{fig:test_perf_results}),
+we can expect that a Complex Instance Method Entry probe will 
 
 \subsection{Instrumentation Points}
 \label{sec:sec:instrumentation_points}
