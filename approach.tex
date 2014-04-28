@@ -98,8 +98,18 @@ There are two factors to take into account when determining our overall budget:
 		over in practice, we simply reduce the budget and vice versa.
 \end{description}
 
-\todo{Test suite $f$ with \flaky tests $f!$.
-Budget $B_{f} = B_{6} + B_{f!} + B_{nd}$}
+For a total exploratory budget $B_{e}$ and total flaky test budget $B_{f}$, we
+have total test suite budget $B$, where
+\begin{align*}
+B = B_{e} + B_{f}
+\end{align*}
+
+Given a suite of tests $T$, a test $t \in T$ is allocated budget $B_{t}$, where
+\begin{align*}
+B_t = \frac{B_e}{|T|} + \frac{B_f \times T_f}{\sum\limits_{i=1}^{|T|}
+f(T_{i_p})} + B_{remainder}
+\end{align*}
+
 
 \subsection{Allocating Test Suite Budget}
 \label{sec:sec:allocating_budget}
