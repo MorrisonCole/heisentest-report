@@ -116,10 +116,14 @@ master server and the agent will be once again free to build the next iteration.
 Note that in reality, a job can comprise of any number of runnable steps - from
 executing a shell script to hitting an external server.
 
-\todo{A diagram of this flow would be nice.}
-
 It is obvious that, if we are to develop a tool to assist developers with \flaky
 tests, we should run as part of a modular continuous integration system.
 
-\todo{Walk the reader through the upcoming sections of the paper. Can only
-really do this at the end!}
+The rest of the report will proceed with a familiar structure.
+\autoref{sec:context} describes the theory and context behind the project.
+\autoref{sec:example} presents a motivating example of a \flaky test. Following
+the example, we detail our general approach in \autoref{sec:approach}.
+\autoref{sec:imp} discusses the design and of our proof of concept tool,
+\splatter. Finally, \autoref{sec:relwork} compares our work to that of previous
+research and tools. We wrap up with a conclusion (\autoref{sec:conc}) and
+suggest future directions for both \splatter and the research in general.
