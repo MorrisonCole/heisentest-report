@@ -330,11 +330,10 @@ build could fail. This is robust enough for a proof of concept.
 
 We looked into Soot for its ability to generate control flow graphs (CFGs). When
 searching for failure-predicting predicates, we will favour locations further
-down the CFG when placing probes (new or moved). Section \todo{ref} describes
-this process in more detail.
+down the CFG when placing probes (new or moved).
 
 It is possible to generate the CFG for a method using ASMDEX alone, although it
-is a slightly more tricky task.
+is a slightly more tricky task, and one that we have not tackled so far.
 
 In the end, although Soot appeared to be a nice tool to work with, we scrapped
 it for a few reasons. Firstly, the representation used by Soot is fairly
@@ -369,18 +368,40 @@ instrumentation from sites that are known to be problematic or, alternatively,
 {\lq}bug-free{\rq}!
 
 \textbf{Methods} For methods that are not blacklisted or ignored due to
-annotations, we store the method name and owner class (\todo{should also keep
-track of signature / return type?}) in our pool of {\lq}method{\rq}
-instrumentation points. During the second pass, these methods can be
-instrumented with a complex (argument-saving) or simple (counter-based) probe IF
-chosen during the WEKA stage.
+annotations, we store the method name and owner class in our pool of
+{\lq}method{\rq} instrumentation points. During the second pass, these methods
+can be instrumented with a complex (argument-saving) or simple (counter-based)
+probe IF chosen during the WEKA stage.
 
 \subsection{Logging to JSON}
 
-\todo{Describe/show structure of log messages (show sample JSON for a method
-call and the original Java code etc.). Perhaps also show the Dalvik bytecode?}
+The background thread in charge of logging the events to disk serialises the
+data to {\tt JSON} before writing it.
 
-Logging runs on a background thread. The Test APK drives the Application APK.
+\autoref{lst:json_log} shows an example output from one of the the fully
+instrumented (\ie, {\tt COMPLEX}) test runs performed in
+\autoref{sec:sec:probe_cost}. It tells us the method
+\textit{anInstrumentedEmptyMethod} was entered at system millisecond time
+\textit{1398719422295} by the thread with id \textit{51708}. Since it was a
+{\tt COMPLEX} probe, we also get the name and value of any actual arguments
+(\lineref{line:begin_params} to \lineref{line:end_params}).
+
+\begin{lstlisting}[label=lst:json_log]
+[
+  {
+    "eventType": "Complex Instance Method Entry",
+    "threadId": 51708,
+    "time": 1398719422295,
+    "class": "com.heisentest.skeletonandroidapp.test.acceptance.ProbeTest",
+    "method": "anInstrumentedEmptyMethod",
+    "parameters": [(*@\label{line:begin_params}@*)
+      {
+        "unusedParameter": "0"
+      }
+    ](*@\label{line:end_params}@*)
+  }
+]
+\end{lstlisting}
 
 \subsection{Analysis}
 
