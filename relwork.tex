@@ -19,7 +19,7 @@ more overhead.
 
 Multi-threaded environments are commonplace. In order to record the execution
 order of multiple threads, we include the system time in each log event. Each
-thread logs to a separate sink. After the tests run completes, we merge and
+thread logs to a separate sink. After the test run completes, we merge and
 interleave the individual logs before storing them. We end up with a single log
 file with times and thread IDs.
 
@@ -43,7 +43,7 @@ much in the same way Jenkins and other CI tools do by default.
 \subsubsection{Performance}
 
 Instrumentation adds performance overhead. In the case of a production system,
-this is a major problem since performance directly affects a user’s experience.
+this is a major problem since performance directly affects a user's experience.
 Nainar and Liblit \cite{ArumugaNainar:2010:ABI:1806799.1806839} propose an
 adaptive bug isolation system with a performance overhead of just 1\%.
 
@@ -60,7 +60,7 @@ Both fixed and adaptive approaches have been proposed[] in the past. All of
 these approaches were developed with the underlying constraint of deploying the
 instrumented software to real users. [adaptive bug isolation] makes use of
 binary instrumentation to iteratively re-instrument deployed applications to
-hone in on a bug-predicting predicates. Whilst the adaptive approach has many
+hone in on bug-predicting predicates. Whilst the adaptive approach has many
 benefits in terms of overhead, it relies on a specialized API - Dyninst - for
 code patching to support the injection of  instrumentation at runtime. This has
 additional runtime costs \cite{DyninstGuide} associated with saving and

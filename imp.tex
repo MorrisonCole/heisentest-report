@@ -256,7 +256,7 @@ they are deleted.
 We devised a workaround; Android has guaranteed {\lq}public{\rq} storage that is
 not removed when an application is uninstalled. Its location is not fixed and is
 likely to differ per-device and operating system version. So, we take care to
-inform the build agent of the exact location of the devices public storage each
+inform the build agent of the exact location of the device's public storage each
 test run before copying the files.
 
 When the tests finish running, we log a message with a special tag to {\tt
@@ -271,9 +271,9 @@ build could fail. This is robust enough for a proof of concept.
 \subsubsection{Soot}
 
 We looked into Soot for its ability to generate control flow graphs (CFGs). When
-searching for failure-predicting predicates, we will favor locations futher down
-the CFG when placing probes (new or moved). Section \todo{ref} describes this
-process in more detail.
+searching for failure-predicting predicates, we will favour locations further
+down the CFG when placing probes (new or moved). Section \todo{ref} describes
+this process in more detail.
 
 It is possible to generate the CFG for a method using ASMDEX alone, although it
 is a slightly more tricky task.
@@ -285,7 +285,7 @@ method using Soot, we'd have to somehow map the locations to our ASMDEX
 instrumentation sites --- a non-trivial task. Finally, the overhead of starting
 up Soot and loading an APK is significant. On an
 Intel\textsuperscript{\textregistered} Core\textsuperscript{\texttrademark}
-i7-3610QM CPU @ 2.30GHz, the the time to load the application and test APKs was
+i7-3610QM CPU @ 2.30GHz, the time to load the application and test APKs was
 10.76 seconds. With a total instrumentation time of 19.09 seconds, Soot takes up
 56\% of the total instrumentation time (and that is \textit{without} generating
 the CFGs for any methods). In fact, with Soot removed entirely, the same
@@ -303,9 +303,9 @@ marked with \texttt{// TODO:} comments in the places they do exist.
 \subsubsection{SDK}
 
 An SDK project can (optionally) be included. It defines the annotation
-@SplatterIgnore. During the isntrumentation phase, if a method is found with
+@SplatterIgnore. During the instrumentation phase, if a method is found with
 this annotation, it is blacklisted from the list of possible instrumentation
-sites. This could be useful by developers during debugging, or to remove
+sites. This could be useful for developers during debugging, or to remove
 instrumentation from sites that are known to be problematic or, alternatively,
 {\lq}bug-free{\rq}!
 
@@ -353,11 +353,11 @@ happen to be instrumented.
 
 \subsection{Modifying the Behaviour}
 
-A small project ('splatter-sdk') can be included to force certain behaviour. It
-is a simple library that defines a @Splatter annotation, with a parameter
-{\lq}InstrumentationPolicy{\rq}. When a method is annoted with this and a policy
-specified, Splatter will respect the defined behaviour when performing
-instrumentation.
+A small project ({\lq}splatter-sdk{\rq}) can be included to force certain
+behaviour. It is a simple library that defines a @Splatter annotation, with a
+parameter {\lq}InstrumentationPolicy{\rq}. When a method is annotated with this
+and a policy specified, Splatter will respect the defined behaviour when
+performing instrumentation.
 
 Available policies are:
 
@@ -442,7 +442,7 @@ but was: ""
     \end{tabular}
 \end{center}
 
-\flaky tests using the same troublesome method or similar logical flow may well
+\Flaky tests using the same troublesome method or similar logical flow may well
 fail with the same stacktrace or assertion failure. By automatically detecting
 this, developers could target groups of related tests and potentially fix an
 entire group at once.

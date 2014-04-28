@@ -49,7 +49,7 @@ lies in an audio identification application of the same name. As of \today,
 Shazam reports more than 85 million active users spanning 200 countries and 33
 languages across the Android, iOS, Windows Phone and BlackBerry platforms. As a
 technology-centric company, it is essential that Shazam are able to deliver
-correct software on time and under budget. Modern development practices ensure
+correct software on time and within budget. Modern development practices ensure
 these requirements are as closely met as possible.
 
 Development at Shazam is approached in a style resembling the Test Driven
@@ -82,11 +82,11 @@ from their codebase, we saw $N$ tests fail unexpectedly.
 
 \subsection{Automating the Diagnostic Process}
 
-Our goal is automate as much of the process for fixing a flaky test as possible,
-freeing developers to spend time developing the software, rather than debugging
-tests that are in fact intended to speed up the development process. Ultimately,
-each test case must be investigated and fixed by a developer, but as we will
-show, much of the legwork can be automated.
+Our goal is to automate as much of the process for fixing a flaky test as
+possible, freeing developers to spend time developing the software, rather than
+debugging tests that are in fact intended to speed up the development process.
+Ultimately, each test case must be investigated and fixed by a developer, but as
+we will show, much of the legwork can be automated.
 
 The tool we propose --- \textit{\splatter} --- gathers and analyses information
 much in the same way as a developer would. First, it identifies the flaky tests
@@ -124,18 +124,18 @@ of the Java Virtual Machine had only just begun to acknowledge their Dalvik
 sibling. As such, we document and discuss many of our design decisions along the
 way.
 
-\flaky tests are hard to reproduce. In general, there are three stages during
+\Flaky tests are hard to reproduce. In general, there are three stages during
 which we may intervene:
 \begin{enumerate}
 	\item Identification - which tests in the suite are flaky?
-	\item Prioritisation - why of the \flaky tests should we fix first?
+	\item Prioritisation - which of the \flaky tests should we fix first?
 	\item Resolution - what information can we gather to speed the resolution of a test?
 \end{enumerate}
 
 Ultimately, the final stage is the target. In order to tackle the problem
 practically, knowledge gathered at each stage must be combined and considered.
 
-Existing tools (Shazam’s \flaky Test Monitor included) provide answers to 1.
+Existing tools (Shazam’s \Flaky Test Monitor included) provide answers to 1.
 This information can be used to inform manual inspection of 2. As of yet, no
 tool exists to tackle 3.
 
@@ -146,7 +146,7 @@ build agents (other servers with the capability to build the project(s) -
 virtual or otherwise) an attached job.
 
 For a typical job, the chosen build agent pulls down the latest changes,
-compiles and run the tests and runs any post-build tasks. At the end, any build
+compiles and runs the tests and runs any post-build tasks. At the end, any build
 artifacts (distributable packages, test results, etc.) will be uploaded to the
 master server and the agent will be once again free to build the next iteration.
 Note that in reality, a job can comprise of any number of runnable steps - from

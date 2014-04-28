@@ -11,7 +11,7 @@ model the problem.}
 A test consists of a set of inputs and a corresponding expected output, over
 some subject under test. In a perfect world, a test always produces the expected
 output provided the subject's behaviour is fixed. In reality, environmental and
-chance factors can effect the actual output. We can model the expected output
+chance factors can affect the actual output. We can model the expected output
 probabilistically.
 
 \begin{quote}
@@ -35,8 +35,8 @@ for non-negligible probability $\epsilon \in (0..\alpha]$.
 
 \end{defn}
 
-Flaky tests fail rarely.  What is “rare" depends on the problem and the cost of
-the test.  If a test fails frequently enough, it can be converted into a
+Flaky tests fail rarely.  What is {\lq}rare{\rq} depends on the problem and the
+cost of the test.  If a test fails frequently enough, it can be converted into a
 standard failing test by repeatedly running the test, subject to the cost of
 that test.  The parameter $\alpha$ represents this threshold between
 reproducible via repetition and not.  The exact probability $\epsilon$ must be
@@ -119,7 +119,7 @@ intended), both solutions are workarounds until the tests can be resolved.
 
 A set of tests displaying seemingly random failure can devalue an entire suite,
 so it is of utmost importance that developers fix such issues as they arise.
-Since the test suite is not a user facing feature and can quickly become a cost
+The test suite is not a user-facing feature and can quickly become a cost
 rather than a benefit.
 
 A developer given the task of fixing a bug in an automated test faces a similar
@@ -129,20 +129,20 @@ In our experience, within the context of real software development projects
 developers quickly become frustrated when dealing with \flaky tests and begin to
 rely on instinct in order to stay productive. In other words, they lose
 confidence in the test suite. It is essential to maintain a reliable test suite
-for it to remain a beneficial part of a teams' workflow.
+for it to remain a beneficial part of a team's workflow.
 
 
 \subsection{Why not {\lq}non-deterministic{\rq}}
 
 Flaky tests have been referred to as {\lq}non-deterministic{\rq} by
 practitioners. Whilst a flaky test may well be non-deterministic (\ie, it
-behaves differently on different runs), but may also be deterministic with
+behaves differently on different runs), it may also be deterministic with
 respect to some unknown input. Hence, flaky seems a better choice of term.
 
 
 \subsection{What is a \flaky test?}
 
-\flaky tests tend to occur on the system level. They do not often manifest in
+\Flaky tests tend to occur on the system level. They do not often manifest in
 unit or integration tests since these tests usually simply call a function with
 some parameters and check its output against some expected value in isolation
 from the system as a whole (or, in the case of integration - against some
@@ -158,7 +158,7 @@ a test can be distilled down to:
   Then I am in this state (assert)
 \end{verbatim}
 
-\flaky tests are commonly caused by timing issues. The action step requires the
+\Flaky tests are commonly caused by timing issues. The action step requires the
 arrange step to have completed before it runs; there must be some kind of wait
 and check mechanism to block further progress until the arrange step has
 finished.
@@ -169,7 +169,7 @@ $S_2$ --- $(x_{1},x_{2},x_{3})$. Finally, the assertion checks that the current
 state is equal to $S_2$.
 
 If each value of the vector $S_{1}$ is loaded asynchronously, the test must
-check for each of the vectors values to be correct before $A$ is applied. If the
+check for each of the vector values to be correct before $A$ is applied. If the
 test checked only the first two values, the action would complete only if the
 third element happened to have loaded before the values in position 1 and 2.
 
@@ -180,30 +180,28 @@ there is not enough information to solve the problem.
 
 \subsection{Why are \flaky tests a problem?}
 
-A test suite is not a user facing feature.
-
-Consider a project with small team of developers. They write Acceptance,
-Integration and Unit tests to cover every feature they add to the software.
+Consider a project with small team of developers. They write acceptance,
+integration and unit tests to cover every feature they add to the software.
 Their test suite $T$, is made up of tests $t_{0}, t_{1}, \dots, t_{n}$. On
 average, the tests take 20 minutes to run and each developer is expected to run
 the entire suite locally before pushing a new feature to the development branch.
-The test suite contains a number of \flaky Acceptance tests $F$ written $f_{0},
-f_{1}, \dots, f_{k} \text{, where $k \leq n$}$ that the team are aware of. $F
+The test suite contains a number of \flaky acceptance tests $F$ written $f_{0},
+f_{1}, \dots, f_{k} \text{, where $k \leq n$}$ that the team are aware of; $F
 \subseteq T$.
 
 A developer is working on a new feature and has written an Acceptance test to
-ensure it works as expected. The Acceptance test passes, so the developer
+ensure it works as expected. The acceptance test passes, so the developer
 prepares to push the code onto the development branch. Before doing so, the
 developer must run the test suite locally to ensure the work did not break any
-existing functionality. The test suite runs, but 4 of the Acceptance tests ---
+existing functionality. The test suite runs, but 4 of the acceptance tests ---
 $t_{3}, t_{7}, t_{9} \text{ and } t_{21}$ --- fail.
 
-The developer is sure they’ve seen $t_{3}, t_{7} \text{ and } t_{9}$ fail
+The developer is sure they have seen $t_{3}, t_{7} \text{ and } t_{9}$ fail
 randomly before, i.e. $t_{3}, t_{7}, t_{9} \in F$. After checking with
 colleagues, they assume that $t_{21} \in F$, since it appears to be unrelated
-to the area of code they’ve been working on. The developer pushes the code.
+to the area of code they have been working on. The developer pushes the code.
 
-In this example, $t_{21}$ was not actually \\flaky, but had been broken by the
+In this example, $t_{21}$ was not actually \flaky, but had been broken by the
 developers changes. It is important to recognise that, whilst in some situations
 it may be possible to run the test suite multiple times to be sure, sometimes
 this is impractical. Test suites may take hours, days or even months to run in
@@ -231,7 +229,8 @@ considered. Normally, a particular software iteration would be held back until
 all tests pass, but with \flaky tests thrown into the mix - it may take multiple
 runs before all the tests pass at once - again, adding overhead.
 
-The set of \flaky tests cause confusion, obscure real failures and erode trust.
+The set of \flaky tests causes confusion, obscures real failures and erodes
+trust.
 
 
 \subsection{Why not just {\lq}suppress{\rq} the \flaky tests?}
@@ -287,10 +286,11 @@ out entirely.
 
 \subsubsection{Identification}
 
-\flaky tests are often split out into a seperate suite (a practice is known as
+\Flaky tests are often split out into a seperate suite (a practice is known as
 {\lq}quarantining{\rq}), so that developers may continue to receive the benefits
-of a fast feedback cycle from the stable ones. This is a reasonable, although
-it is the first step on a slippery slope to complete test suite erosion.
+of a fast feedback cycle from the stable ones. This is a reasonable approach,
+although it is the first step on a slippery slope to complete test suite
+erosion.
 
 But, this is jumping ahead. First, \flaky tests must be identified. How does a
 developer know if a failure was genuine (\ie, failed due to a change in
@@ -312,11 +312,11 @@ useful to examine test failure over time --- trends in failure may stand out.
 
 A couple of projects have tackled this preliminary step of \flaky test
 identification; namely, the Chromium Flakiness
-Dashboard\cite{flakinessDashboard}, Shazam’s internal {\lq}\flaky Test
+Dashboard\cite{flakinessDashboard}, Shazam’s internal {\lq}\Flaky Test
 Monitor{\rq} and various Jenkins plugins. These tools typically run as a
 continuous integration step. Some simply attach a value to each test
 representing its likelihood of failure during any given test run. Others also
-expose statistics such as \emph{stability($N$)} (the tests chance of failure
+expose statistics such as \emph{stability($N$)} (the test's chance of failure
 across the previous $N$ runs), successful runs since last failure and first
 known failure. Both the Shazam Android and Chromium dashboards include a
 graphical matrix view for visual detection of trends, displaying tests and their
@@ -387,8 +387,8 @@ cause of many \flaky tests.
 
 The Android team at Shazam use a standard workflow and are able to deploy
 frequently. Code is eventually committed to a master branch where it is picked
-up by a continuous integration server and built. Tests (Unit, Integration and
-Acceptance) are run on an array of physical Android devices connected to build
+up by a continuous integration server and built. Tests (unit, integration and
+acceptance) are run on an array of physical Android devices connected to build
 agents. \todo{Mention built times? Shazam's permission.}.
 
 Instrumenting Android applications is possible, but less well-tested than Java.

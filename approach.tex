@@ -35,11 +35,11 @@ can be used to allocate budget to tests in a suite (Section
 \subsection{Flakiness}
 \label{sec:sec:flakiness}
 
-\flaky tests with a relatively low probability of failure are harder to
+\Flaky tests with a relatively low probability of failure are harder to
 reproduce. We define a normalised scalar value --- \emph{\flakiness} (Definition
 \ref{def:flakiness}) --- based on probability of test failure. We favour tests
 with high \flakiness and instrument them more heavily by assigning \flaky test
-budget proportionaly to \flakiness; Section \ref{sec:sec:allocating_budget}
+budget proportionally to \flakiness; Section \ref{sec:sec:allocating_budget}
 describes the process in detail. Algorithm \ref{alg:calculate_flakiness}
 presents a possible method of calculating \flakiness.
 
@@ -111,9 +111,9 @@ historical data. Exploratory budget is randomly allocated to the remaining
 tests in the hopes that we get lucky and catch a previously stable test fail
 unexpectedly.
 
-We start from a pesimistic; new tests are assumed to have a flakiness value of
-1. As the test is run, the flakiness value is adjusted as usual until it
-represents a more accurate value. New tests will therefore be heavily
+We start from a pesimistic viewpoint; new tests are assumed to have a flakiness
+value of 1. As the test is run, the flakiness value is adjusted as usual until
+it represents a more accurate value. New tests will therefore be heavily
 instrumented, and gradually less so as they prove themselves to be reliable.
 
 \begin{algorithm}[h]
@@ -121,7 +121,7 @@ instrumented, and gradually less so as they prove themselves to be reliable.
 \label{alg:splatter}
 
 \begin{algorithmic}
-	\Require{$tests$ is an set comprising all the tests in the test suite}
+	\Require{$tests$ is a set comprising all the tests in the test suite}
 	\Require{$proportionTargeted$ is a decimal value in the range $[0, 1]$}
 	\Statex
 
@@ -290,11 +290,11 @@ once areas of problematic code are identified, heavier-weight complex probes
 could then be inserted to gather more detailed information.
 
 \todo{Dropped the ‘scalar value monitoring’ of previous approaches, since we can
-monitor a lot more with our budget when we are sure we’ve found an area of
+monitor a lot more with our budget when we are sure we have found an area of
 problematic code.}
 \todo{Optimal placement of probes is NP-Hard?}
 
-Complex probes serialize java objects to JSON with google-gson. Primitives are
+Complex probes serialize Java objects to JSON with google-gson. Primitives are
 boxed to their object representations.
 
 Predicate probes simply maintain a counter that is incremented each time the
