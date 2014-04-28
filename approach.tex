@@ -396,51 +396,55 @@ private void anUninstrumentedEmptyMethod(int unusedParameter) {
 The tests were run on a Nexus 5 with Android version 4.2.2.
 
 \begin{figure}[h]
+
+\centering
+\begin{tikzpicture}
+	\begin{axis}[
+		xlabel = Number of Arguments,
+		ylabel = Duration\,/\,ms,
+		xtick={1, 2, 3, 4},
+		legend style = { at = {(0.93,0.7)} },
+	]
+		\addplot[
+			color = black,
+			mark = x,
+		] coordinates {
+		( 1, 0.2626 )
+		( 2, 0.3652 )
+		( 3, 0.0645 )
+		( 4, 0.0364 )
+		};
+		\addlegendentry{\tt NONE} ;
+		\addplot[
+			color = blue,
+			mark = x,
+		] coordinates {
+		( 1, 24.17 )
+		( 2, 22.23 )
+		( 3, 25.58 )
+		( 4, 10.49 )
+		};
+		\addlegendentry{\tt SIMPLE} ;
+		\addplot[
+			color = red,
+			mark = x,
+		] coordinates {
+		( 1, 67.27 )
+		( 2, 49.52 )
+		( 3, 108.3 )
+		( 4, 99.91 )
+		};
+		\addlegendentry{\tt COMPLEX} ;
+	\end{axis}
+\end{tikzpicture}
+
 \caption{}
 \label{fig:test_perf_results}
-
-\begin{center}
-  \begin{tikzpicture}
-		\begin{axis}[
-			xlabel = Number of Arguments,
-			ylabel = Duration\,/\,ms,
-			xtick={1, 2, 3},
-		]
-			\addplot[
-				color = black,
-				mark = x,
-			] coordinates {
-			( 1, 0.2626 )
-			( 2, 0.3652 )
-			( 3, 0.0645 )
-			( 4, 0.0364 )
-			};
-			\addplot[
-				color = blue,
-				mark = x,
-			] coordinates {
-			( 1, 24.17 )
-			( 2, 22.23 )
-			( 3, 25.58 )
-			( 4, 10.49 )
-			};
-			\addplot[
-				color = red,
-				mark = x,
-			] coordinates {
-			( 1, 67.27 )
-			( 2, 49.52 )
-			( 3, 108.3 )
-			( 4, 99.91 )
-			};
-		\end{axis}
-	\end{tikzpicture}
-\end{center}
-
 \end{figure}
 
-With the initial results performance tests (\autoref{fig:test_perf_results}),
-we can expect that a Complex Instance Method Entry probe will 
+With the initial results from the performance tests
+(\autoref{fig:test_perf_results}), we can expect that a Complex Instance Method
+Entry probe will have an associated cost of roughly 
 
 \subsection{Instrumentation Points}
 \label{sec:sec:instrumentation_points}
