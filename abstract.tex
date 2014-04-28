@@ -1,21 +1,18 @@
 \begin{abstract}
 
-We present a framework for identifying and accelerating the resolution of flaky
-test cases in a test suite. A flaky test case is a test case with a low
-probability of failure.
+We present a framework for identifying and accelerating the resolution of \flaky
+test cases in a test suite. A flaky test case is one with a low probability of
+failure.
 
-The framework operates on a continuous lifecycle. To begin, each test's
-probability of failure is calculated. Then, each test is adaptively instrumented
---- state-logging probes are placed in choice locations. Finally, aggregated
-data is analysed to identify predicates strongly associated with test failure.
-At each stage, the framework can work autonomously or with input from a
-developer.
+To begin, each test's probability of failure is calculated. Then, each test is
+adaptively instrumented --- state-logging probes are placed in choice locations.
+Finally, aggregated data is analysed to identify predicates strongly associated
+with test failure.
 
 Our instrumentation approach applies bug isolation techniques in an ideal
 environment, allowing us to record and analyse a huge amount of runtime data
-over time. We improve probe placement by taking into account control flow graphs
-and loops. Finally, we introduce the notion of an instrumentation budget and
-allocate probes based on learned cost.
+over time. We improve adaptive instrumentation with the introduction of an
+instrumentation budget and allocate probes based on on measured cost.
 
 We discuss and document the implementation of a working proof of concept, named
 \splatter, that targets Android applications and integrates with a popular

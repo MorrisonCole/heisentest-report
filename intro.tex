@@ -59,6 +59,9 @@ advantage of the continuous integration environment, gathering data each time an
 associated test suite is run. Figure \ref{fig:developer_workflow} shows a high-
 level \splatter workflow.
 
+\todo{Explain why we are ‘just’ targeting Android for now (GUI testing,
+\etc).}
+
 \begin{figure}[h]
 
 \includegraphics[width=\linewidth]{Images/developer_workflow}
@@ -71,7 +74,7 @@ Running as a continuous integration step is a natural application. For one, test
 suites are run as continuous integration steps themselves. In addition, we want
 to be as transparent as possible.
 
-One of the primary initial goals of this paper was to create a continuous
+One of the primary initial goals of the project was to create a continuous
 integration plugin to present the data gathered during the identification of the
 \flaky tests. As we researched the area, we realised that the indentification of
 \flaky tests is the most well-covered and least interesting area. The more
