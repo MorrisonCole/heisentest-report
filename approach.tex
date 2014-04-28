@@ -325,38 +325,33 @@ Predicate probes simply maintain a counter that is incremented each time the
 predicate is observed to be true.
 
 \begin{center}
-    \begin{tabular}{| l | p{6cm} | l |}
+    \begin{tabular}{| l | p{6cm} |}
     \hline
-        \textbf{Program Point} & \textbf{Description} & \textbf{Cost} \\
+        \textbf{Program Point} & \textbf{Description} \\
     \hline
-        \multicolumn{3}{|c|}{\textit{Complex Probes}} \\
+        \multicolumn{2}{|c|}{\textit{Complex Probes}} \\
     \hline
         Function Entry &
         At the beginning of each function, we serialize all parameter objects
-        (boxing primitives), along with all live variables. &
-        \todo{Cost} \\
+        (boxing primitives), along with all live variables. \\
     \hline
         Function Return &
         At each function call with a return value, we serialize its object
-        result. &
-        \todo{Cost} \\
+        result. \\
     \hline
         Conditional Branch &
         At each branch point, we record all variables in scope separately for
-        each path. &
-        \todo{Cost} \\
+        each path. \\
     \hline
         Variable Assignment &
         For an assignment $V = E$, where $E$ is an expression, we record both
-        the current value of $V$ and the new value of $V$ after assignment. &
-        \todo{Cost} \\
+        the current value of $V$ and the new value of $V$ after assignment. \\
     \hline
-        \multicolumn{3}{|c|}{\textit{Predicate Probes}} \\
+        \multicolumn{2}{|c|}{\textit{Predicate Probes}} \\
     \hline
         Conditional Branch &
         At each path of the branch we maintain a counter that is incremented
-        every time the path is taken. &
-        \todo{Cost} \\
+        every time the path is taken. \\
     \hline
 
     \end{tabular}
@@ -370,13 +365,14 @@ individual test to run over budget, we risk running over budget at the suite
 level. We refine probe costs by comparing expected overhead to measured
 overhead.
 
-We measured the effects of both the Complex and Simple Method Entry Probes. We
-wrote and ran three tests, each of which called an empty method with one
-primitive parameter 100 times. The tests were annotated with {\tt COMPLEX},
-{\tt SIMPLE} and {\tt NONE} policy types. The uninstrumented test is used as
-a baseline. \autoref{lst:uninstrumented_test} shows the basic structure of the
-uninstrumented test --- the others are similar. Timings were measured for the
-method calls only; start up and shutdown times were ignored.
+To measure the effects of both the Complex and Simple Method Entry Probes, we
+wrote and ran 12 tests. Each of the tests call an empty method with one or more
+arguments 100 times. The tests were annotated with {\tt COMPLEX}, {\tt SIMPLE}
+and {\tt NONE} policy types. The uninstrumented (\ie, {\tt NONE}) test is used
+as a baseline. \autoref{lst:uninstrumented_test} shows the basic structure of
+the uninstrumented test with 1 argument --- the others similar. Timings were
+measured for the method calls only; start up and shutdown times were ignored.
+The tests were run on a Nexus 5 running Android version 4.2.2.
 
 \begin{lstlisting}[caption=Uninstrumented Test,label=lst:uninstrumented_test]
 @Splatter(instrumentationPolicy = NONE)
@@ -392,8 +388,6 @@ public void testUninstrumentedEmptyMethod() {
 private void anUninstrumentedEmptyMethod(int unusedParameter) {
 }
 \end{lstlisting}
-
-The tests were run on a Nexus 5 with Android version 4.2.2.
 
 \begin{figure}[h]
 
@@ -444,7 +438,9 @@ The tests were run on a Nexus 5 with Android version 4.2.2.
 
 With the initial results from the performance tests
 (\autoref{fig:test_perf_results}), we can expect that a Complex Instance Method
-Entry probe will have an associated cost of roughly 
+Entry probe will have an associated overhead of approximately 250 times that of
+the original method call, with a Simple Instance Method Entry probe having less
+at roughly 60.
 
 \subsection{Instrumentation Points}
 \label{sec:sec:instrumentation_points}
