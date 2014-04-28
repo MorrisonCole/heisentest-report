@@ -128,23 +128,24 @@ re-packaged.
 \subsubsection{First Pass}
 
 The first time, we build up a list of {\tt InstrumentationPoint} objects. These
-correspond to the instrumentation points defined in \todo{sec:}. The proof of
-concept supports method entry instrumentation points, and has basic
-infrastructure for branch points, but no working support. At the moment, our
-implementation is not adaptive --- instrumentation points are added
-unconditionally provided they match a certain signature (\eg, method entry).
-Each {\tt InstrumentationPoint} object has an associated {\tt
-InstrumentationPolicy}. The tool assumes an {\tt InstrumentationPolicy} of {\tt
-Complex} for now, unless a {\tt @Splatter} annotation is found with a different
-policy. Section \todo{[]} defines the {\tt @Splatter} annotation and its
-customizable parameters. Note that in the future, instrumentation points and the
-like will be stored along with the test run results by the Jenkins plugin. Then,
-the results will be given to this tool again, so that it can decide which
-instrumentation policies to apply to each instrumentation point (\eg, an
-instrumentation point with a previous {\tt InstrumentationPolicy} of {\tt
-InstrumentationPolicy.COMPLEX} could be assigned a new policy of {\tt
-InstrumentationPolicy.NONE} if the site has not been helpful in determining a
-failure-predicting predicate and should not be monitored this time around).
+correspond to the instrumentation points defined in
+\autoref{sec:sec:instrumentation_points}. The proof of concept supports method
+entry instrumentation points, and has basic infrastructure for branch points,
+but no working support. At the moment, our implementation is not adaptive ---
+instrumentation points are added unconditionally provided they match a certain
+signature (\eg, method entry). Each {\tt InstrumentationPoint} object has an
+associated {\tt InstrumentationPolicy}. The tool assumes an {\tt
+InstrumentationPolicy} of {\tt Complex} for now, unless a {\tt @Splatter}
+annotation is found with a different policy. \autoref{sec:sec:splatter_sdk}
+defines the {\tt @Splatter} annotation and its customizable parameters. Note
+that in the future, instrumentation points and the like will be stored along
+with the test run results by the Jenkins plugin. Then, the results will be given
+to this tool again, so that it can decide which instrumentation policies to
+apply to each instrumentation point (\eg, an instrumentation point with a
+previous {\tt InstrumentationPolicy} of {\tt InstrumentationPolicy.COMPLEX}
+could be assigned a new policy of {\tt InstrumentationPolicy.NONE} if the site
+has not been helpful in determining a failure-predicting predicate and should
+not be monitored this time around).
 
 \subsubsection{Second Pass}
 
@@ -153,10 +154,7 @@ instrumentation points defined, we visit the bytecode again, this time inserting
 probes based on the {\tt InstrumentationPolicy} each time we encounter bytecode
 that matches a known {\tt InstrumentationPoint}. As might be expected, a policy
 of {\tt COMPLEX} tells us to inject a complex probe, {\tt SIMPLE} a simple
-(counter-based) probe and {\tt NONE} nothing at all. Finally, at the end of the
-second pass, any extra classes that we require for monitoring our
-instrumentation are injected. \todo{Note that most of these classes are now
-defined in the Splatter SDK?}.
+(counter-based) probe and {\tt NONE} nothing at all.
 
 The user must provide at least one base test class and the names of its
 equivalent JUnit's {\tt SetUp} and {\tt TearDown} methods. These are methods
@@ -301,6 +299,7 @@ marked with \texttt{// TODO:} comments in the places they do exist.
 \subsection{Notes}
 
 \subsubsection{SDK}
+\label{sec:sec:splatter_sdk}
 
 An SDK project can (optionally) be included. It defines the annotation
 @SplatterIgnore. During the instrumentation phase, if a method is found with

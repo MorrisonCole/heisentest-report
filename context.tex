@@ -277,7 +277,6 @@ First, let us consider common causes of flakiness:
 	\item Left-over state --- static state can affect the execution of a test. If
 	it is not cleaned up and reset, it can cause strange behaviour. This includes
 	things like external databases, configuration files \etc.
-	\item \todo{Might be missing something...}
 \end{itemize}
 
 Each developer familiar with these issues may employ techniques and patterns to
@@ -330,7 +329,6 @@ obvious factors which may affect prioritisation, including:
 	be tackled as a group. Certain failure types may be considered more critical than others.
 	\item Age --- a \flaky test that has been known to be \flaky for a long period
 	may be prioritised over more recent additions, or vice versa.
-	\item \todo{I must be missing something here!}
 \end{itemize}
 
 In the end, it is up to the development team to prioritise the \flaky tests, if
