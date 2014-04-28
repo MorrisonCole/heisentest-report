@@ -160,9 +160,8 @@ The user must provide at least one base test class and the names of its
 equivalent JUnit's {\tt SetUp} and {\tt TearDown} methods. These are methods
 that are called respectively at the beginning and end of each individual test
 run. We inject code to initialize and clean up our logging system at these
-points. Upon {\tt SetUp}, we create a file matching the test name \todo{a
-directory diagram with some tests} under the directory \todo{android
-directories}.
+points. Upon {\tt SetUp}, we create a file matching the test name to store
+runtime data.
 
 \subsubsection{Injecting Instrumentation}
 
@@ -191,7 +190,9 @@ private static String appendIntToString(String baseString, int number) {
 }
 \end{lstlisting}
 
-The corresponding Dalvik bytecode would be generated for {\tt anExampleMethod}:
+The corresponding Dalvik bytecode would be generated for {\tt anExampleMethod}\footnote{Note that this listing omits irrelevant
+sections of bytecode. The full listing can be found in
+\autoref{sec:sec:full_dalvik_bytecode_example}.}:
 
 \begin{lstlisting}[mathescape,numberblanklines=false]
 #1              : (in Lcom/example/MainActivity;)
@@ -217,16 +218,75 @@ $\vdots$ (*@\ReactivateNumber@*)
 Lines \ref{method_body_definition}-\ref{method_body_end_definition} define the
 method body. In this case, the method body simply returns void since it is empty
 in the original Java source. The full set of bytecode operations and symbols are
-defined at \cite{dalvikBytecode}. Note that this listing omits irrelevant
-sections of bytecode. The full listing can be found in section
-\ref{sec:sec:full_dalvik_bytecode_example}. From here on we will focus on the
+defined at \cite{dalvikBytecode}. From here on we will focus on the
 registers, method body and locals of the bytecode, omitting extraneous
 information as we see fit.
 
-\todo{colour coded register allocation (Dalvik bytecode)}
+\begin{lstlisting}[label=instrumented_example]
+    #1              : (in Lcom/heisentest/skeletonandroidapp/test/unit/MainActivityTest;)
+      name          : 'anExampleMethod'
+      type          : '(Ljava/lang/String;I)Ljava/lang/String;'
+      access        : 0x0002 (PRIVATE)
+      code          -
+      registers     : 12
+      ins           : 3
+      outs          : 7
+      insns size    : 48 16-bit code units
+026750:                                        |[026750] com.heisentest.skeletonandroidapp.test.unit.MainActivityTest.anExampleMethod:(Ljava/lang/String;I)Ljava/lang/String;
+026760: 1220                                   |0000: const/4 v0, #int 2 // #2
+026762: 2304 0a03                              |0001: new-array v4, v0, [Ljava/lang/String; // type@030a
+026766: 1207                                   |0003: const/4 v7, #int 0 // #0
+026768: 1a00 f20a                              |0004: const-string v0, "firstArg" // string@0af2
+02676c: 4d00 0407                              |0006: aput-object v0, v4, v7
+026770: 1217                                   |0008: const/4 v7, #int 1 // #1
+026772: 1a00 0f0f                              |0009: const-string v0, "secondArg" // string@0f0f
+026776: 4d00 0407                              |000b: aput-object v0, v4, v7
+02677a: 7100 3908 0000                         |000d: invoke-static {}, Ljava/lang/System;.currentTimeMillis:()J // method@0839
+026780: 0b00                                   |0010: move-result-wide v0
+026782: 7100 3c08 0000                         |0011: invoke-static {}, Ljava/lang/Thread;.currentThread:()Ljava/lang/Thread; // method@083c
+026788: 0c02                                   |0014: move-result-object v2
+02678a: 1a03 e308                              |0015: const-string v3, "anExampleMethod" // string@08e3
+02678e: 1225                                   |0017: const/4 v5, #int 2 // #2
+026790: 2356 0803                              |0018: new-array v6, v5, [Ljava/lang/Object; // type@0308
+026794: 1207                                   |001a: const/4 v7, #int 0 // #0
+026796: 7701 f707 0b00                         |001b: invoke-static/range {v11}, Ljava/lang/Integer;.toString:(I)Ljava/lang/String; // method@07f7
+02679c: 0c05                                   |001e: move-result-object v5
+02679e: 4d05 0607                              |001f: aput-object v5, v6, v7
+0267a2: 1217                                   |0021: const/4 v7, #int 1 // #1
+0267a4: 4d0a 0607                              |0022: aput-object v10, v6, v7
+0267a8: 0795                                   |0024: move-object v5, v9
+0267aa: 7707 fe05 0000                         |0025: invoke-static/range {v0, v1, v2, v3, v4, v5, v6}, Lcom/heisentest/splatter/instrumentation/logging/JsonLogger;.complexLogInstanceMethodEntry:(JLjava/lang/Thread;Ljava/lang/String;[Ljava/lang/String;Ljava/lang/Object;[Ljava/lang/Object;)V // method@05fe
+0267b0: 0791                                   |0028: move-object v1, v9
+0267b2: 07a2                                   |0029: move-object v2, v10
+0267b4: 01b3                                   |002a: move v3, v11
+0267b6: 7120 fa05 3200                         |002b: invoke-static {v2, v3}, Lcom/heisentest/skeletonandroidapp/test/unit/MainActivityTest;.appendIntToString:(Ljava/lang/String;I)Ljava/lang/String; // method@05fa
+0267bc: 0c00                                   |002e: move-result-object v0
+0267be: 1100                                   |002f: return-object v0
+      catches       : (none)
+      positions     : 
+        0x002b line=20
+      locals        : 
+        0x0000 - 0x0030 reg=9 this Lcom/heisentest/skeletonandroidapp/test/unit/MainActivityTest; 
+        0x0000 - 0x0030 reg=10 firstArg Ljava/lang/String; 
+        0x0000 - 0x0030 reg=11 secondArg I 
+\end{lstlisting}
 
-\todo{Need to detail our register allocating visitor and explain how it works /
-when it (might?) fail!}
+\autoref{instrumented_example} shows the bytecode after a Complex Instance
+Method Entry probe has been added. The reference to the instance object ({\tt
+this}) is shifted up to register 9 by our instrumentation, along with all of the
+following method parameters. Our instrumentation does its work using registers 0
+to 8, and simply moves the argument parameters back to their original positions
+after the work is done.
+
+Our instrumentation process is built around ASMDEX's architecture. Unfamiliarity
+with the library meant that comprimises were made in the name of time. The most
+significant of these is the register shifting present in all of our
+instrumentation. We override ASMDEX's {\tt visitMaxs} method to request
+additional registers with which to do our work (\ie, to log our events). Since
+this occurs \textit{after} the original method bytecode is generated, we must
+shift the argument parameters back to their original positions at the end of our
+instrumentation. Future versions of \splatter could be made more efficient by
+eliminating this register shifting.
 
 \subsubsection{Storing the results}
 
