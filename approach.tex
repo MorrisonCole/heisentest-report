@@ -2,13 +2,13 @@
 \label{sec:approach}
 
 Figure \ref{fig:architecture_overview} depicts the high-level processes of
-\splatter that execute when an integrated project is built. There are three
+\venera that execute when an integrated project is built. There are three
 major phases:
 
 \textbf{Analysis.} Test run history is analysed and the probability of failure
 for each test is calculated.
 
-\textbf{Instrumentation.} \splatter extracts the packaged application, examines
+\textbf{Instrumentation.} \venera extracts the packaged application, examines
 its bytecode and injects state-monitoring probes. Probe placement is informed by
 available historical data and is performed with respect to a budget. Tests
 determined to be \flaky are prioritised and are more heavily instrumented.
@@ -119,14 +119,14 @@ f(T_{i_p})} + B_{remainder}
 
 \begin{algorithm}[h]
 \caption{Instrumenting the test suite with respect to a budget}
-\label{alg:splatter}
+\label{alg:venera}
 
 \begin{algorithmic}
 	\Require{$tests$ is a set comprising all the tests in the test suite}
 	\Require{$proportionTargeted$ is a decimal value in the range $[0..1]$}
 	\Statex
 
-	\Function{splatter}{$tests$, $proportionTargeted$}
+	\Function{venera}{$tests$, $proportionTargeted$}
 
 	\State $suiteBudget \gets$ calculateSuiteBudget($tests$)
 	\Statex
@@ -156,7 +156,7 @@ f(T_{i_p})} + B_{remainder}
 
 \end{algorithm}
 
-Algorithm \ref{alg:splatter} defines the two main steps: calculation and
+Algorithm \ref{alg:venera} defines the two main steps: calculation and
 instrumentation. First a per-test budget is calculated based on our knowledge
 base; finally the instrumentation is performed. It is during the second step
 that the application is actually modified.
@@ -376,7 +376,7 @@ measured for the method calls only; start up and shutdown times were ignored.
 The tests were run on a Nexus 5 running Android version 4.2.2.
 
 \begin{lstlisting}[caption=Uninstrumented Test,label=lst:uninstrumented_test]
-@Splatter(instrumentationPolicy = NONE)
+@Venera(instrumentationPolicy = NONE)
 public void testUninstrumentedEmptyMethod() {
 	Stopwatch.createStarted();
 	for (int i = 0; i < 100; i++) {
@@ -385,7 +385,7 @@ public void testUninstrumentedEmptyMethod() {
 	Stopwatch.stop();
 }
 
-@Splatter(instrumentationPolicy = NONE)
+@Venera(instrumentationPolicy = NONE)
 private void anUninstrumentedEmptyMethod(int unusedParameter) {
 }
 \end{lstlisting}

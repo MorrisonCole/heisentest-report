@@ -1,4 +1,4 @@
-splatter(suiteBudget, tests[])
+venera(suiteBudget, tests[])
 	flakinessThreshold = 0.4
 	targetedBudget = suiteBudget * 0.75
 	exploratoryBudget = suiteBudget * (1 - 0.75)

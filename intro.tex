@@ -50,7 +50,7 @@ debugging tests that are in fact intended to speed up the development process.
 Ultimately, each test case must be investigated and fixed by a developer, but as
 we will show, much of the legwork can be automated.
 
-The tool we propose --- \textit{\splatter} --- gathers and analyses information
+The tool we propose --- \textit{\venera} --- gathers and analyses information
 much in the same way as a developer would. First, it identifies the flaky tests
 in a test suite. Then, it employs techniques similar to those discussed by
 \citet{ArumugaNainar:2010:ABI:1806799.1806839} to gather relevant debugging
@@ -58,7 +58,7 @@ information over a series of test runs. Finally we analyze the gathered data and
 identify predicates strongly associated with test failure. Our tool takes
 advantage of the continuous integration environment, gathering data each time an
 associated test suite is run. Figure \ref{fig:developer_workflow} shows a high-
-level \splatter workflow.
+level \venera workflow.
 
 Previous and potential future work with an industry software startup lead us to
 target the Android platform for our proof of concept.
@@ -124,6 +124,6 @@ The rest of the report will proceed with a familiar structure.
 \autoref{sec:example} presents a motivating example of a \flaky test. Following
 the example, we detail our general approach in \autoref{sec:approach}.
 \autoref{sec:imp} discusses the design and of our proof of concept tool,
-\splatter. Finally, \autoref{sec:relwork} compares our work to that of previous
+\venera. Finally, \autoref{sec:relwork} compares our work to that of previous
 research and tools. We wrap up with a conclusion (\autoref{sec:conc}) and
-suggest future directions for both \splatter and the research in general.
+suggest future directions for both \venera and the research in general.

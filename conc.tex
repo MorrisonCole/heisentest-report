@@ -35,22 +35,22 @@ case study with the developers at Shazam. We hope to gain an understanding of
 the ways developers deal with \flaky tests, what tools they use and how they
 feel \flaky tests affect the team.
 
-In order to support the development of the tool, we plan to deploy \splatter to
+In order to support the development of the tool, we plan to deploy \venera to
 the Android team at Shazam in the near future. Seeing how it behaves and how
 developers interact with it will be critical in steering the engineering work.
 
-Finally, we also plan to evaluate the performance of \splatter. For some known
-\flaky tests that have been fixed, we will apply \splatter and analyse its
+Finally, we also plan to evaluate the performance of \venera. For some known
+\flaky tests that have been fixed, we will apply \venera and analyse its
 performance. We will measure probe proximity to the source of the \flaky test
-over a series of runs. Presuming \splatter works as expected, we would hope to
+over a series of runs. Presuming \venera works as expected, we would hope to
 see probes placed in locations closer to the bug as a test is run repeatedly.
 
-In order to be helpful in practice, \splatter would ideally reduce the expected
+In order to be helpful in practice, \venera would ideally reduce the expected
 time to fix a flaky test for some or all types of developer (experienced,
 inexperienced, \etc.). We would need to compare a set of developers using the
 tool to a set of developers without the tool in experimental conditions. The
 developer sets could either be of mixed or similar experience, and working on a
-familiar or unfamiliar codebase. Familiarity of the group using \splatter with
+familiar or unfamiliar codebase. Familiarity of the group using \venera with
 the tool will also need to be accounted for.
 
 Improve probe placement by taking into account control flow graphs
@@ -61,7 +61,7 @@ and loops.
 In a typical test driven development cycle, tests are run constantly --- both by
 the developers and the continuous integration build agents. We could gather test
 run data from the tests run by developers themselves by sending the results over
-the network to the Splatter CI plugin.
+the network to the Venera CI plugin.
 
 \begin{itemize}
 	\item This would require {\lq}noise{\rq} reduction --- developers break tests
