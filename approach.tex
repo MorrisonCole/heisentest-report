@@ -85,18 +85,20 @@ where $\alpha$ is the \flaky test threshold; \ie, the point at which $\epsilon$
 \subsection{Test Suite Budget}
 \label{sec:sec:budget}
 
-There are two factors to take into account when determining our overall budget:
+Our budget is time-based. We can calculate the average time to completion for
+an some test suite $T$ with $\sum\limits_{t \in T} averageTimeToCompletion(t)$.
+Given some maximum time $B^{max}$, we have a test suite budget $B$, where
+\begin{align*}
+B = B^{max} - \sum\limits_{t \in T} averageTimeToCompletion(t)
+\end{align*}
 
-\begin{description}
-	\item[Total time available] \hfill \\
- 		Our upper bound for run time. This can be specified by the developer(s), or
- 		left as a sensible default.
-	\item[Average run time of each test] \hfill \\
-		Instrumentation comes with overhead. If we know the average run time of a
-		suite without instrumentation and the estimated overhead of probes, we can
-		apply instrumentation until we hit our upper bound. If we end up running
-		over in practice, we simply reduce the budget and vice versa.
-\end{description}
+Note that a sensible $B^{max}$ will vary with user needs, so it will be exposed
+for modification.
+
+It is important that we are able to estimate the effects of individual probes in
+terms of timing in order to meet our budget. If our instrumentation causes a
+individual test to run over budget, we risk running over budget at the suite
+level. We adapt probe costs by comparing expected overhead to measured overhead.
 
 For a total exploratory budget $B_{e}$ and total flaky test budget $B_{f}$, we
 have total test suite budget $B$, where
@@ -114,12 +116,10 @@ f(T_{i_p})} + B_{remainder}
 \subsection{Allocating Test Suite Budget}
 \label{sec:sec:allocating_budget}
 
-Test suite budget is distributed across all tests. We split our budget into two
-pools --- targeted and exploratory. We allocate targeted budget to tests with
-high flakiness, prioritising those with the highest flakiness and least
-historical data. Exploratory budget is randomly allocated to the remaining
-tests in the hopes that we get lucky and catch a previously stable test fail
-unexpectedly.
+Test suite budget is distributed over all tests. We partition our budget into
+two pools --- \flaky and exploratory. We allocate \flaky budget proportionally
+to a test's flakiness. Exploratory budget is randomly allocated to all tests.
+Exploratory budget gives us a chance of gathering data from newly flaky tests.
 
 We start from a pesimistic viewpoint; new tests are assumed to have a flakiness
 value of 1. As the test is run, the flakiness value is adjusted as usual until
@@ -196,9 +196,11 @@ that the application is actually modified.
 
 	\EndFunction
 	\Statex
+
+	\Require{$B_{t}^{max}$ is the maximum targeted budget for a test $t$}
 	\Function{calculateTestTargetedBudget}{$test$, $targetedBudget$}
 
-	\State $maximumTargetedBudget \gets \todo{someNumberThatWeCalculate}$
+	\State $maximumTargetedBudget \gets t_{b_max}$
 
 	\State $budget \gets (test.flakiness / totalFlakiness) * targetedBudget$
 	\Statex
@@ -279,6 +281,14 @@ previous instrumentation sites, budget, etc.}
 \end{algorithmic}
 
 \end{algorithm}
+
+
+\subsection{Prioritisation and Future Optimisations}
+
+In the future, we could adjust \flaky budget allocation by taking into account
+relative volume of historical data. For example, a newly \flaky test for which
+we have little to no data may be prioritised above a known \flaky test for which
+we hold a large amount of information from previous instrumented runs.
 
 
 \subsection{Monitoring Application State with Probes}
