@@ -38,10 +38,12 @@ can be used to allocate budget to tests in a suite (Section
 \Flaky tests with a relatively low probability of failure are harder to
 reproduce. We define a normalised scalar value --- \emph{\flakiness} (Definition
 \ref{def:flakiness}) --- based on probability of test failure. We favour tests
-with high \flakiness and instrument them more heavily by assigning \flaky test
-budget proportionally to \flakiness; Section \ref{sec:sec:allocating_budget}
-describes the process in detail. Algorithm \ref{alg:calculate_flakiness}
-presents a possible method of calculating \flakiness.
+with high \flakiness and instrument them more heavily by assigning \flaky budget
+proportionally to \flakiness; Section \ref{sec:sec:allocating_budget} describes
+the process in detail. Algorithm \ref{alg:calculate_flakiness} presents a
+possible method of calculating \flakiness. It is important to note that
+\flakiness is purely a prioritisation-related value --- we could of course
+simply divide the \flaky budget equally between all \flaky tests.
 
 \begin{defn}[\Flakiness]
 \label{def:flakiness}
