@@ -35,12 +35,30 @@ to interference by any number of environmental events or characteristics. For
 example, an operating system starved of memory could kill the application, or, a
 particularly slow start-up time could cause a timeout to occur.
 
+\subsection{\Flaky Tests are a Real Problem}
+
 \Flaky tests are no small issue. Mozilla\cite{mozillaFlakyTestBug} and Chromium
 have known flaky tests. Android even includes an {\tt @FlakyTest}
 annotation\cite{androidFlakyInterface} in its testing kit for automatic re-
 running of known \flaky tests. The {\tt @FlakyTest} Android annotation has been
 present since the initial release of Android.
 
+When the latest changes are due to be released, the \flaky tests must be
+considered. Normally, a particular software iteration would be held back until
+all tests pass, but with \flaky tests thrown into the mix - it may take multiple
+runs before all the tests pass at once - again, adding overhead.
+
+The set of \flaky tests causes confusion, obscures real failures and erodes
+trust.
+
+Simply surpressing the \flaky tests is not a long-term solution. Informally, let
+a valid test be a test that asserts that some unit of the application behaves as
+expected. A redundant test might check behaviour that is not required, or is
+tested thoroughly elsewhere. Assuming all tests in a suite are valid, then any
+\flaky tests in the suite are also valid. A \flaky test may cover behaviour that
+is not tested elsewhere. Suppressing (temporarily retiring) the \flaky test may
+do more harm than good, since the behaviour it previously tested will now be go
+completely unchecked unless manually tested upon each commit.
 
 \subsection{Automating the Diagnostic Process}
 
