@@ -102,16 +102,18 @@ exposed for modification.
 \subsection{Allocating Test Suite Budget}
 \label{sec:sec:allocating_budget}
 
-We distibute $B$ over all tests --- \flaky or not. We partition our budget into
-two pools --- \flaky and exploratory. We allocate \flaky budget proportionally
-to a test's flakiness. Exploratory budget is randomly allocated to all tests.
-Exploratory budget gives us a chance of gathering data from newly flaky tests.
-
-For a total exploratory budget $B_{e}$ and total flaky test budget $B_{f}$, we
-have
+We partition our budget into two pools --- \flaky and exploratory. Given our
+total test suite budget $B$, we have
 \begin{align*}
 B = B_{e} + B_{f}
 \end{align*}
+where $B_{e}$ is the total exploratory budget and $B_{f}$ is the total flaky
+test budget.
+
+At the test level, we allocate \flaky budget proportionally to a test's
+flakiness. Exploratory budget is uniformly randomly allocated over all tests;
+each test in the suite is equally likely to receive a portion of the exploratory
+budget, but not guaranteed.
 
 Given a suite of tests $T$, a test $t \in T$ is allocated budget $B_{t}$, where
 \begin{align*}
@@ -209,7 +211,9 @@ that the application is actually modified.
 
 \subsubsection{Exploratory Budget Allocation}
 
-\begin{algorithm}[h]
+Exploratory budget gives us a chance of gathering data from newly flaky tests.
+
+\begin{algorithm}[H]
 \caption{Allocating exploratory budget to tests}
 \label{alg:allocateExploratoryBudget}
 
