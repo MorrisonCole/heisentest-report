@@ -102,7 +102,7 @@ exposed for modification.
 \subsection{Allocating Test Suite Budget}
 \label{sec:sec:allocating_budget}
 
-We partition our budget into two pools --- \flaky and exploratory. Given our
+We partition our budget into two pools: \flaky and exploratory. Given our
 total test suite budget $B$, we have
 \begin{align*}
 B = B_{e} + B_{f}
@@ -111,7 +111,7 @@ where $B_{e}$ is the total exploratory budget and $B_{f}$ is the total flaky
 test budget.
 
 At the test level, we allocate \flaky budget proportionally to a test's
-flakiness. Exploratory budget is uniformly randomly allocated over all tests;
+flakiness. Exploratory budget is uniformly randomly allocated over all tests ---
 each test in the suite is equally likely to receive a portion of the exploratory
 budget, but not guaranteed.
 
