@@ -121,39 +121,39 @@ B_t = \frac{B_e}{|T|} + \frac{B_f \times T_f}{\sum\limits_{i=1}^{|T|}
 f(T_{i_p})} + B_{remainder}
 \end{align*}
 
-\begin{algorithm}[h]
+\begin{algorithm}[H]
 \caption{Instrumenting the test suite with respect to a budget}
 \label{alg:venera}
 
 \begin{algorithmic}
-	\Require{$tests$ is a set comprising all the tests in the test suite}
-	\Require{$proportionTargeted$ is a decimal value in the range $[0..1]$}
+	\Require{$T$ is the set of tests making up the test suite}
+	\Require{$proportionFlaky$ is a decimal value in the range $[0..1]$}
 	\Statex
 
-	\Function{venera}{$tests$, $proportionTargeted$}
+	\Function{venera}{$T$, $proportionFlaky$}
 
-	\State $suiteBudget \gets$ calculateSuiteBudget($tests$)
+	\State $B \gets$ calculateSuiteBudget($T$)
 	\Statex
 
-	\State allocateBudget($tests$, $suiteBudget$, $proportionTargeted$)
+	\State allocateBudget($T$, $B$, $proportionFlaky$)
 	\Statex
 
-	\ForAll {$test \in tests$}
-		\State{instrument($test$)}
+	\ForAll {$t \in T$}
+		\State{instrument($t$)}
 	\EndFor
 
 	\EndFunction
 
 	\Statex
 
-	\Function{allocateBudget}{$tests$, $suiteBudget$, $proportionTargeted$}
+	\Function{allocateBudget}{$T$, $B$, $proportionFlaky$}
 
-	\State{$flakyBudget \gets suiteBudget * proportionTargeted$}
-	\State{$exploratoryBudget \gets suiteBudget * (1 - proportionTargeted)$}
+	\State{$flakyBudget \gets B * proportionFlaky$}
+	\State{$exploratoryBudget \gets B * (1 - proportionFlaky)$}
 	\Statex
 
-	\State{allocateTargetedBudget($tests$, $flakyBudget$)}
-	\State{allocateExploratoryBudget($tests$, $exploratoryBudget$)}
+	\State{allocateFlakyBudget($T$, $flakyBudget$)}
+	\State{allocateExploratoryBudget($T$, $exploratoryBudget$)}
 
 	\EndFunction
 \end{algorithmic}
