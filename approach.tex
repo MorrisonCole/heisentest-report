@@ -209,7 +209,7 @@ It is during the instrumentation step that the application is actually modified.
 	\State $testFlakyBudget \gets (flakiness(t) / totalFlakiness) * B_f$
 	\Statex
 
-	\Return minimum($testFlakyBudget$, $B_{f}^{max}$)
+	\State \Return minimum($testFlakyBudget$, $B_{f}^{max}$)
 
 	\EndFunction
 \end{algorithmic}
@@ -225,37 +225,36 @@ Exploratory budget gives us a chance of gathering data from newly flaky tests.
 \label{alg:allocateExploratoryBudget}
 
 \begin{algorithmic}[1]
-	\Function{AllocateExploratoryBudget}{ $tests$, $B_e$}
+	\Require{$T$ is the set of tests making up the test suite}
+	\Require{$B_e$ is the total exploratory budget}
+	\Require{$B_{e}^{max}$ is the maximum exploratory budget for a test}
+	\Statex
 
-	\State shuffle($tests$)
-	\State $iterator \gets tests.getIterator()$
-	\While{$exploratoryBudget > 0$ AND $iterator.hasNext()$}
-		\State $currentTest \gets tests.getNext()$
+	\Function{AllocateExploratoryBudget}{$T$, $B_e$}
+
+	\State KnuthShuffle($T$)
+	\State $iterator \gets T.getIterator()$
+	\While{$B_e > 0$ AND $iterator.hasNext()$}
+		\State $t \gets iterator.getNext()$
 		\State \begin{varwidth}[t]{\linewidth}
-		$exploratoryBudget \gets exploratoryBudget -$\par
-		\hskip\algorithmicindent \text{calculateTestExploratoryBudget}(test,
-		exploratoryBudget)
+		$B_e \gets B_e -$\par
+		\hskip\algorithmicindent \text{calculateTestExploratoryBudget}($t$,
+		$B_e$, $B_{e}^{max}$)
 		\end{varwidth}
 	\EndWhile
 
 	\EndFunction
 	\Statex
 
-	\Require{$B_{e}^{max}$ is the maximum exploratory budget for a test $t$}
-	\Statex
+	\Function{CalculateTestExploratoryBudget}{$t$, $B_e$, $B_{e}^{max}$}
 
-	\Function{CalculateTestExploratoryBudget}{test, exploratoryBudget}
-
-	\State $maximumExploratoryBudget \gets B_{e}^{max}$
-
-	\If{$test.budget > 0$}
+	\If{$B_t > 0$}
 		\Return $0$
 	\EndIf
 
-	\State $test.budget \gets$ minimum($exploratoryBudget$,
-	$maximumExploratoryBudget$)
+	\State $B_t \gets$ minimum($B_e$, $B_{e}^{max}$)
 
-	\State \Return $test.budget$
+	\State \Return $B_t$
 
 	\EndFunction
 \end{algorithmic}
