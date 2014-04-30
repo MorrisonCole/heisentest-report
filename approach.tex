@@ -275,15 +275,18 @@ allocations, test outcomes and budgets.
 \label{alg:instrument_test}
 
 \begin{algorithmic}
-	\Function{Instrument}{test}
+	\Require{$t$ is a test}
+	\Statex
+
+	\Function{Instrument}{$t$}
 
 	\State{$sites \gets GetNextSetInstrumentationPoints()$}
-	\While{$test.budget > 0$}
+	\While{$B_t > 0$}
 		\ForAll{$site \in sites$}
 			\State{$cost \gets site.cost$}
-			\If{$cost \le test.budget$}
+			\If{$cost \le B_t$}
 				\State{$site.active \gets true$}
-				\State{$test.budget \gets budget - cost$}
+				\State{$B_t \gets B_t - cost$}
 			\Else
 				% Need to work out how to define new algorithmic-style macros (e.g.
 				% \BREAK)
