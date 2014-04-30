@@ -132,12 +132,12 @@ receive exploratory budget.}
 
 \begin{algorithmic}
 	\Require{$T$ is the set of tests making up the test suite}
+	\Require{$B$ is the test suite budget}
 	\Require{$proportionFlaky$ is a decimal value in the range $[0..1]$}
 	\Statex
 
 	\Function{venera}{$T$, $proportionFlaky$}
 
-	\State $B \gets$ calculateSuiteBudget($T$)
 	\Statex
 
 	\State allocateBudget($T$, $B$, $proportionFlaky$)
@@ -165,10 +165,11 @@ receive exploratory budget.}
 
 \end{algorithm}
 
-Algorithm \ref{alg:venera} defines the two main steps: calculation and
-instrumentation. First a per-test budget is calculated based on our knowledge
-base; finally the instrumentation is performed. It is during the second step
-that the application is actually modified.
+\mc{$proportionFlaky$ is stupid.}
+
+\algref{alg:venera} defines the two main steps: allocation and instrumentation.
+First, $B_t$ is calculated for each $t$. Then, the instrumentation is performed.
+It is during the instrumentation step that the application is actually modified.
 
 \subsubsection{\Flaky Budget Allocation}
 \label{sec:sec:flaky_budget_alloc}
