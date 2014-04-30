@@ -179,36 +179,37 @@ It is during the instrumentation step that the application is actually modified.
 \label{alg:allocateFlakyBudget}
 
 \begin{algorithmic}
-	\Function{AllocateFlakyBudget}{$tests$, $flakyBudget$}
+	\Require{$T$ is the set of tests making up the test suite}
+	\Require{$B_f$ is the total \flaky test budget}
+	\Require{$B_{f}^{max}$ is the maximum \flaky budget for a test}
+	\Statex
+
+	\Function{AllocateFlakyBudget}{$T$, $B_f$, $B_{f}^{max}$}
 
 	\State $totalFlakiness \gets 0$
 
-	\ForAll{$test \in tests$}
-		\State $totalFlakiness \gets totalFlakiness + test.flakiness$
+	\For{$t \in T$}
+		\State $totalFlakiness \gets totalFlakiness + flakiness(t)$
 	\EndFor
 	\Statex
 
-	\State $tests \gets \text{sortByFlakinessDescending(}tests$)
+	\State $T \gets$ sortByFlakinessDescending($T$)
 
-	\ForAll{$test \in tests$}
-		\State $test.budget \gets$ calculateTestFlakyBudget($test$,
-		$totalFlakiness$, $flakyBudget$)
+	\For{$t \in T$}
+		\State $B_t \gets$ calculateTestFlakyBudget($t$, $totalFlakiness$, $B_f$,
+		$B_{f}^{max}$)
 	\EndFor
 
 	\EndFunction
 	\Statex
 
-	\Require{$B_{f}^{max}$ is the maximum \flaky budget for a test $t$}
+	\Function{calculateTestFlakyBudget}{$t$, $totalFlakiness$, $B_f$,
+	$B_{f}^{max}$}
+
+	\State $testFlakyBudget \gets (flakiness(t) / totalFlakiness) * B_f$
 	\Statex
 
-	\Function{calculateTestFlakyBudget}{$test$, $flakyBudget$}
-
-	\State $maximumFlakyBudget \gets B_{f}^{max}$
-
-	\State $budget \gets (test.flakiness / totalFlakiness) * flakyBudget$
-	\Statex
-
-	\Return minimum($testFlakyBudget$, $maximumFlakyBudget$)
+	\Return minimum($testFlakyBudget$, $B_{f}^{max}$)
 
 	\EndFunction
 \end{algorithmic}
