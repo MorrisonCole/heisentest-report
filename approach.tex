@@ -305,26 +305,24 @@ allocations, test outcomes and budgets.
 \label{sec:probes}
 
 There are a number of types of points at which it is useful to gather
-information about application state. We extend the common approach of counters
-and predicates[] to include instrumentation designed for to gather much more
-contextual information.
+information about application state. We scrap the common approach of counters
+and predicates used in past work [] [] and instead include instrumentation
+designed to gather much more contextual information.
 
 We refer to a piece of code inserted at an instrumentation site to monitor
-application state as a probe. Complex probes record the state of live objects
-such as variables and method parameters, but carry a large performance overhead.
-Predicate probes are a lightweight alternative to monitor execution flow.
+application state as a \textit{probe}. \textit{Complex} probes record the
+state of live objects such as variables and method parameters, but carry a large
+performance overhead. \textit{Simple} probes are a lightweight alternative to
+monitor execution flow only.
 
-Probes are allocated based on the available budget, historical results and
-available instrumentation sites. For example, predicate probes could be used to
-hone in on program flows associated with failure during initial runs. Later,
+Probes are placed based on the available budget, historical results and
+available instrumentation sites. For example, simple probes could be used to
+determine program flows associated with failure during initial runs. Later,
 once areas of problematic code are identified, heavier-weight complex probes
 could then be inserted to gather more detailed information.
 
-Complex probes serialize Java objects to JSON with google-gson. Primitives are
-boxed to their object representations.
-
-Predicate probes simply maintain a counter that is incremented each time the
-predicate is observed to be true.
+Each of the probes listed in the table below records the system time and thread
+ID.
 
 \begin{center}
     \begin{tabular}{| l | p{6cm} |}
@@ -333,27 +331,33 @@ predicate is observed to be true.
     \hline
         \multicolumn{2}{|c|}{\textit{Complex Probes}} \\
     \hline
-        Function Entry &
-        At the beginning of each function, we serialize all parameter objects
-        (boxing primitives), along with all live variables. \\
+        Instance Method Entry &
+        At the beginning of each instance method, we record all arguments, along
+        with all live variables. \\
     \hline
-        Function Return &
-        At each function call with a return value, we serialize its object
-        result. \\
+    		Static Method Entry &
+        At the beginning of each static method, we record all arguments. \\
+    \hline
+        Method Return &
+        At each method call with a return value, we record its result. \\
     \hline
         Conditional Branch &
-        At each branch point, we record all variables in scope separately for
-        each path. \\
+        At each conditional branch point, we record all live variables and the
+        path that was taken. \\
     \hline
         Variable Assignment &
-        For an assignment $V = E$, where $E$ is an expression, we record both
-        the current value of $V$ and the new value of $V$ after assignment. \\
+        For an assignment $V = E$, where $E$ is an expression and $V$ is a
+        variable, we record both the current value of $V$ and the new value of
+        $V$ after assignment. \\
     \hline
-        \multicolumn{2}{|c|}{\textit{Predicate Probes}} \\
+        \multicolumn{2}{|c|}{\textit{Simple Probes}} \\
     \hline
-        Conditional Branch &
-        At each path of the branch we maintain a counter that is incremented
-        every time the path is taken. \\
+        Method Entry &
+        At the start of each method (instance or static), we record that the
+        method was executed. \\
+    \hline
+    		Conditional Branch &
+        At each conditional branch point, we record which path was taken. \\
     \hline
 
     \end{tabular}

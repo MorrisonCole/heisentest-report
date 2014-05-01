@@ -163,6 +163,11 @@ run. We inject code to initialize and clean up our logging system at these
 points. Upon {\tt SetUp}, we create a file matching the test name to store
 runtime data.
 
+\subsubsection{The Event System}
+
+Complex probes serialize Java objects to JSON with google-gson. Primitives are
+boxed to their object representations.
+
 \subsubsection{Injecting Instrumentation}
 
 This section details the steps we take to insert probe at an instance method
