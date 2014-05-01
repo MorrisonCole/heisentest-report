@@ -350,7 +350,7 @@ ID.
         variable, we record both the current value of $V$ and the new value of
         $V$ after assignment. \\
     \hline
-        \multicolumn{2}{|c|}{\textit{Simple Probes}} \\
+        \multicolumn{2}{|c|}{\textit{Simplegmail Probes}} \\
     \hline
         Method Entry &
         At the start of each method (instance or static), we record that the
@@ -446,13 +446,14 @@ private void anUninstrumentedEmptyMethod(int unusedParameter) {
 With the initial results from the performance tests
 (\autoref{fig:test_perf_results}), we can expect that a Complex Instance Method
 Entry probe will have an associated overhead of approximately 250 times that of
-the original method call, with a Simple Instance Method Entry probe having less
+the original method call, with a Simple Instance Method Entry probe having less,
 at roughly 60.
 
-Our collected data is not ideal. Each of the data points is backed by only one
-measured value and it is clear that the Android platform has intefered with
-the results. In order to properly evaluate the cost of our probes, we will need
-to measure a large number of methods over multiple runs to smooth out the data.
+Unfortunately, these are unreliable estimates at best. Each of the data points
+is backed by only one measured value and it is clear that the Android platform
+has intefered with the results. In order to properly evaluate the cost of our
+probes, we will need to measure a large number of methods over multiple runs to
+smooth out the data.
 
 In the case of Complex Instance Method Entry probes, we would expect an increase
 in overhead as a function of the number of parameters of the instrumented
@@ -481,5 +482,5 @@ elsewhere.
 \label{sec:sec:observer_effect}
 
 If our instrumentation happens to perturb the behaviour of a \flaky test in such
-a way that $\epsilon$ is observed to have changed, we reduce the budget
-allocated to the test until $\epsilon$ returns to its previous value.
+a way that $\epsilon$ is observed to have changed, we reduce the portion of
+$B_f$ allocated to the test until $\epsilon$ returns to its previous value.
