@@ -102,7 +102,8 @@ test {\tt APK}s. Figure \ref{fig:instrumenting_apk} shows each of the steps in
 the order they occur. First, the application {\tt .apk} is extracted. Then, the
 {\tt classes.dex} file is parsed two times: the first pass inspects the
 bytecode, the second injects our instrumentation. Finally, the {\tt APK} is
-re-packaged.
+re-packaged, the tests are run, and the results are collected. Afterward, the
+Jenkins plugin takes over.
 
 \begin{figure}[h]
 \includegraphics[width=\linewidth]{Images/instrumenting_apk}
