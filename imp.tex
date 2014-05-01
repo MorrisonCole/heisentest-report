@@ -360,8 +360,13 @@ probe IF chosen during the WEKA stage.
 
 \subsection{Logging to JSON}
 
+Each event is created as a bean in memory and held in a blocking queue until it
+can be written to a {\tt .json} output file. We define an abstract LogEvent bean
+with common values (System Time, Thread ID, EventName etc.) and implement
+subclasses for specific events.
+
 The background thread in charge of logging the events to disk serialises the
-data to {\tt JSON} before writing it.
+data to {\tt JSON} before writing it to a file.
 
 \autoref{lst:json_log} shows an example output from one of the the fully
 instrumented (\ie, {\tt COMPLEX}) test runs performed in
@@ -431,12 +436,6 @@ Available policies are:
   containing method.
 \end{itemize}
 
-
-\subsection{Logging Events}
-
-Each event is created as a bean and held in a queue until it can be written to a
-JSON output file. We define an abstract LogEvent bean with common values (System
-Time, Thread, EventName etc.) and subclass for specific events.
 
 \subsection{Jenkins Plugin}
 \label{sec:sec:jenkins_plugin}
