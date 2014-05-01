@@ -483,4 +483,7 @@ elsewhere.
 
 If our instrumentation happens to perturb the behaviour of a \flaky test in such
 a way that $\epsilon$ is observed to have changed, we reduce the portion of
-$B_f$ allocated to the test until $\epsilon$ returns to its previous value.
+$B_f$ allocated to the test until $\epsilon$ returns to its previous value. If
+$\epsilon$ never returns and the test is stable (\ie, $\epsilon$ is $0$), we
+assume it was fixed, provided there was a associated source code change when the
+behaviour originally changed.
