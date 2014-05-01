@@ -56,6 +56,19 @@ the tool will also need to be accounted for.
 Improve probe placement by taking into account control flow graphs
 and loops.
 
+\subsubsection{Prioritisation}
+
+In the future, we could adjust \flaky budget allocation by taking into account
+relative volume of historical data. For example, a newly \flaky test for which
+we have little to no data may be prioritised above a known \flaky test for which
+we hold a large amount of information from previous instrumented runs.
+
+We could start from a pesimistic viewpoint. A new tests would be assumed to have
+a flakiness value of 1. As the test is run, the flakiness value would be
+adjusted as usual until it represented a more accurate value. New tests will
+therefore be heavily instrumented, and gradually less so as they prove
+themselves to be reliable.
+
 \subsubsection{Gathering data from local test runs}
 
 In a typical test driven development cycle, tests are run constantly --- both by
