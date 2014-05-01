@@ -1,25 +1,9 @@
 \section{Design and Implementation}
 \label{sec:imp}
 
-This section details the design and implementation of our proof of concept tool,
-as it stands so far. It is comprised of two parts: a Jenkins plugin and an
-Android instrumentation.
-
-At a high level, we essentially instrument the application under test and store
-the gathered data. We then analyse the gathered data, adapt the instrumentation
-and present useful information to the developers.
-
-To keep the scope reasonable, we currently target Java Android applications. Of
-course, the approach is general, and could be applied to any number of languages
-and frameworks. A pure Java instrumentation would be fairly similar, and
-actually far less complex, for reasons that will be expanded upon later.
-
-
-\subsection{Jenkins Plugin}
-
-The Jenkins plugin is a wrapper that manages the storage of the test results and
-associated artifacts in a HSQL database.
-
+This section details the design and implementation of our proof of concept tool
+--- \venera --- as it stands so far. It is comprised of two parts: and an
+Android instrumentation application and a Jenkins plugin.
 
 \subsection{Android Instrumentation}
 
@@ -354,11 +338,10 @@ the CFGs for any methods). In fact, with Soot removed entirely, the same
 instrumentation run took just 3.294 seconds --- 17\% of the previous total run
 time.
 
-\subsubsection{Hardcoded Strings}
+\subsection{Jenkins Plugin}
 
-There are various points in the application that have been hardcoded during
-development and never exposed to the user or calculated automatically. These are
-marked with \texttt{// TODO:} comments in the places they do exist.
+The Jenkins plugin is a wrapper that manages the storage of the test results and
+associated artifacts in a HSQL database.
 
 \subsection{Notes}
 
