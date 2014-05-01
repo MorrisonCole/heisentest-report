@@ -1,8 +1,10 @@
 %% Save and reset the Section counter, since this is a nested LaTeX document.
 \newcounter{oldSectionCounter}
+\newcounter{oldSubSectionCounter}
 \newcounter{oldPageCounter}
 
 \setcounter{oldSectionCounter}{\value{section}}
+\setcounter{oldSubSectionCounter}{\value{subsection}}
 \setcounter{oldPageCounter}{\value{page}}
 
 \setcounter{section}{0}
@@ -26,7 +28,7 @@
 
 \maketitle
 
-\section{Progress So Far}
+\tocless\section{Progress So Far}
 
 \begin{enumerate}
 
@@ -61,7 +63,7 @@
 
 \newpage
 
-\section{Future Plans}
+\tocless\section{Future Plans}
 
 \begin{enumerate}
 
@@ -88,5 +90,6 @@
 
 % Restore the old value of the Section counter
 \setcounter{section}{\value{oldSectionCounter}}
+\setcounter{subsection}{\value{oldSubSectionCounter}}
 \setcounter{page}{\value{oldPageCounter}}
 %%

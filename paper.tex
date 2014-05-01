@@ -105,9 +105,9 @@ pdftitle={\ourtitle},
 \renewcommand{\algref}[1]{\hyperref[#1]{Algorithm~\ref*{#1}}}
 \newcommand{\lineref}[1]{\hyperref[#1]{Line~\ref*{#1}}}
 
-% Paragraph formatting
-% \setlength{\parskip}{\baselineskip}
-% \setlength{\parindent}{15pt}
+% Allow supression of Table of Contents entries
+\newcommand{\nocontentsline}[3]{}
+\newcommand{\tocless}[2]{\bgroup\let\addcontentsline=\nocontentsline#1{#2}\egroup}
 
 % Line spacing
 \onehalfspacing
