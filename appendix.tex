@@ -77,23 +77,39 @@
 
 \subsection{Code Listing}
 
-\begin{mdframed}
-	\begin{itemize}
-		\item Your code should be properly presented and formatted neatly. Don't let
-		long lines of code arbitrarily wrap round to the next line, as this looks
-		very messy. In order not to use up too many pages you can switch the paper
-		orientation to lanscape and print the code in two columns.
-
-		In general, don't add more than about 25 pages of code listing to the
-		report. If your code does not fit within 25 pages, you can provide a listing
-		of the most interesting parts of your code (but include around 20-25 pages)
-		or parts of the code you may need to reference from the main chapters. If
-		you don't include everything, it must be clear that this is not the complete
-		listing. State which parts you've included, add a brief explanation of why
-		you've included these particular parts, and provide a brief summary of which
-		code you have omitted.
-	\end{itemize}
-\end{mdframed}
+\begin{landscape}
+\lstinputlisting{../venera/venera-instrumentation/src/./main/java/com/heisentest/venera/Main.java}
+\lstinputlisting{../venera/venera-instrumentation/src/./main/java/com/heisentest/venera/utility/DalvikTypeDescriptor.java}
+\lstinputlisting{../venera/venera-instrumentation/src/./main/java/com/heisentest/venera/utility/DalvikOpcodes.java}
+\lstinputlisting{../venera/venera-instrumentation/src/./main/java/com/heisentest/venera/instrumentation/point/MethodEntryInstrumentationPoint.java}
+\lstinputlisting{../venera/venera-instrumentation/src/./main/java/com/heisentest/venera/instrumentation/point/InstrumentationPoint.java}
+\lstinputlisting{../venera/venera-instrumentation/src/./main/java/com/heisentest/venera/instrumentation/point/JumpInstrumentationPoint.java}
+\lstinputlisting{../venera/venera-instrumentation/src/./main/java/com/heisentest/venera/VeneraApkProcessor.java}
+\lstinputlisting{../venera/venera-instrumentation/src/./main/java/com/heisentest/venera/Descriptors.java}
+\lstinputlisting{../venera/venera-instrumentation/src/./main/java/com/heisentest/venera/classwriters/LogEventWriter.java}
+\lstinputlisting{../venera/venera-instrumentation/src/./main/java/com/heisentest/venera/classwriters/HeisentestJsonLoggerClassWriter.java}
+\lstinputlisting{../venera/venera-instrumentation/src/./main/java/com/heisentest/venera/classwriters/LoggerClassWriter.java}
+\lstinputlisting{../venera/venera-instrumentation/src/./main/java/com/heisentest/venera/MethodSignature.java}
+\lstinputlisting{../venera/venera-instrumentation/src/./main/java/com/heisentest/venera/transform/dex/VeneraDexTransformer.java}
+\lstinputlisting{../venera/venera-instrumentation/src/./main/java/com/heisentest/venera/transform/dex/InstrumentationSpy.java}
+\lstinputlisting{../venera/venera-instrumentation/src/./main/java/com/heisentest/venera/transform/dex/BaseTestCaseClassInfo.java}
+\lstinputlisting{../venera/venera-instrumentation/src/./main/java/com/heisentest/venera/transform/dex/visitor/VeneraApplicationVisitor.java}
+\lstinputlisting{../venera/venera-instrumentation/src/./main/java/com/heisentest/venera/transform/dex/visitor/ComplexInstanceMethodEntryMethodVisitor.java}
+\lstinputlisting{../venera/venera-instrumentation/src/./main/java/com/heisentest/venera/transform/dex/visitor/VeneraRegisterAllocatingMethodVisitor.java}
+\lstinputlisting{../venera/venera-instrumentation/src/./main/java/com/heisentest/venera/transform/dex/visitor/noop/VeneraNoOpMethodVisitor.java}
+\lstinputlisting{../venera/venera-instrumentation/src/./main/java/com/heisentest/venera/transform/dex/visitor/noop/VeneraNoOpClassVisitor.java}
+\lstinputlisting{../venera/venera-instrumentation/src/./main/java/com/heisentest/venera/transform/dex/visitor/firstpass/VeneraFirstPassMethodVisitor.java}
+\lstinputlisting{../venera/venera-instrumentation/src/./main/java/com/heisentest/venera/transform/dex/visitor/firstpass/VeneraFirstPassClassVisitor.java}
+\lstinputlisting{../venera/venera-instrumentation/src/./main/java/com/heisentest/venera/transform/dex/visitor/firstpass/VeneraFirstPassApplicationVisitor.java}
+\lstinputlisting{../venera/venera-instrumentation/src/./main/java/com/heisentest/venera/transform/dex/visitor/firstpass/VeneraFirstPassAnnotationVisitor.java}
+\lstinputlisting{../venera/venera-instrumentation/src/./main/java/com/heisentest/venera/transform/dex/visitor/test/VeneraLoggingTearDownMethodVisitor.java}
+\lstinputlisting{../venera/venera-instrumentation/src/./main/java/com/heisentest/venera/transform/dex/visitor/test/VeneraLoggingInitializationMethodVisitor.java}
+\lstinputlisting{../venera/venera-instrumentation/src/./main/java/com/heisentest/venera/transform/dex/visitor/test/VeneraBaseTestCaseClassVisitor.java}
+\lstinputlisting{../venera/venera-instrumentation/src/./main/java/com/heisentest/venera/transform/dex/visitor/test/VeneraLoggingSetUpMethodVisitor.java}
+\lstinputlisting{../venera/venera-instrumentation/src/./main/java/com/heisentest/venera/transform/dex/visitor/SimpleInstanceMethodEntryMethodVisitor.java}
+\lstinputlisting{../venera/venera-instrumentation/src/./main/java/com/heisentest/venera/transform/dex/visitor/VeneraLoggingClassVisitor.java}
+\lstinputlisting{../venera/venera-instrumentation/src/./main/java/com/heisentest/venera/VeneraApkInstrumenter.java}
+\end{landscape}
 
 \subsubsection{Source Code Repositories}
 
