@@ -22,17 +22,7 @@
 	\end{itemize}
 \end{mdframed}
 
-\subsection{Supporting documentation or data}
-
-\begin{mdframed}
-	\begin{itemize}
-		\item If you have additional data, diagrams or thing s like a set of use
-		case specifications that are relevant to the documentation of your work then
-		they can be included in an appendix section. Don't just include everything,
-		only items that are directly relevant to the documentation or description of
-		your work.
-	\end{itemize}
-\end{mdframed}
+\subsection{Supporting Data}
 
 \subsubsection{Full Dalvik Bytecode Example}
 \label{sec:sec:full_dalvik_bytecode_example}
@@ -60,22 +50,18 @@
         0x0000 - 0x0005 reg=3 secondArg I
 \end{lstlisting}
 
-\subsection{Test results and test reports}
-
-\begin{mdframed}
-	\begin{itemize}
-		\item If you have test results that add to the value of the report, but
-		which would not fit within the page limit of the main report, you can
-		include them as an appendix. Don't add them just to pad the report, though.
-	\end{itemize}
-\end{mdframed}
-
 \subsection{Project Plan and Interim Report}
 
 \include{Reports/ProjectPlan}
 \include{Reports/InterimReport}
 
 \subsection{Code Listing}
+
+This section lists the majority of the source code that makes up the \venera
+instrumentation tool. Reading code on paper is not ideal --- we suggest checkout
+out the full \venera source code with {\tt git} from
+\cite{heisentestInstrumentation} and the Jenkins plugin source code from
+\cite{heisentestPlugin}.
 
 \begin{landscape}
 \lstinputlisting{../venera/venera-instrumentation/src/./main/java/com/heisentest/venera/Main.java}
@@ -96,8 +82,6 @@
 \lstinputlisting{../venera/venera-instrumentation/src/./main/java/com/heisentest/venera/transform/dex/visitor/VeneraApplicationVisitor.java}
 \lstinputlisting{../venera/venera-instrumentation/src/./main/java/com/heisentest/venera/transform/dex/visitor/ComplexInstanceMethodEntryMethodVisitor.java}
 \lstinputlisting{../venera/venera-instrumentation/src/./main/java/com/heisentest/venera/transform/dex/visitor/VeneraRegisterAllocatingMethodVisitor.java}
-\lstinputlisting{../venera/venera-instrumentation/src/./main/java/com/heisentest/venera/transform/dex/visitor/noop/VeneraNoOpMethodVisitor.java}
-\lstinputlisting{../venera/venera-instrumentation/src/./main/java/com/heisentest/venera/transform/dex/visitor/noop/VeneraNoOpClassVisitor.java}
 \lstinputlisting{../venera/venera-instrumentation/src/./main/java/com/heisentest/venera/transform/dex/visitor/firstpass/VeneraFirstPassMethodVisitor.java}
 \lstinputlisting{../venera/venera-instrumentation/src/./main/java/com/heisentest/venera/transform/dex/visitor/firstpass/VeneraFirstPassClassVisitor.java}
 \lstinputlisting{../venera/venera-instrumentation/src/./main/java/com/heisentest/venera/transform/dex/visitor/firstpass/VeneraFirstPassApplicationVisitor.java}
@@ -110,8 +94,3 @@
 \lstinputlisting{../venera/venera-instrumentation/src/./main/java/com/heisentest/venera/transform/dex/visitor/VeneraLoggingClassVisitor.java}
 \lstinputlisting{../venera/venera-instrumentation/src/./main/java/com/heisentest/venera/VeneraApkInstrumenter.java}
 \end{landscape}
-
-\subsubsection{Source Code Repositories}
-
-The full source code listings are available at \cite{heisentestInstrumentation}
-and \cite{heisentestPlugin}.
