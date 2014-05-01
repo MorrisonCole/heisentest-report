@@ -342,14 +342,6 @@ the CFGs for any methods). In fact, with Soot removed entirely, the same
 instrumentation run took just 3.294 seconds --- 17\% of the previous total run
 time.
 
-\subsection{Jenkins Plugin}
-\label{sec:sec:jenkins_plugin}
-
-The Jenkins plugin is a wrapper that manages the storage of the test results and
-associated artifacts in a HSQL database.
-
-\subsection{Notes}
-
 \subsubsection{SDK}
 \label{sec:sec:venera_sdk}
 
@@ -446,7 +438,11 @@ Each event is created as a bean and held in a queue until it can be written to a
 JSON output file. We define an abstract LogEvent bean with common values (System
 Time, Thread, EventName etc.) and subclass for specific events.
 
-\subsection{A Solution}
+\subsection{Jenkins Plugin}
+\label{sec:sec:jenkins_plugin}
+
+The Jenkins plugin is a wrapper that manages the storage of the test results and
+associated artifacts in a HSQL database.
 
 \subsubsection{Identification}
 
