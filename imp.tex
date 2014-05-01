@@ -34,21 +34,20 @@ key submodules.
 \end{figure}
 
 
-\subsection{\venerainst{}}
+\subsection{\venera Instrumentation}
 
-The main tool --- {\tt venera-instrumentation} --- is operated from the
-command line. It takes a number of arguments, each of which are necessary for
-the correct running of the program. If any of the necessary arguments are
-missing, a usage message is printed and the program exits.
+The main tool --- found under the {\tt venera-instrumentation} directory --- is
+operated from the command line. It takes a number of required arguments. If any
+of the arguments are missing, a usage message is printed and the program exits.
 
 \begin{itemize}
     \item {\tt applicationApk} --- The fully qualified path to the Application
     APK to be instrumented.
     \item {\tt testApk} --- The fully qualified path to the Application Test APK
     to be instrumented.
-    \item {\tt baseTestCaseInfo} --- An arbitrarily long list: the full name of
-    a base test case class, followed by the short names of its set up and tear
-    down methods. Comma separated.
+    \item {\tt baseTestCaseInfo} --- A comma seperated list of tuples consisting
+    of: the full name of a base test case class, followed by the short names of
+    its set up and tear down methods. Must have at least one element.
 \end{itemize}
 
 An example usage, run from the directory containing both of the APKs to be
@@ -63,7 +62,7 @@ instrumented, would look something like:
 \subsubsection{The Android Platform}
 
 It is necessary to give an overview of the Android platform in order to
-understand how our \venerainst{} tool works.
+understand how \venera works.
 
 In a standard Java application, code is compiled into {\tt .class} files and
 packaged as a {\tt .jar} --- an archive containing compiled {\tt .class} files,
