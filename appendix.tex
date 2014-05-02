@@ -1,16 +1,51 @@
 \section{Appendix}
 \label{sec:appendix}
 
-\subsection{System Manual}
+\subsection{\venera System Manual}
 
-\begin{mdframed}
-	\begin{itemize}
-		\item This should include all the technical details that would enable a
-		student to continue your project next year, and be able to amend or extend
-		your code. For example, Where is the code? What do you do to compile and
-		install it?
-	\end{itemize}
-\end{mdframed}
+\subsection{\venera Jenkins Plugin System Manual}
+
+The Venera Jenkins Plugin maintains a HSQL database of standard test artifacts
+and their associated Venera JSON logs. It will eventually be responsible for
+Venera result presentation and analysis.
+
+\subsubsection{Source Code}
+
+The full source code is freely available at \cite{heisentestPlugin}.
+
+\subsubsection{Requirements}
+
+To build the project from source, the following tools are required:
+
+\begin{itemize}
+  \item Java Development Kit (v.7+) \cite{jdk}
+  \item Maven (v.3+) \cite{maven}
+\end{itemize}
+
+We recommend using IntelliJ \cite{intellij} or some other Java-centric IDE,
+although any editor is fine in theory.
+
+\subsubsection{Running the Project}
+
+From the command line:
+
+\begin{lstlisting}[numbers=none]
+mvn hpi:run
+\end{lstlisting}
+
+IntelliJ users can create a build configuration with type Maven and working
+directory set to the root of the project to execute the same command.
+
+\subsubsection{Common Problems}
+
+When executing mvn hpi:run I get {\lq}java.net.BindException: Address already in
+use{\rq}.
+
+Something is using the TCP port (probably a previous instance that failed to
+shut down correctly). On Linux, running {\tt lsof -i tcp:\$PORT} will give you
+the list of processes using TCP port {\tt\$PORT}, which you can then kill with
+{\tt kill \$PID}.
+
 
 \subsection{User Manual}
 
