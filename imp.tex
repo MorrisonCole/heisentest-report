@@ -390,7 +390,7 @@ instrumented (\ie, {\tt COMPLEX}) test runs performed in
 ]
 \end{lstlisting}
 
-\subsection{Hooking into testrunners}
+\subsection{Hooking into Test Runners}
 
 Part of our approach is to log distinct data per-test. To keep overhead to a
 minimum, we take a map of test runner classes and their respective set up / tear
@@ -424,13 +424,13 @@ performing instrumentation.
 Available policies are:
 
 \begin{itemize}
-  \item NONE - Disallows all instrumentation from being injected in the method.
-  When a test is given with this value, the logging system itself will not be
-  initialized for that test.
-  \item SIMPLE - Disallows complex probes from being injected in the containing
-  method.
-  \item COMPLEX - (Default), allows all probes to be potentially placed in the
+  \item {\tt NONE} --- Disallows all instrumentation from being injected in the
+  method. When a test is given with this value, the logging system itself will
+  not be initialized for that test.
+  \item {\tt SIMPLE} --- Disallows complex probes from being injected in the
   containing method.
+  \item {\tt COMPLEX} --- (Default), allows all probes to be potentially placed
+  in the containing method.
 \end{itemize}
 
 
