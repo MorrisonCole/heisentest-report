@@ -131,10 +131,7 @@ for it to remain a beneficial part of a team's workflow.
 
 \subsection{Why Not {\lq}Non-Deterministic{\rq}?}
 
-Flaky tests have been referred to as {\lq}non-deterministic{\rq} by
-practitioners. Whilst a flaky test may well be non-deterministic (\ie, it
-behaves differently on different runs), it may also be deterministic with
-respect to some unknown input. Hence, flaky seems a better choice of term.
+Deterministic has three possible meanings depending on the context. In physics,
 
 
 \subsection{Fixing \Flaky Tests the Manual Way}
@@ -143,18 +140,15 @@ Sometimes, it is not possible to fix a \flaky test from the information output
 by the testrunner alone. Typically, the information includes logs, an assertion
 failure message and/or a stack trace. Applications with a user interface may
 also provide a number of screenshots. Often, a developer will have to manually
-gather information to build up an understanding of the intended flow vs. the
+gather information to build up an understanding of the intended flow versus the
 actual flow on failing runs. For \flaky tests with a low failure rate, this can
-be a painstaking and time-consuming process. Indeed, if the \flaky test is a
-timing based issue, attaching a debugger may cause the test to pass
-indefinitely.
-
-There are many ways to fix a \flaky test. A developer relies on experience and
-intuition to determine the best approach.
+be a painstaking and time-consuming process, if not completely ineffective.
+Indeed, if the \flaky test is a timing based issue, attaching a debugger may
+cause the test to pass indefinitely due to the observer effect.
 
 \subsubsection{Common Causes of Flakiness}
 
-First, let us consider common causes of flakiness:
+First, let us consider some common causes of flakiness:
 \begin{itemize}
 	\item Timeouts --- issues can occur when {\lq}driving{\rq} the application
 	from the outside. Often, callbacks for actions are not available, so a test
@@ -172,20 +166,21 @@ First, let us consider common causes of flakiness:
 \end{itemize}
 
 Each developer familiar with these issues may employ techniques and patterns to
-avoid them. However, while bug rates may be reduced, they may never be stamped
-out entirely.
-
-\subsubsection{Identification}
+avoid them. However, while bug rates can be reduced, they are unlikely to ever
+reach zero.
 
 \Flaky tests are often split out into a seperate suite (a practice is known as
 {\lq}quarantining{\rq}), so that developers may continue to receive the benefits
-of a fast feedback cycle from the stable ones. This is a reasonable approach,
-although it is the first step on a slippery slope to complete test suite
-erosion.
+of a fast feedback cycle from the rest of the tests. This appears to be a
+reasonable approach, but it is not a long term solution. Even if the tests are
+fixed and moved from quarantine regularly, the benefits of the supressed tests
+are completely lost once they are removed from the main test suite.
 
-But, this is jumping ahead. First, \flaky tests must be identified. How does a
-developer know if a failure was genuine (\ie, failed due to a change in
-behaviour it was designed to test) or unexpected?
+\subsubsection{Identification}
+
+First, \flaky tests must be identified. How does a developer know if a failure
+was genuine (\ie, failed due to a change in behaviour it was designed to test)
+or unexpected?
 
 Manual inspection of the related changeset and failure stacktrace is often
 sufficient. A change in an area of the application (seemingly) entirely
@@ -202,14 +197,23 @@ test can continue to cause problems further down the line. In fact, it can be
 useful to examine test failure over time --- trends in failure may stand out.
 
 A couple of projects have tackled this preliminary step of \flaky test
-identification; namely, the Chromium Flakiness
-Dashboard\cite{flakinessDashboard} and various Jenkins plugins. These tools
-typically run as a continuous integration step. Some simply attach a value to
-each test representing its likelihood of failure during any given test run.
-Others also expose statistics such as \emph{stability($N$)} (the test's chance
-of failure across the previous $N$ runs), successful runs since last failure and
-first known failure. The Chromium dashboard includes a graphical matrix view for
-visual detection of trends, displaying tests and their binary results over time.
+identification; namely, the Chromium Flakiness Dashboard
+\cite{flakinessDashboard} and various Jenkins plugins. These tools typically run
+as a continuous integration step. Some simply attach a value to each test
+representing its likelihood of failure during any given test run. Others also
+expose statistics such as \emph{stability($N$)} (the test's chance of failure
+across the previous $N$ runs), successful runs since last failure and first
+known failure. The Chromium Flakliness Dashboard includes a graphical matrix
+view for visual detection of trends, displaying tests and their binary results
+over time.
+
+\begin{figure}[h]
+
+\includegraphics[width=\linewidth]{Images/chromium_flaky_dashboard}
+
+\caption{The Chromium Flakiness Dashboard \cite{flakinessDashboard}}
+\label{fig:chromium_dashboard}
+\end{figure}
 
 \subsubsection{Prioritisation}
 
