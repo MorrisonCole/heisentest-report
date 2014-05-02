@@ -21,15 +21,16 @@ effectively deterministic with iteration so long as it is cheap. We call those
 that are expensive or rarely fail \emph{flaky} tests.
 
 Environmental factors are often related to intermittent test failure. The
-further we travel up the layers of the pyramid, the more environmental factors
-we introduce. Unit tests target and exercise isolated sections of code. A well
-written unit test's outcome is almost guaranteed to depend only on the behaviour
-of the code it exercises. Integration tests may depend on an external service
-(\eg, a database), so may sometimes fail unexpectedly. Most vulnerable are
-acceptance tests. Since they run on a complete system, they are potentially open
-to interference by any number of environmental events or characteristics. For
-example, an operating system starved of memory could kill the application, or, a
-particularly slow start-up time could cause a timeout to occur.
+further we travel up the layers of automated testing toward the system level,
+the more environmental factors we introduce. Unit tests target and exercise
+isolated sections of code. A well written unit test's outcome is almost
+guaranteed to depend only on the behaviour of the code it exercises. Integration
+tests may depend on an external service (\eg, a database), so may sometimes fail
+unexpectedly. Most vulnerable are acceptance tests. Since they run on a complete
+system, they are potentially open to interference by any number of environmental
+events or characteristics. For example, an operating system starved of memory
+could kill the application, or, a particularly slow start-up time could cause a
+timeout to occur.
 
 \subsection{\Flaky Tests are a Real Problem}
 
