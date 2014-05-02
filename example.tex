@@ -22,8 +22,8 @@ similarly to the following:
   Then I am in state Y (assert)
 \end{verbatim}
 
-\Flaky tests are commonly caused by timing issues. Considering the general
-outline above, it is obvious that the act step requires the arrange step to have
+\Flaky tests are can be caused by timing issues. Considering the general steps
+outline above, it is obvious that the action requires the arrangement to have
 completed before it runs --- there must be some kind of wait and check mechanism
 to block further progress until the arrange step has finished.
 
@@ -32,12 +32,13 @@ As an example, consider a test run that initially enters state $X$
 transforms $X$ to $Y$: $(y_{1}, y_{2}, y_{3})$. Finally, the assertion
 checks that the current state is equal to $Y$.
 
-If each value of the vector $X$ is loaded asynchronously, the test must
-check for each of the vector values to be correct before $A$ is applied. If the
-test checked only the first two values, the action would complete only if the
-third element happened to have loaded before the values in position 1 and 2.
+If each value of the vector $X$ is loaded asynchronously, the test must check
+for each of the vector values to be correct (\ie, as expected) before
+transformation $A$ is applied. If the test checked only the first two values,
+the action would complete only if the third element happened to have loaded
+before the values in position 1 and 2.
 
 In practice, with hundreds of user interface elements, these types of problems
 can become quite prevalent. Often, the solutions are obvious, but sometimes
 there is not enough information to solve the problem from the regular test
-results, especially if the failure is rare.
+outputs, especially if the failure is rare.
