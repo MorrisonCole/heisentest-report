@@ -262,11 +262,21 @@ information as we see fit.
 \end{lstlisting}
 
 \autoref{instrumented_example} shows the bytecode after a Complex Instance
-Method Entry probe has been added. The reference to the instance object ({\tt
-this}) is shifted up to register 9 by our instrumentation, along with all of the
-following method parameters. Our instrumentation does its work using registers 0
-to 8, and simply moves the argument parameters back to their original positions
-after the work is done.
+Method Entry probe has been added. It is clear after inspecting the full listing
+included in \autoref{sec:sec:full_dalvik_instrumented_bytecode_example} that our
+Complex Instance Method Entry probe is doing a lot of work. Indeed, the probe
+must {\lq}box{\rq} any primitive arguments (\ie, convert them into a Java
+object), set up an {\tt Object} array and more. This is why the Complex probes
+carry such a high overhead as show in \autoref{sec:sec:probe_cost}.
+
+The reference to the instance object ({\tt this}) is shifted up to
+register 9 by our instrumentation, along with all of the following method
+parameters. Our instrumentation does its work using registers 0 to 8, and simply
+moves the argument parameters back to their original positions after the work is
+done. Our class --- {\tt RegisterAllocatingMethodVisitor} --- can be subclassed
+by any instrumenting method visitor to implement this functionality. This is a
+useful piece of functionality, since otherwise register manipulation is tedious
+and prone to error.
 
 Our instrumentation process is built around ASMDEX's architecture. Unfamiliarity
 with the library meant that comprimises were made in the name of time. The most
@@ -278,7 +288,78 @@ shift the argument parameters back to their original positions at the end of our
 instrumentation. Future versions of \venera could be made more efficient by
 eliminating this register shifting.
 
-\subsubsection{Storing the results}
+\subsubsection{\venera SDK}
+\label{sec:sec:venera_sdk}
+
+A small project under the {\tt venera-sdk} directory defines the main event
+logging system ({\tt HeisentestJsonLogger}) and event beans (subclassed from
+{\tt LogEvent}). The \venera SDK also defines the annotation @Venera and its
+associated parameter of type {\tt InstrumentationPolicy}. During the
+instrumentation phase, if a method is found with this annotation, its policy
+is applied unconditionally. This could be useful for developers during
+debugging --- it allows them to prevent sites from being instrumented or to
+specifify an exact instrumentation type from the available policies:
+\begin{itemize}
+  \item {\tt NONE} --- Disallows any instrumentation from being injected into
+  the method. When a test is annotated with this parameter, the logging system
+  itself will not be initialized for that test.
+  \item {\tt SIMPLE} --- Disallows complex probes from being injected into the
+  containing method.
+  \item {\tt COMPLEX} --- (Default), allows all probes to be placed
+  in the containing method if needs be.
+\end{itemize}
+
+During setup, if the currently executing method has a {\tt @Venera} annotation
+attached, we look at its policy before running the logging set up. If the
+annotation has {\tt InstrumentationPolicy.NONE}, we simply run the test as normal.
+
+This means that within a class with multiple tests, we can disable
+instrumentation on any subset of the tests if the developer so desires.
+
+It is important to note that while the {\tt @Venera} annotation with an
+instrumentation policy of {\tt NONE} prevents the method itself from being
+instrumented (and in the case of a test, also prevents the logging system from
+being initialized), other methods will \textit{still} potentially be
+instrumented. So a test with the annotation and policy that initializes an
+Android {\tt Activity} and performs a sequence of actions will still have a
+performance penalty if called methods happen to be instrumented.
+
+\subsection{Logging to JSON}
+
+Each event is created as an event bean in memory and held in a blocking queue
+until it can be written to the {\tt .json} output file. We define an abstract
+{\tt LogEvent} bean with common values (System Time, Thread ID, EventName etc.)
+and implement subclasses for specific events.
+
+The background thread in charge of logging the events to disk serialises the
+data to {\tt JSON} before writing it to a file.
+
+\autoref{lst:json_log} shows an example output from one of the the fully
+instrumented (\ie, {\tt COMPLEX}) test runs performed in
+\autoref{sec:sec:probe_cost}. It tells us the method
+\textit{anInstrumentedEmptyMethod} was entered at system millisecond time
+\textit{1398719422295} by the thread with id \textit{51708}. Since it was a
+{\tt COMPLEX} probe, we also get the name and value of any actual arguments
+(\lineref{line:begin_params} to \lineref{line:end_params}).
+
+\begin{lstlisting}[label=lst:json_log]
+[
+  {
+    "eventType": "Complex Instance Method Entry",
+    "threadId": 51708,
+    "time": 1398719422295,
+    "class": "com.heisentest.skeletonandroidapp.test.acceptance.ProbeTest",
+    "method": "anInstrumentedEmptyMethod",
+    "parameters": [(*@\label{line:begin_params}@*)
+      {
+        "unusedParameter": "0"
+      }
+    ](*@\label{line:end_params}@*)
+  }
+]
+\end{lstlisting}
+
+\subsubsection{Storing the Results}
 
 With the tests running on the Android device or emulator, we must somehow
 retrieve the {\tt JSON} logs either during the test run or afterward.
@@ -338,84 +419,6 @@ i7-3610QM CPU @ 2.30GHz, the time to load the application and test APKs was
 the CFGs for any methods). In fact, with Soot removed entirely, the same
 instrumentation run took just 3.294 seconds --- 17\% of the previous total run
 time.
-
-\subsubsection{\venera SDK}
-\label{sec:sec:venera_sdk}
-
-A small project under the {\tt venera-sdk} directory defines the main event
-logging system ({\tt HeisentestJsonLogger}) and event beans (subclassed from
-{\tt LogEvent}). The \venera SDK also defines the annotation @Venera and its
-associated parameter of type {\tt InstrumentationPolicy}. During the
-instrumentation phase, if a method is found with this annotation, its policy
-is applied unconditionally. This could be useful for developers during
-debugging --- it allows them to prevent sites from being instrumented or to
-specifify an exact instrumentation type from the available policies:
-\begin{itemize}
-  \item {\tt NONE} --- Disallows any instrumentation from being injected into
-  the method. When a test is annotated with this parameter, the logging system
-  itself will not be initialized for that test.
-  \item {\tt SIMPLE} --- Disallows complex probes from being injected into the
-  containing method.
-  \item {\tt COMPLEX} --- (Default), allows all probes to be placed
-  in the containing method if needs be.
-\end{itemize}
-
-\subsection{Logging to JSON}
-
-Each event is created as a bean in memory and held in a blocking queue until it
-can be written to a {\tt .json} output file. We define an abstract LogEvent bean
-with common values (System Time, Thread ID, EventName etc.) and implement
-subclasses for specific events.
-
-The background thread in charge of logging the events to disk serialises the
-data to {\tt JSON} before writing it to a file.
-
-\autoref{lst:json_log} shows an example output from one of the the fully
-instrumented (\ie, {\tt COMPLEX}) test runs performed in
-\autoref{sec:sec:probe_cost}. It tells us the method
-\textit{anInstrumentedEmptyMethod} was entered at system millisecond time
-\textit{1398719422295} by the thread with id \textit{51708}. Since it was a
-{\tt COMPLEX} probe, we also get the name and value of any actual arguments
-(\lineref{line:begin_params} to \lineref{line:end_params}).
-
-\begin{lstlisting}[label=lst:json_log]
-[
-  {
-    "eventType": "Complex Instance Method Entry",
-    "threadId": 51708,
-    "time": 1398719422295,
-    "class": "com.heisentest.skeletonandroidapp.test.acceptance.ProbeTest",
-    "method": "anInstrumentedEmptyMethod",
-    "parameters": [(*@\label{line:begin_params}@*)
-      {
-        "unusedParameter": "0"
-      }
-    ](*@\label{line:end_params}@*)
-  }
-]
-\end{lstlisting}
-
-\subsection{Hooking into Test Runners}
-
-Part of our approach is to log distinct data per-test. To keep overhead to a
-minimum, we take a map of test runner classes and their respective set up / tear
-down methods (run before / after each test in a class is run). We inject our
-logger set up and clean up to the setup / teardown methods respectively.
-
-Note that during setup if the currently executing method has a @Venera
-annotation attached, we look at its policy before running the logging set up. If
-the annotation has InstrumentationPolicy.NONE, we simply run the test as normal.
-
-This means that within a class with multiple tests, we can disable
-instrumentation on any subset of the tests if the developer so desires.
-
-It is important to note that while the @Venera annotation with an
-instrumentation policy of NONE prevents the method itself from being
-instrumented (and in the case of a test, also prevents the logging system from
-being initialized), other methods will STILL potentially be instrumented. So a
-test with the annotation and policy that initializes an Activity and performs a
-sequence of actions will still have a performance penalty if called methods
-happen to be instrumented.
 
 
 \subsection{\jenkinsPlugin}
