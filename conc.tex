@@ -84,6 +84,39 @@ adjusted as usual until it represented a more accurate value. New tests will
 therefore be heavily instrumented, and gradually less so as they prove
 themselves to be reliable.
 
+The \jenkinsPlugin could be improved as far as prioritisation is concerned.
+We could use data gathered during the identification stage to rank the tests
+according to criteria; a simple output would be a descending list ordered by
+flakiness. Or, we could group the tests by common failure type, \eg:
+\begin{center}
+    \begin{tabular}{| p{10cm} | l |}
+    \hline
+    Common Failure & \flaky Test Count \\ \hline
+    {\begin{lstlisting}[language=Java, numbers=none]
+java.lang.OutOfMemoryError
+	\end{lstlisting}}
+    & 4 \\ \hline
+    {\begin{lstlisting}[language=Java, numbers=none]
+java.lang.AssertionError:
+Expected: (View visibility to be View.VISIBLE and View to have a width and a height)
+but: View visibility to be View.VISIBLE View with id: class android.resources.R$id.anExampleView(1) had a visibility of View.GONE
+	\end{lstlisting}}
+	& 2 \\ \hline
+    {\begin{lstlisting}[language=Java, numbers=none]
+junit.framework.AssertionFailedError:
+expected: "an_example_string"
+but was: ""
+	\end{lstlisting}}
+	& 1 \\ \hline
+
+    \end{tabular}
+\end{center}
+
+\Flaky tests using the same troublesome method or similar logical flow may well
+fail with the same stacktrace or assertion failure. By automatically detecting
+this, developers could target groups of related tests and potentially fix an
+entire group at once.
+
 \subsubsection{Gathering Data from Local Test Runs}
 
 In a typical test driven development cycle, tests are run constantly --- both by
