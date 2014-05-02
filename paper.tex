@@ -92,11 +92,11 @@
 pdftitle={\ourtitle},
     pdfauthor={Earl T. Barr and Morrison Cole},
     plainpages=false,
-    linkcolor=blue, % Overriding these colors to black is somewhat unfortunate
-    %citecolor=black, % b/c the defaults are useful in color.
-    citecolor=blue, % b/c the defaults are useful in color.
+    linkcolor=black, % Overriding these colors to black is somewhat unfortunate
+    citecolor=black, % b/c the defaults are useful in color.
+    %citecolor=blue, % b/c the defaults are useful in color.
     filecolor=black,
-    urlcolor=blue
+    urlcolor=black
 }
 \def\sectionautorefname{Section}
 \def\subsectionautorefname{Section}
@@ -153,6 +153,19 @@ pdftitle={\ourtitle},
 
 \begin{document}
 
+\input{Reports/abstract}
+\newpage
+\thispagestyle{empty}
+\mbox{}
+\input{Reports/abstract}
+\newpage
+\thispagestyle{empty}
+\mbox{}
+\input{Reports/abstract}
+\newpage
+\thispagestyle{empty}
+\mbox{}
+
 \input{title}
 
 \input{abstract}
@@ -197,9 +210,5 @@ destroy the value of an automated regression suite.}''
 
 \newpage
 \input{appendix}
-
-\input{Reports/abstract}
-\input{Reports/abstract}
-\input{Reports/abstract}
 
 \end{document}
