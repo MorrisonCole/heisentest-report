@@ -15,15 +15,24 @@
 	\end{itemize}
 \end{mdframed}
 
+Our aim is a framework that speeds the resolution of \flaky tests in a test
+suite. We propose an ideal system where tests are instrumented with respect to a
+budget. We produce proof of concept named for the Android platform that
+integrates with Jenkins with a plugin. Our proof of concept is shown to
+successfully instrument an Android application by inserting probes at
+instrumentation points with respect to certain conditions. We present and
+analyse initial cost measurements for two of the implemented probe types.
 
-\subsection{Design Failures}
+Our proof of concept, \venera, does not implement any of the budget logic laid
+out in our approach. The tool was designed with budget in mind, so future work
+building up this functionality is possible.
 
-Could have used Soot to convert Dalvik bytecode into standard Java .class files
-using Dexpler \cite{bartel:soap2012} and instrumented from then on. However, the
-DEX code output by Dexpler is often invalid, as is evident from the bug reports
-and ongoing development at GitHub. Perhaps in the future, Soot would be a more
-viable option. Certainly the features it boasts are attractive for the
-Heisentest project.
+We initially spread our efforts across the indentification, prioritisation and
+resolution areas. As the project progressed, the resolution stage gradually
+became our sole focus. Although this was unfortunate for our industry partner,
+without this shift the scope would have been too large for the given time scale.
+In fact, the engineering and theory surrounding resolution alone could be
+developed far further than we have already taken it.
 
 
 \subsection{Future Work}
@@ -53,8 +62,22 @@ developer sets could either be of mixed or similar experience, and working on a
 familiar or unfamiliar codebase. Familiarity of the group using \venera with
 the tool will also need to be accounted for.
 
-Improve probe placement by taking into account control flow graphs
-and loops.
+
+\subsection{Design Failures}
+
+\subsubsection{Soot}
+
+We could have used Soot to convert Dalvik bytecode into standard Java {\tt
+.class} files using Dexpler \cite{bartel:soap2012} and instrumented from then
+on. However, the {\tt dex} code output by Dexpler is often invalid, as is
+evident from the bug reports and ongoing discussion at GitHub. Perhaps in the
+future, Soot will be a more viable option. Certainly the features it boasts are
+attractive for our project.
+
+\subsubsection{Probe Placement}
+
+We can improve our probe placement strategy by taking into account control flow
+graphs and loops.
 
 \subsubsection{Prioritisation}
 
