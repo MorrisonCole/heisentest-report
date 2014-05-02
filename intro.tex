@@ -64,19 +64,19 @@ each stage must be combined and considered.
 
 This report is broadly divided into two sections: the approach and the
 description of our proof of concept implementation. The engineering, discussed
-in detail during \autoref{sec:imp}, was ambitious in of itself --- it proved a
-significant challenge implementing even the basic features of our proposed
-framework.
+in detail during \autoref{sec:imp}, was ambitious in of itself given the time
+frame --- it proved a significant challenge implementing even the basic features
+of our proposed framework.
 
-The tool we produced --- \textit{\venera} --- gathers and analyses information
+The approach we take describes a framework that gathers and analyses information
 much in the same way as a developer would. First, it identifies the flaky tests
 in a test suite. Then, it employs techniques similar to those discussed by
 \citet{ArumugaNainar:2010:ABI:1806799.1806839} to gather relevant debugging
-information over a series of test runs. Our tool takes advantage of the
-continuous integration environment, gathering data each time an associated test
-suite is run. Figure \ref{fig:developer_workflow} shows the high-level \venera
-workflow. Previous and potential future work with an industry software startup
-lead us to target the Android platform for this initial proof of concept.
+information over a series of test runs. Finally we analyse the gathered data and
+identify predicates strongly associated with test failure. Our framework takes
+advantage of the continuous integration environment, gathering data each time an
+associated test suite is run. Figure \ref{fig:developer_workflow} shows the
+high-level workflow.
 
 \begin{figure}[h]
 
@@ -120,11 +120,29 @@ executing a shell script to hitting an external server.
 It is obvious that, if we are to develop a tool to assist developers with \flaky
 tests, we should run as part of a modular continuous integration system.
 
-The rest of the report will proceed with a familiar structure.
-\autoref{sec:context} describes the theory and context behind the project.
-\autoref{sec:example} presents a motivating example of a \flaky test. Following
-the example, we detail our general approach in \autoref{sec:approach}.
-\autoref{sec:imp} discusses the design and of our proof of concept tool,
-\venera. Finally, \autoref{sec:relwork} compares our work to that of previous
-research and tools. We wrap up with a conclusion (\autoref{sec:conc}) and
-suggest future directions for both \venera and the research in general.
+
+\subsection{Engineering}
+
+Previous and potential future work with an industry software startup lead us to
+target the Android platform for our proof of concept. The engineering load was
+large: two major projects and a smaller suite of comprising a sort of test
+harness were developed in parallel:
+
+\begin{itemize}
+	\item \venera --- An Android instrumentation tool built with ASMDEX.
+	\item \jenkinsPlugin --- A Jenkins plugin that is responsible for maintaining
+	historical results and displaying information to the developer(s).
+	\item Test Harness --- A working Android application and
+	Espresso-based system test suite, an Android application for generating
+	instrumentation code and a small SDK facilitating developer intervention
+	during instrumentation.
+\end{itemize}
+
+The engineering is discussed in more detail during \autoref{sec:imp}. The rest
+of the report will proceed with a familiar structure: \autoref{sec:context}
+describes the theory and context behind the project. \autoref{sec:example}
+presents a motivating example of a \flaky test. Following the example, we detail
+our general approach in \autoref{sec:approach}. Finally, \autoref{sec:relwork}
+compares our work to that of previous research and tools. We wrap up with a
+conclusion (\autoref{sec:conc}) and suggest future directions for both \venera
+and the research in general.
