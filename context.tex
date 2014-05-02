@@ -101,14 +101,15 @@ and assertion.
 Anecdotally, the higher-level the behaviour being tested, the more likely a test
 is to fail due to inputs unaccounted for. Tests that exercise seemingly valid
 code can fail unexpectedly and unpredictably. Developers working with such tests
-face a dilemma --- {\lq}suppress{\rq} the tests until they are fixed, or
-acknowledge them but keep them active, potentially randomly breaking the build
-from time to time until they are fixed. Since the tests exercise behaviour which
-is needed (and indeed, works as intended), both solutions are workarounds until
-the tests can be resolved. A set of tests displaying seemingly random failure
-can devalue an entire suite, so it is of utmost importance that developers fix
-such issues as they arise. The test suite is not a user-facing feature and can
-quickly become a cost rather than a benefit.
+face a dilemma --- either they must {\lq}suppress{\rq} the tests until they are
+fixed, or acknowledge them but keep them active, potentially randomly
+{\lq}breaking the build{\rq} from time to time until they are fixed. Since the
+tests exercise behaviour which is needed (and indeed, works as intended), both
+solutions are simply workarounds until the tests can be resolved. A set of tests
+displaying seemingly random failure can devalue an entire suite, so it is of
+utmost importance that developers fix such issues as they arise. The test suite
+is not a user-facing feature and can quickly become a cost rather than a
+benefit.
 
 In our experience, within the context of real software development projects
 developers quickly become frustrated when dealing with \flaky tests and begin to
