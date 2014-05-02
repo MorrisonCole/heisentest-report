@@ -82,7 +82,7 @@ adjusted as usual until it represented a more accurate value. New tests will
 therefore be heavily instrumented, and gradually less so as they prove
 themselves to be reliable.
 
-\subsubsection{Gathering data from local test runs}
+\subsubsection{Gathering Data from Local Test Runs}
 
 In a typical test driven development cycle, tests are run constantly --- both by
 the developers and the continuous integration build agents. We could gather test
@@ -97,13 +97,13 @@ the network to the Venera CI plugin.
 	does affect build times and developers may not appreciate the extra overhead!
 \end{itemize}
 
-\subsubsection{Commit blaming}
+\subsubsection{Commit Blaming}
 
 Our CI plugin could display an estimated commit {\lq}blame{\rq} range, along
 with relevant build numbers if a previously stable test is suddenly observed to
 be \flaky.
 
-\subsubsection{Retiring trusted tests}
+\subsubsection{Retiring Trusted Tests}
 
 Projects with a huge number of tests face lengthy build times. It may be in a
 teams' interest to remove trusted tests from the per-commit build and instead
@@ -111,7 +111,7 @@ run them on a seperate cycle to tighten the immediate feedback loop. We could
 provide a listing of {\lq}most trusted{\rq} tests (\ie, tests that have
 exhibited no flakiness over a significant period).
 
-\subsubsection{Porting the plugin}
+\subsubsection{Porting the Plugin}
 
 Jenkins is but one of many available continuous integration tools
 \cite{ContinuousIntegrationSoftware}. Hudson, TeamCity, CruiseControl and Team
@@ -132,6 +132,7 @@ However, we should measure performance in more detail to identify the real
 bottlenecks before applying theoretical performance improvements.
 
 \subsubsection{Continuous Integration}
+
 In the future, we could look at the test runs over time and attach various
 values to each test much in the same way as the existing Continuous Integration
 tools. It will also need to be extended with an interface to visualise test
