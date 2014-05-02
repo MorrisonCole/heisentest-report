@@ -339,21 +339,26 @@ the CFGs for any methods). In fact, with Soot removed entirely, the same
 instrumentation run took just 3.294 seconds --- 17\% of the previous total run
 time.
 
-\subsubsection{SDK}
+\subsubsection{\venera SDK}
 \label{sec:sec:venera_sdk}
 
-An SDK project can (optionally) be included. It defines the annotation
-@VeneraIgnore. During the instrumentation phase, if a method is found with
-this annotation, it is blacklisted from the list of possible instrumentation
-sites. This could be useful for developers during debugging, or to remove
-instrumentation from sites that are known to be problematic or, alternatively,
-{\lq}bug-free{\rq}!
-
-\textbf{Methods} For methods that are not blacklisted or ignored due to
-annotations, we store the method name and owner class in our pool of
-{\lq}method{\rq} instrumentation points. During the second pass, these methods
-can be instrumented with a complex (argument-saving) or simple (counter-based)
-probe IF chosen during the WEKA stage.
+A small project under the {\tt venera-sdk} directory defines the main event
+logging system ({\tt HeisentestJsonLogger}) and event beans (subclassed from
+{\tt LogEvent}). The \venera SDK also defines the annotation @Venera and its
+associated parameter of type {\tt InstrumentationPolicy}. During the
+instrumentation phase, if a method is found with this annotation, its policy
+is applied unconditionally. This could be useful for developers during
+debugging --- it allows them to prevent sites from being instrumented or to
+specifify an exact instrumentation type from the available policies:
+\begin{itemize}
+  \item {\tt NONE} --- Disallows any instrumentation from being injected into
+  the method. When a test is annotated with this parameter, the logging system
+  itself will not be initialized for that test.
+  \item {\tt SIMPLE} --- Disallows complex probes from being injected into the
+  containing method.
+  \item {\tt COMPLEX} --- (Default), allows all probes to be placed
+  in the containing method if needs be.
+\end{itemize}
 
 \subsection{Logging to JSON}
 
@@ -411,27 +416,6 @@ being initialized), other methods will STILL potentially be instrumented. So a
 test with the annotation and policy that initializes an Activity and performs a
 sequence of actions will still have a performance penalty if called methods
 happen to be instrumented.
-
-
-\subsection{Modifying the Behaviour}
-
-A small project ({\lq}venera-sdk{\rq}) can be included to force certain
-behaviour. It is a simple library that defines a @Venera annotation, with a
-parameter {\lq}InstrumentationPolicy{\rq}. When a method is annotated with this
-and a policy specified, \venera will respect the defined behaviour when
-performing instrumentation.
-
-Available policies are:
-
-\begin{itemize}
-  \item {\tt NONE} --- Disallows all instrumentation from being injected in the
-  method. When a test is given with this value, the logging system itself will
-  not be initialized for that test.
-  \item {\tt SIMPLE} --- Disallows complex probes from being injected in the
-  containing method.
-  \item {\tt COMPLEX} --- (Default), allows all probes to be potentially placed
-  in the containing method.
-\end{itemize}
 
 
 \subsection{\jenkinsPlugin}
