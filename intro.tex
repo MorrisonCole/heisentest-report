@@ -68,12 +68,13 @@ in detail during \autoref{sec:imp}, was ambitious in of itself given the time
 frame --- it proved a significant challenge implementing even the basic features
 of our proposed framework.
 
-The approach we take describes a framework that gathers and analyses information
-much in the same way as a developer would. First, it identifies the flaky tests
-in a test suite. Then, it employs techniques similar to those discussed by
-\citet{ArumugaNainar:2010:ABI:1806799.1806839} to gather relevant debugging
-information over a series of test runs. Finally we analyse the gathered data and
-identify predicates strongly associated with test failure. Our framework takes
+We describe a framework that gathers and analyses information much in the same
+way as a developer would. First, we identifies the flaky tests in a test suite.
+Then, we instrument each of the tests with respect to a budget to gather
+relevant debugging information over a series of test runs. Finally we analyse
+the gathered data and identify predicates strongly associated with test failure.
+Our intrumentation policy is adaptive, probe costs are estimated and adjusted
+over time; probe placements are informed by historical data. Our framework takes
 advantage of the continuous integration environment, gathering data each time an
 associated test suite is run. Figure \ref{fig:developer_workflow} shows the
 high-level workflow.
