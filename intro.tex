@@ -36,35 +36,17 @@ timeout to occur.
 have known flaky tests. Android even includes an {\tt @FlakyTest}
 annotation\cite{androidFlakyInterface} in its testing kit for automatic re-
 running of known \flaky tests; the annotation has been present since the initial
-release of Android.
-
-Simply surpressing \flaky tests is not a long-term solution. Informally, let
-a valid test be a test that asserts that some unit of the application behaves as
-expected. A redundant test might check behaviour that is not required, or is
-tested thoroughly elsewhere. Assuming all tests in a suite are valid, then any
-\flaky tests in the suite are also valid. A \flaky test may cover behaviour that
-is not tested elsewhere. Suppressing (temporarily retiring) the \flaky test may
-do more harm than good, since the behaviour it previously tested will now be go
-completely unchecked unless manually tested upon each commit.
-
-When the latest changes are due to be released, the \flaky tests must be
-considered. Normally, a particular software iteration would be held back until
-all tests pass, but with \flaky tests thrown into the mix - it may take multiple
-runs before all the tests pass at once - again, adding overhead.
-
-For personal experience, \flaky tests cause confusion, obscure real failures and
-erode trust in the test suite.
+release of Android. From personal experience in industry, \flaky tests cause
+confusion, obscure real failures and erode trust in the test suite.
 
 \subsection{Automating the Diagnostic Process}
 
 Our goal is to automate as much of the process for fixing a flaky test as
 possible, freeing developers to spend time developing the software, rather than
-debugging tests that are in fact intended to speed up the development process.
-Ultimately, each test case must be investigated and fixed by a developer, but as
-we will show, much of the legwork can be automated.
+debugging tests that are in fact intended to aid the development process.
 
 \Flaky tests are hard to reproduce. In general, there are three stages during
-which we may intervene to aid developers dealing with them:
+which we may intervene:
 \begin{enumerate}
 	\item Identification - which tests in the suite are flaky?
 	\item Prioritisation - which of the \flaky tests should we fix first?
@@ -72,24 +54,29 @@ which we may intervene to aid developers dealing with them:
 	test?
 \end{enumerate}
 
-Existing tools provide crude \flaky test identification. Information from these
-tools can be used to inform prioritisation decisions. As of yet, no tool exists
-to tackle resolution itself. Ultimately, it is the resolution of \flaky tests
-that we are interesed in. In order to tackle the problem practically though,
-knowledge gathered at each stage must be combined and considered.
+Ultimately, each test case must be investigated and fixed by a developer, but as
+we will show, much of the legwork can be automated. Existing tools provide crude
+\flaky test identification. Results from these tools can be used to inform
+prioritisation decisions. As of yet, no tool exists to tackle resolution itself.
+It is this final stage, the resolution of \flaky tests, that we are interesed
+in. In order to tackle the problem practically, knowledge gathered at
+each stage must be combined and considered.
 
-The tool we propose --- \textit{\venera} --- gathers and analyses information
+This report is broadly divided into two sections: the approach and the
+description of our proof of concept implementation. The engineering, discussed
+in detail during \autoref{sec:imp}, was ambitious in of itself --- it proved a
+significant challenge implementing even the basic features of our proposed
+framework.
+
+The tool we produced --- \textit{\venera} --- gathers and analyses information
 much in the same way as a developer would. First, it identifies the flaky tests
 in a test suite. Then, it employs techniques similar to those discussed by
 \citet{ArumugaNainar:2010:ABI:1806799.1806839} to gather relevant debugging
-information over a series of test runs. Finally we analyze the gathered data and
-identify predicates strongly associated with test failure. Our tool takes
-advantage of the continuous integration environment, gathering data each time an
-associated test suite is run. Figure \ref{fig:developer_workflow} shows a high-
-level \venera workflow.
-
-Previous and potential future work with an industry software startup lead us to
-target the Android platform for our proof of concept.
+information over a series of test runs. Our tool takes advantage of the
+continuous integration environment, gathering data each time an associated test
+suite is run. Figure \ref{fig:developer_workflow} shows the high-level \venera
+workflow. Previous and potential future work with an industry software startup
+lead us to target the Android platform for this initial proof of concept.
 
 \begin{figure}[h]
 
