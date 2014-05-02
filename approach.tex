@@ -113,11 +113,12 @@ test budget.
 At the test level, we allocate \flaky budget proportionally to a test's
 flakiness. Exploratory budget is uniformly randomly allocated over all tests ---
 each test in the suite is equally likely to receive a portion of the exploratory
-budget, but not guaranteed.
+budget, but not guaranteed. The pseudocode algorithms below define our exact
+methods for allocating and instrumenting a test suite.
 
 \begin{algorithm}[H]
 \caption{Instrumenting the test suite with respect to a budget}
-\label{alg:venera}
+\label{alg:InstrumentTestSuite}
 
 \begin{algorithmic}
 	\Require{$T$ is the set of tests making up the test suite}
@@ -125,7 +126,7 @@ budget, but not guaranteed.
 	\Require{$proportionFlaky$ is a decimal value in the range $[0..1]$}
 	\Statex
 
-	\Function{venera}{$T$, $proportionFlaky$}
+	\Function{InstrumentTestSuite}{$T$, $proportionFlaky$}
 
 	\Statex
 
@@ -154,11 +155,10 @@ budget, but not guaranteed.
 
 \end{algorithm}
 
-\mc{$proportionFlaky$ is stupid.}
-
-\algref{alg:venera} defines the two main steps: allocation and instrumentation.
-First, $B_t$ is calculated for each $t$. Then, the instrumentation is performed.
-It is during the instrumentation step that the application is actually modified.
+\algref{alg:InstrumentTestSuite} defines the two main steps: allocation and
+instrumentation. First, $B_t$ is calculated for each $t$. Then, the
+instrumentation is performed. It is during the instrumentation step that the
+application is actually modified.
 
 \subsubsection{\Flaky Budget Allocation}
 \label{sec:sec:flaky_budget_alloc}
@@ -249,9 +249,6 @@ Exploratory budget gives us a chance of gathering data from newly flaky tests.
 \end{algorithmic}
 
 \end{algorithm}
-
-
-\subsection{Instrumentation}
 
 \algref{alg:instrument_test} details the basic process for instrumenting a test
 with respect to a given budget. {\tt GetNextSetInstrumentationPoints()} returns
@@ -453,18 +450,21 @@ but it is impossible to be sure with so few data points.
 \label{sec:sec:instrumentation_points}
 
 There are potentially millions of lines of code, where do we place our
-instrumentation?
+probes?
 
-Given an entry point, in our case, a test or setup method, we simply take the
-next set of code units in the control flow graph.
+If we have no historical data, we simply take the next set of code units in the
+control flow graph following the entry point --- in our case, a test set up or
+test method.
 
 The main strategy is to place probes further and further down the control
-dependence graph until we are able to detect a failure-predicting predicate.
+flow graph until we are able to detect a failure-predicting predicate.
 
 Once we have detected a failure-predicting predicate, we can assign the majority
-of our budget to drill down in related areas. Still, we reserve a portion to
-‘scout’ in case we get lucky and find another failure predicting predicate
-elsewhere.
+of our budget to drill down in related areas. Still, we reserve a portion of our
+individual test budget to explore in case we get lucky and find another failure
+predicting predicate elsewhere. This is similar to our approach on the test
+suite level, where we split our main budget $B$ into \flaky budget $B_f$ and
+exploratory budget $B_e$.
 
 
 \subsection{Countering the {\lq}Observer Effect{\rq}}
