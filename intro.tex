@@ -63,6 +63,21 @@ debugging tests that are in fact intended to speed up the development process.
 Ultimately, each test case must be investigated and fixed by a developer, but as
 we will show, much of the legwork can be automated.
 
+\Flaky tests are hard to reproduce. In general, there are three stages during
+which we may intervene to aid developers dealing with them:
+\begin{enumerate}
+	\item Identification - which tests in the suite are flaky?
+	\item Prioritisation - which of the \flaky tests should we fix first?
+	\item Resolution - what information can we gather to speed the resolution of a
+	test?
+\end{enumerate}
+
+Existing tools provide crude \flaky test identification. Information from these
+tools can be used to inform prioritisation decisions. As of yet, no tool exists
+to tackle resolution itself. Ultimately, it is the resolution of \flaky tests
+that we are interesed in. In order to tackle the problem practically though,
+knowledge gathered at each stage must be combined and considered.
+
 The tool we propose --- \textit{\venera} --- gathers and analyses information
 much in the same way as a developer would. First, it identifies the flaky tests
 in a test suite. Then, it employs techniques similar to those discussed by
@@ -101,20 +116,6 @@ clear stumbling block, since tried and tested instrumentation tools in the world
 of the Java Virtual Machine had only just begun to acknowledge their Dalvik
 sibling. As such, we document and discuss many of our design decisions along the
 way.
-
-\Flaky tests are hard to reproduce. In general, there are three stages during
-which we may intervene:
-\begin{enumerate}
-	\item Identification - which tests in the suite are flaky?
-	\item Prioritisation - which of the \flaky tests should we fix first?
-	\item Resolution - what information can we gather to speed the resolution of a test?
-\end{enumerate}
-
-Ultimately, the final stage is the target. In order to tackle the problem
-practically, knowledge gathered at each stage must be combined and considered.
-
-Existing tools provide answers to 1. This information can be used to inform
-manual inspection of 2. As of yet, no tool exists to tackle 3.
 
 In a typical software development project, continuous integration systems will
 be set up from the beginning. Developers write code and commit to source
