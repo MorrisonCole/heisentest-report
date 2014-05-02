@@ -87,22 +87,25 @@ high-level workflow.
 \label{fig:developer_workflow}
 \end{figure}
 
-Running as a continuous integration step is a natural application. For one, test
-suites are run as continuous integration steps themselves. In addition, we want
-to be as transparent as possible.
+Running continuously as part of the integration environment is a natural
+position for our framework. For one, test suites are run as continuous
+integration steps themselves. In addition, we want to be as transparent to
+developers as possible --- intervention should be minimised.
 
 One of the primary initial goals of the project was to create a continuous
 integration plugin to present the data gathered during the identification of the
-\flaky tests. As we researched the area, we realised that the indentification of
-\flaky tests is the most well-covered and least interesting area. The more
-experimental and relatively untouched area dealing with adaptive instrumentation
-and analysis of collected information eventually became our primary focus.
+\flaky tests. As we researched the area, we realised that the indentification
+and prioritisation of \flaky tests is the most well-covered and least
+interesting problem. The relatively untouched area of resolution to which we
+could apply adaptive instrumentation and analyse collected information
+eventually became our primary focus.
 
-Reaching a stage where we could analyze the gathered data proved to be far more
+Reaching a stage where we could analyze real data proved to be far more
 challenging than expected. The relative youth of the Android platform was a
 clear stumbling block, since tried and tested instrumentation tools in the world
-of the Java Virtual Machine had only just begun to acknowledge their Dalvik
-sibling. As such, we document and discuss many of our design decisions along the
+of the Java Virtual Machine have only just begun to acknowledge their Dalvik
+sibling. As such, our engineering project is one of the first of its kind to be
+open-sourced, so we document and discuss many of our design decisions along the
 way.
 
 In a typical software development project, continuous integration systems will
