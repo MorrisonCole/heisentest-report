@@ -3,6 +3,49 @@
 
 \subsection{\venera System Manual}
 
+Venera is a command-line tool that hooks into any Android test runner and
+instruments your application test suite. It adds event-firing probes at instance
+method entries and logs to a human-readable JSON format. Included is an SDK with
+an annotation that gives developers control over the instrumentation policy.
+Complex probes have a large overhead, but record a huge amount of program state.
+Simple probes simply fire events. In the future, probes placement will be based
+on historical test run data and a budget.
+
+\subsubsection{Requirements}
+
+To build the project from source, the following tools are required:
+
+\begin{itemize}
+  \item Java Development Kit (v.7+) \cite{jdk}
+  \item Android SDK (with the latest tools) \cite{androidSDK}
+  \item Gradle (v.1.10+) \cite{gradle}
+\end{itemize}
+
+We recommend using IntelliJ \cite{intellij}, Android Studio \cite{androidStudio}
+or some other Java-centric IDE, although anything is fine in principal.
+
+\subsubsection{Running the Project}
+
+To try \venera on the included Android application (skeleton-android-app), run
+from the command line:
+
+\begin{lstlisting}[numbers=none]
+cd skeleton-android-app
+gradle clean connectedAndroidTest -P=venera
+\end{lstlisting}
+
+IntelliJ users can create a skeleton-android-app Gradle build configuration and
+run the task {\tt clean connectedAndroidTest} with script parameters {\tt
+-P=venera}.
+
+To run \venera on your own Android application, modify the {\tt build.gradle}
+file under the {\tt venera-instrumentation} directory to point to your APKs.
+You'll need to also provide a Gradle task (or equivalent) to pull the results
+from the device in the same way that skeleton-android-app's build.gradle already
+does. Note that integration with other Android applications will be made more
+intuitive in the future.
+
+
 \subsection{\jenkinsPlugin System Manual}
 
 The \jenkinsPlugin maintains a HSQL database of standard test artifacts
