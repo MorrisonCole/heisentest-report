@@ -17,9 +17,9 @@ Essentially, any test can be distilled down to three basic steps:
 \textit{arrange}, \textit{act} and \textit{assert}. A well-written test may read
 similarly to the following:
 \begin{verbatim}
-  Given I am in this state (arrange)
-  When I do this (act)
-  Then I am in this state (assert)
+  Given I am in state X (arrange)
+  When I do perform action A (act)
+  Then I am in state Y (assert)
 \end{verbatim}
 
 \Flaky tests are commonly caused by timing issues. Considering the general
@@ -27,12 +27,12 @@ outline above, it is obvious that the act step requires the arrange step to have
 completed before it runs --- there must be some kind of wait and check mechanism
 to block further progress until the arrange step has finished.
 
-As an example, consider a test run that initially enters state $S_{1}$
-(arrange), where $S_{1}$ is a vector $(x_{1},x_{2},x_{3})$. Action $A$
-transforms $S_1$ to $S_2$ --- $(x_{4},x_{5},x_{6})$. Finally, the assertion
-checks that the current state is equal to $S_2$.
+As an example, consider a test run that initially enters state $X$
+(arrange), where $X$ is a vector $(x_{1}, x_{2}, x_{3})$. Action $A$
+transforms $X$ to $Y$: $(y_{1}, y_{2}, y_{3})$. Finally, the assertion
+checks that the current state is equal to $Y$.
 
-If each value of the vector $S_{1}$ is loaded asynchronously, the test must
+If each value of the vector $X$ is loaded asynchronously, the test must
 check for each of the vector values to be correct before $A$ is applied. If the
 test checked only the first two values, the action would complete only if the
 third element happened to have loaded before the values in position 1 and 2.
