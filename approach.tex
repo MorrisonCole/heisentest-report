@@ -48,12 +48,12 @@ simply divide the \flaky budget equally between all \flaky tests.
 \begin{defn}[\Flakiness]
 \label{def:flakiness}
 
-Given a test $T$ with probability of failure $T_{p}$, test \flakiness is
+Given a test $t$ with probability of failure $P_{t}$, test \flakiness is
 calculated by
 \begin{align*}
-  f(T_{p})=
+  \mathit{flakiness}(P_{t})=
 	\begin{cases}
-	    1 - \frac{T_{p}}{\alpha},& \text{if } T_{p}< \alpha\\
+	    1 - \frac{P_{t}}{\alpha},& \text{if } P_{t}< \alpha\\
 	    0,              & \text{otherwise}
 	\end{cases}
 \end{align*}
