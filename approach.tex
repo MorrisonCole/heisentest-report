@@ -115,17 +115,6 @@ flakiness. Exploratory budget is uniformly randomly allocated over all tests ---
 each test in the suite is equally likely to receive a portion of the exploratory
 budget, but not guaranteed.
 
-Given a suite of tests $T$, a test $t \in T$ is allocated budget $B_{t}$, where
-\begin{align*}
-B_t = \frac{B_f \times T_f}{\sum\limits_{i=1}^{|T|}
-f(T_{i_p})} + \frac{B_e}{|T|} + B_{remainder}
-\end{align*}
-\mc{This is wrong. $B_{remainder}$ is not defined. It \textit{should} be the
-remaining budget after the $B_e$ and $B_f$ are allocated. Also $\frac{B_e}{|T|}$
-is not how $B_e$ is allocated --- it is allocated over all non-\flaky tests
-uniformly until there is no budget remaining. In other words, not all tests will
-receive exploratory budget.}
-
 \begin{algorithm}[H]
 \caption{Instrumenting the test suite with respect to a budget}
 \label{alg:venera}
@@ -306,8 +295,8 @@ allocations, test outcomes and budgets.
 
 There are a number of types of points at which it is useful to gather
 information about application state. We scrap the common approach of counters
-and predicates used in past work and instead include instrumentation designed to
-gather much more contextual information.
+and predicates used in past bug isolation work and instead include
+instrumentation designed to gather much more contextual information.
 
 We refer to a piece of code inserted at an instrumentation site to monitor
 application state as a \textit{probe}. \textit{Complex} probes record the
