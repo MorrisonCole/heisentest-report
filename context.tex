@@ -222,7 +222,8 @@ suite, how does a developer decide which tests to fix first? There are several
 obvious factors which may affect prioritisation, including:
 \begin{itemize}
 	\item Failure type --- multiple \flaky tests exhibiting similar problems may
-	be tackled as a group. Certain failure types may be considered more critical than others.
+	be tackled as a group. Certain failure types may be considered more critical
+	than others.
 	\item Age --- a \flaky test that has been known to be \flaky for a long period
 	may be prioritised over more recent additions, or vice versa.
 \end{itemize}
@@ -231,8 +232,8 @@ In the end, it is up to the development team to prioritise the \flaky tests, if
 at all. With this in mind, the most useful thing we could do is expose
 information to aid the decision making process. Providing the ability to group
 and sort \flaky tests by the attributes listed above would no doubt be valuable.
-In fact, this was an initial goal of the paper, but it was sidelined in order to
-focus on the instrumentation.
+In fact, this was an initial goal of the project, but it was eventually
+sidelined in order to focus on the resolution phase.
 
 \subsubsection{Resolution}
 
@@ -240,14 +241,15 @@ A common approach when fixing any bug (not just a \flaky test) is to step
 through the code manually with the assistance of a debugger. By examining
 execution flow and program state over one or more runs, a developer can often
 pinpoint the cause or a related area of code. Debugging a \flaky acceptance test
-in this way is often tedious, fruitless and time-consuming. Since an acceptance
-test must compile and run the entire application, average run times can be
-extremely lengthy. If the test must constantly be re-run in order to see it
-fail, this time quickly adds up. What's more, attaching a debugger can affect
-thread interleaving, potentially obscuring previously observed flaky behaviour.
+in this way is often tedious, fruitless and time-consuming, especially if the
+failure rate is low. Since an acceptance test must compile and run the entire
+application, average run times can be extremely lengthy. If the test must
+constantly be re-run in order to see it fail, this time quickly adds up. What's
+more, attaching a debugger can affect the execution of the test, potentially
+perturbing its behaviour.
 
 An experienced developer may simply inspect the test in question to determine
-the cause. The success of this method depends on the complexity and (likely)
+the cause. The success of this method likely depends on the complexity and
 familiarity of the bug.
 
 
