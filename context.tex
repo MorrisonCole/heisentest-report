@@ -242,21 +242,3 @@ perturbing its behaviour.
 An experienced developer may simply inspect the test in question to determine
 the cause. The success of this method likely depends on the complexity and
 familiarity of the bug.
-
-
-\subsection{An Automatic Assistant}
-
-We know why automated tests are useful, what a \flaky test is and why they are
-costly. What can we do to aid the process of resolution?
-
-We have seen that tools exist to speed the identification of \flaky tests. Some
-of these tools expose information that can be useful in prioritisation, but none
-touch resolution. This is the interesting part.
-
-As we've seen, a developer will often resort to a manual execution with the help
-of a debugger, to gather information on program state with the aim of
-identifying the bug (or areas related to it). We could, with the assistance of
-instrumentation, gather this information ahead of time. If we knew a test to be
-\flaky, we could attach instrumentation to automatically gather and save
-sections of program state. Using Adaptive Bug Isolation techniques, we could
-output a ranked list of strongly associated program statements.
