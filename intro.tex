@@ -108,22 +108,6 @@ sibling. As such, our engineering project is one of the first of its kind to be
 open-sourced, so we document and discuss many of our design decisions along the
 way.
 
-In a typical software development project, continuous integration systems will
-be set up from the beginning. Developers write code and commit to source
-control. A master server will detect the change and assign one of a number of
-build agents (other servers with the capability to build the project(s) -
-virtual or otherwise) an attached job.
-
-For a typical job, the chosen build agent pulls down the latest changes,
-compiles and runs the tests and runs any post-build tasks. At the end, any build
-artifacts (distributable packages, test results, etc.) will be uploaded to the
-master server and the agent will be once again free to build the next iteration.
-Note that in reality, a job can comprise of any number of runnable steps - from
-executing a shell script to hitting an external server.
-
-It is obvious that, if we are to develop a tool to assist developers with \flaky
-tests, we should run as part of a modular continuous integration system.
-
 
 \subsection{Engineering}
 

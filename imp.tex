@@ -437,7 +437,22 @@ Available policies are:
 \subsection{\jenkinsPlugin}
 \label{sec:sec:jenkins_plugin}
 
-The Jenkins plugin is a wrapper that manages the storage of the test results and
+In a typical software development project, continuous integration systems are
+set up at the beginning. Developers write code and commit to source control. A
+server running a Continuous Integration tool will detect the change and assign
+one of a number of build agents (other servers with the capability to build the
+project(s) - virtual or otherwise) an attached job.
+
+For a typical job, the chosen build agent pulls down the latest changes,
+compiles the code and runs the tests and any related tasks. At the end, any
+build artifacts (distributable packages, test results, etc.) are uploaded to the
+Continuous Integration server, freeing the agent to once again build the next
+job in the queue. Note that in reality, a job can comprise of any number of
+runnable steps --- from executing a shell script to hitting an external server.
+
+It is obvious that, if we are to develop a tool to assist developers with \flaky
+tests, we should run as part of a modular continuous integration system. The
+Jenkins plugin is a wrapper that manages the storage of the test results and
 associated artifacts in a HSQL database.
 
 \subsubsection{Identification}
