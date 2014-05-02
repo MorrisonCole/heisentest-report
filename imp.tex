@@ -436,6 +436,8 @@ Integration systems. At all stages of design, this must be kept in mind.
 The Jenkins plugin manages the storage of the test results and associated
 artifacts in a HSQL database. After a test run completes, we can gather the test
 run artifacts (JUnit results, \venera {\tt JSON} log files \etc) and store them
-in a persistent database. As it stands, the plugin does not feed any historical
-information back to \venera. Alongside displaying information to the developers,
-this will be its eventual role.
+in a persistent database. We have built in basic support for Weka, the machine
+learning framework we plan to use to inform our probe placement, but as it
+stands, the plugin does not feed any historical information back to \venera.
+Alongside displaying prioritisation and resolution information to the
+developers, this will be its eventual role.
