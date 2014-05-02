@@ -11,13 +11,13 @@ We describe the tool from the bottom up;
 \subsection{\venera}
 \label{sec:sec:android_instrumentation}
 
-The Venera repository\cite{heisentestInstrumentation} is made up of a number of
+The \venera repository\cite{heisentestInstrumentation} is made up of a number of
 modules. Figure \ref{fig:repo_structure} shows an overview of the structure and
 key submodules.
 
 \begin{figure}[h]
     \dirtree{%
-    .1 heisentest-venera.
+    .1 venera.
     .2 dex-generator\DTcomment{An Android application from which ASMDEX visitor
     code is generated}.
     .2 dexifier\DTcomment{A Java command line tool that generates ASMDEX visitor
@@ -418,7 +418,7 @@ happen to be instrumented.
 A small project ({\lq}venera-sdk{\rq}) can be included to force certain
 behaviour. It is a simple library that defines a @Venera annotation, with a
 parameter {\lq}InstrumentationPolicy{\rq}. When a method is annotated with this
-and a policy specified, Venera will respect the defined behaviour when
+and a policy specified, \venera will respect the defined behaviour when
 performing instrumentation.
 
 Available policies are:
