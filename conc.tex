@@ -60,20 +60,21 @@ it may be pushed in the future.
 \subsubsection{Probe Placement}
 
 We can improve our probe placement strategy by taking into account control flow
-graphs and loops.
+graphs and loops, as detailed in \autoref{sec:sec:sec:soot}.
 
 \subsubsection{Prioritisation}
 
-In the future, we could adjust \flaky budget allocation by taking into account
-relative volume of historical data. For example, a newly \flaky test for which
-we have little to no data may be prioritised above a known \flaky test for which
-we hold a large amount of information from previous instrumented runs.
+Although prioritisation is a somewhere orthogonal concern, in the future, we
+could adjust \flaky budget allocation by taking into account relative volume of
+historical data. For example, a newly \flaky test for which we have little to no
+data may be prioritised above a known \flaky test for which we hold a large
+amount of information from previous instrumented runs.
 
-We could start from a pesimistic viewpoint. A new tests would be assumed to have
-a flakiness value of 1. As the test is run, the flakiness value would be
-adjusted as usual until it represented a more accurate value. New tests will
-therefore be heavily instrumented, and gradually less so as they prove
-themselves to be reliable.
+We could also prioritise new tests in the test suite by assigning pessimistic
+initial flakiness values. A new test would be assumed to have a flakiness value
+of 1. As the test is run, the flakiness value would be adjusted as usual until
+it represented a more accurate value. New tests would therefore be heavily
+instrumented, but gradually less so as they prove themselves to be reliable.
 
 The \jenkinsPlugin could be improved as far as prioritisation is concerned.
 We could use data gathered during the identification stage to rank the tests
@@ -127,17 +128,17 @@ the network to the \jenkinsPlugin.
 
 Our CI plugin could display an estimated commit {\lq}blame{\rq} range, along
 with relevant build numbers if a previously stable test is suddenly observed to
-be \flaky, and vice versa.
+be \flaky, and vice versa. This could assist developers during debugging.
 
-\subsubsection{Retiring Trusted Tests}
+\subsubsection{Identifying Trusted Tests}
 
 Projects with a huge number of tests face lengthy build times. It may be in a
 teams' interest to remove trusted tests from the per-commit build and instead
-run them on a seperate cycle to tighten the immediate feedback loop. We could
+run them on a seperate cycle to shorten immediate feedback loop. We could
 provide a listing of {\lq}most trusted{\rq} tests (\ie, tests that have
-exhibited no flakiness over a significant period).
+exhibited no flakiness over a significant period) for this purpose.
 
-\subsubsection{Porting the Plugin}
+\subsubsection{Porting}
 
 Jenkins is but one of many available continuous integration tools
 \cite{ContinuousIntegrationSoftware}. Hudson, TeamCity, CruiseControl and Team
@@ -149,6 +150,11 @@ materialised.
 TeamCity \cite{TeamCity} has a significant community and a growing number of
 plugins, but is a closed source project maintained by JetBrains.
 
+Likewise, Android is not the only platform with system tests. Standard Java
+would be an obvious next step, but any platform would be suitable. It will be
+possible to decouple the instrumentation itself from the budget allocation and
+probe placement logic --- a lot of the code can be modularised and re-used.
+
 \subsubsection{Logging Performance}
 
 We could log to a seperate blocking queue and file per application thread. After
@@ -156,10 +162,3 @@ the test run is complete, a simple script could {\lq}weave{\rq} the files back
 together using thread IDs and system times. This would reduce runtime blocking.
 However, we should measure performance in more detail to identify the real
 bottlenecks before applying theoretical performance improvements.
-
-\subsubsection{Continuous Integration}
-
-In the future, we could look at the test runs over time and attach various
-values to each test much in the same way as the existing Continuous Integration
-tools. It will also need to be extended with an interface to visualise test
-flakiness and related information.

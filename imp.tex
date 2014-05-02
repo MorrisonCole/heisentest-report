@@ -292,10 +292,11 @@ performance penalty if called methods happen to be instrumented.
 
 \subsection{Logging to JSON}
 
-Each event is created as an event bean in memory and held in a blocking queue
-until it can be written to the {\tt .json} output file. We define an abstract
-{\tt LogEvent} bean with common values (System Time, Thread ID, EventName etc.)
-and implement subclasses for specific events.
+Our logging system is event based. Each probe calls an log method with some
+parameters. The logging method creates an event bean in memory. The bean is put
+into a blocking queue and held until it can be written to the {\tt .json} output
+file. We define an abstract {\tt LogEvent} bean with common values (System Time,
+Thread ID, EventName etc.) and implement subclasses for specific events.
 
 The background thread in charge of logging the events to disk serialises the
 data to {\tt JSON} before writing it to a file.
@@ -364,6 +365,7 @@ an extreme number of log messages (i.e., deleted before we can grab it), the
 build could fail. This is robust enough for a proof of concept.
 
 \subsubsection{Soot}
+\label{sec:sec:sec:soot}
 
 We looked into Soot for its ability to generate control flow graphs (CFGs). When
 searching for failure-predicting predicates, we will favour locations further
