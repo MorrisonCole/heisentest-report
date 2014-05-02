@@ -367,10 +367,9 @@ build could fail. This is robust enough for a proof of concept.
 
 We looked into Soot for its ability to generate control flow graphs (CFGs). When
 searching for failure-predicting predicates, we will favour locations further
-down the CFG when placing probes (new or moved).
-
-It is possible to generate the CFG for a method using ASMDEX alone, although it
-is a slightly more tricky task, and one that we have not tackled so far.
+down the CFG when placing probes (new or moved). It is possible to generate the
+CFG for a method using ASMDEX alone, although it is a slightly more tricky task,
+and one that we have not tackled so far.
 
 In the end, although Soot appeared to be a nice tool to work with, we scrapped
 it for a few reasons. Firstly, the representation used by Soot is fairly
@@ -385,6 +384,13 @@ i7-3610QM CPU @ 2.30GHz, the time to load the application and test APKs was
 the CFGs for any methods). In fact, with Soot removed entirely, the same
 instrumentation run took just 3.294 seconds --- 17\% of the previous total run
 time.
+
+We could have used Soot to convert Dalvik bytecode into standard Java {\tt
+.class} files using Dexpler \cite{bartel:soap2012} and instrumented from then
+on. This would have eliminated any incompatability concerns. However, the {\tt
+dex} code output by Dexpler is often invalid, as is evident from the bug reports
+and ongoing discussion at GitHub. Perhaps in the future, Soot will be a more
+viable option. Certainly the features it boasts are attractive for our project.
 
 
 \subsection{\jenkinsPlugin}

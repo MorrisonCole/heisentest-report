@@ -57,15 +57,6 @@ the tool will also need to be accounted for.
 in which it can be improved. The following sections detail some of the ways that
 it may be pushed in the future.
 
-\subsubsection{Soot}
-
-We could have used Soot to convert Dalvik bytecode into standard Java {\tt
-.class} files using Dexpler \cite{bartel:soap2012} and instrumented from then
-on. However, the {\tt dex} code output by Dexpler is often invalid, as is
-evident from the bug reports and ongoing discussion at GitHub. Perhaps in the
-future, Soot will be a more viable option. Certainly the features it boasts are
-attractive for our project.
-
 \subsubsection{Probe Placement}
 
 We can improve our probe placement strategy by taking into account control flow
@@ -136,7 +127,7 @@ the network to the \jenkinsPlugin.
 
 Our CI plugin could display an estimated commit {\lq}blame{\rq} range, along
 with relevant build numbers if a previously stable test is suddenly observed to
-be \flaky.
+be \flaky, and vice versa.
 
 \subsubsection{Retiring Trusted Tests}
 
